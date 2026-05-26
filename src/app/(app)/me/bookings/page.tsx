@@ -1,0 +1,22 @@
+/**
+ * ROUTE: /me/bookings
+ * ACCESS: authenticated student
+ * PURPOSE: All active + past bookings (hostels, beauty, laundry, events tickets). Filterable by status.
+ * BUILT HERE: Status <Tabs>, booking card list with <OrderStageTracker>.
+ * TODO: implement the full screen once dependent modules + data are wired.
+ */
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = { title: 'Bookings' };
+
+export default function Page() {
+  return (
+    <section className="flex flex-col gap-3">
+      <p className="eyebrow text-lime-deep">/me/bookings</p>
+      <h1 className="font-display text-section text-ink">Bookings</h1>
+      <p className="text-muted max-w-xl text-sm">
+        Placeholder — see the route header above for what gets built here.
+      </p>
+    </section>
+  );
+}
