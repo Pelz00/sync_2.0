@@ -52,7 +52,6 @@ export default function RootLayout({
       className={`${bricolage.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="bg-surface text-foreground font-body flex min-h-full flex-col">
-        {/* Query Client Provider */}
         <Providers>{children}</Providers>
       </body>
     </html>

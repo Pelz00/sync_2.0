@@ -5,7 +5,6 @@
  * BUILT HERE: Role radio, name/email/password, terms checkbox, submit calls modules/auth/actions.ts.
  * TODO: implement the full screen once dependent modules + data are wired.
  */
-import { FormSection } from '@/components/forms';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = { title: 'Sign up' };
@@ -18,12 +17,6 @@ export default function Page() {
       <p className="text-muted max-w-xl text-sm">
         Placeholder — see the route header above for what gets built here.
       </p>
-      {/* Form */}
-      <div className="flex flex-col gap-3">
-        <FormSection title="Sign Up">
-          <h1>hello</h1>
-        </FormSection>
-      </div>
     </section>
   );
 }

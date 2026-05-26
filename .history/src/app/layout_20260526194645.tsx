@@ -12,7 +12,6 @@
 import type { Metadata } from 'next';
 import { Bricolage_Grotesque, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
-import { Providers } from '@/providers/QueryClientProvider';
 
 const bricolage = Bricolage_Grotesque({
   variable: '--font-bricolage',
@@ -51,9 +50,8 @@ export default function RootLayout({
       lang="en"
       className={`${bricolage.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="bg-surface text-foreground font-body flex min-h-full flex-col">
-        {/* Query Client Provider */}
-        <Providers>{children}</Providers>
+      <body className="bg-surface text-foreground flex min-h-full flex-col font-[family-name:var(--font-body)]">
+        {children}
       </body>
     </html>
   );
