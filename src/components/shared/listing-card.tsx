@@ -1,5 +1,5 @@
 /**
- * ListingCard — the single most-reused composite in Sync. Deliberately one
+ * ListingCard - the single most-reused composite in Sync. Deliberately one
  * card shape across hostels / food vendors / beauty pros / tradespeople /
  * laundry / hotspots. Modules pass their own data; the card stays consistent
  * so students get the same scanning rhythm everywhere.
@@ -29,9 +29,11 @@ export interface ListingCardData {
   verified?: boolean;
   /** Top-left ribbon e.g. "New", "Limited", "Popular". */
   ribbon?: string;
+  /** Optional small chip row under the location (Wi-Fi · Water · 24h light). */
+  amenities?: string[];
   /** Has the current user saved this listing? */
   saved?: boolean;
-  /** Optional save action — if omitted the heart button is hidden. */
+  /** Optional save action - if omitted the heart button is hidden. */
   saveAction?: (formData: FormData) => void;
 }
 
@@ -44,6 +46,7 @@ export function ListingCard({
   rating,
   verified,
   ribbon,
+  amenities,
   saved,
   saveAction,
   className,
@@ -84,6 +87,16 @@ export function ListingCard({
               <MapPin className="h-3 w-3" aria-hidden="true" />
               {location}
             </p>
+          )}
+          {amenities && amenities.length > 0 && (
+            <ul className="text-muted flex flex-wrap items-center gap-1 text-[11px]">
+              {amenities.map((a, i) => (
+                <li key={a} className="flex items-center gap-1">
+                  <span className="border-ink/15 rounded-full border px-2 py-0.5">{a}</span>
+                  {i < amenities.length - 1 && <span aria-hidden="true" className="sr-only">·</span>}
+                </li>
+              ))}
+            </ul>
           )}
           <div className="mt-auto flex items-end justify-between pt-2">
             {price !== null && price !== undefined && (

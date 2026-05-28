@@ -1,7 +1,7 @@
 /**
  * Top-level error boundary. Catches runtime errors that bubble past
  * route-level error.tsx files. Never leaks the underlying error.message
- * to the user — surfaces a friendly ErrorState with a retry handler.
+ * to the user - surfaces a friendly ErrorState with a retry handler.
  *
  * NOTE: `error.tsx` must be a Client Component (Next requirement).
  */

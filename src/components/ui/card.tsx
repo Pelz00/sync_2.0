@@ -1,5 +1,5 @@
 /**
- * Card — generic surface container. Sync uses cards heavily (the design language
+ * Card - generic surface container. Sync uses cards heavily (the design language
  * is white cards on cream). Composed of `Card`, `CardHeader`, `CardTitle`,
  * `CardDescription`, `CardContent`, `CardFooter`.
  */

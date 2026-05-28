@@ -1,5 +1,5 @@
 /**
- * ReviewCard — single review entry. Shown on listing detail pages and the
+ * ReviewCard - single review entry. Shown on listing detail pages and the
  * student profile's "My reviews" section. Author name is shortened (first
  * name + last initial) to protect student privacy.
  */

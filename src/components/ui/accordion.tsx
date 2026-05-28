@@ -1,5 +1,5 @@
 /**
- * Accordion — Radix-backed collapsible sections. Use for FAQ, vendor
+ * Accordion - Radix-backed collapsible sections. Use for FAQ, vendor
  * onboarding helper, and dense filter groups on mobile.
  */
 'use client';

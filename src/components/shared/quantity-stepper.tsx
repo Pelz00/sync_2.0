@@ -1,5 +1,5 @@
 /**
- * QuantityStepper — numeric +/− control for cart line items and booking
+ * QuantityStepper - numeric +/− control for cart line items and booking
  * quantities. Controlled via `value` + `onChange`; defaults to min=1, max=99.
  */
 'use client';

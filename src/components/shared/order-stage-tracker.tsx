@@ -1,5 +1,5 @@
 /**
- * OrderStageTracker — horizontal milestone tracker for order lifecycles.
+ * OrderStageTracker - horizontal milestone tracker for order lifecycles.
  * Used across modules (food delivery, laundry pickup, workmanship job).
  * Stages are domain-specific; this component is purely the visual rail.
  */

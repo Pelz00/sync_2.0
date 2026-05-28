@@ -1,5 +1,5 @@
 /**
- * Badge — compact status label. Variants for neutral, accent, warning, success.
+ * Badge - compact status label. Variants for neutral, accent, warning, success.
  * For domain-specific badges (e.g. "Verified vendor"), wrap this in components/shared.
  */
 import * as React from 'react';

@@ -1,5 +1,5 @@
 /**
- * AuthLayout — split-pane shell for login / signup / verify. Brand panel on
+ * AuthLayout - split-pane shell for login / signup / verify. Brand panel on
  * the left (md+), form on the right. Single column on mobile.
  */
 import Link from 'next/link';

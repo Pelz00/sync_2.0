@@ -1,9 +1,9 @@
 /**
- * Toast — re-exports sonner with Sync styling. Mount `<Toaster />` once in the
+ * Toast - re-exports sonner with Sync styling. Mount `<Toaster />` once in the
  * root providers tree, then call `toast(...)` from anywhere (client only).
  *
  * Use for transient feedback (saved, posted, paid). Don't use for errors that
- * need acknowledgement — those go in a dialog.
+ * need acknowledgement - those go in a dialog.
  */
 'use client';
 

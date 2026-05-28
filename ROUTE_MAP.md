@@ -1,4 +1,4 @@
-# Sync — Route Map
+# Sync - Route Map
 
 Every route the app ships. Access levels are enforced by `middleware.ts` (auth + role)
 and ultimately by Supabase RLS on the data layer.
@@ -6,7 +6,7 @@ and ultimately by Supabase RLS on the data layer.
 > **Access legend:** `public` · `auth` (any signed-in user) · `student` · `vendor` ·
 > `landlord` (vendor with `category=landlord`) · `admin`.
 
-## Marketing — `(marketing)`
+## Marketing - `(marketing)`
 
 | Path | Access | Description |
 | --- | --- | --- |
@@ -14,8 +14,9 @@ and ultimately by Supabase RLS on the data layer.
 | `/about` | public | Brand + mission story. |
 | `/how-it-works` | public | Find → book → pay explainer. |
 | `/for-vendors` | public | Vendor recruitment + plan pricing. |
+| `/around` | public | "Around you" - the new home of the full Sync app. Mosaic feed of events/food/laundry/hotspots near the student's hostel. Personalises once signed in. |
 
-## Auth — `(auth)`
+## Auth - `(auth)`
 
 | Path | Access | Description |
 | --- | --- | --- |
@@ -23,11 +24,10 @@ and ultimately by Supabase RLS on the data layer.
 | `/signup` | public | Account creation with role selector (student / vendor). |
 | `/verify` | public during signup | OTP verification (rate-limited). |
 
-## Student app — `(app)`
+## Student app - `(app)`
 
 | Path | Access | Description |
 | --- | --- | --- |
-| `/around` | student | "Around you" hub — curated, geo-scoped mixed feed. |
 | `/hostels` | student | Hostel browse + filters. |
 | `/hostels/[slug]` | student | Hostel detail + booking flow (escrow). |
 | `/events` | student | Events listing. |
@@ -52,7 +52,7 @@ and ultimately by Supabase RLS on the data layer.
 | `/me/notifications` | student | Notification inbox + preferences. |
 | `/me/profile` | student | Profile editing. |
 
-## Vendor — `(vendor)`
+## Vendor - `(vendor)`
 
 | Path | Access | Description |
 | --- | --- | --- |
@@ -67,7 +67,7 @@ and ultimately by Supabase RLS on the data layer.
 | `/vendor/documents` | vendor | Business documents. |
 | `/landlord` | landlord | Landlord dashboard overview. |
 
-## Admin — `(admin)`
+## Admin - `(admin)`
 
 | Path | Access | Description |
 | --- | --- | --- |
@@ -83,7 +83,7 @@ and ultimately by Supabase RLS on the data layer.
 
 | Path | Method | Description |
 | --- | --- | --- |
-| `/api/webhooks/paystack` | POST | Paystack webhooks — HMAC-SHA512 signature required. |
+| `/api/webhooks/paystack` | POST | Paystack webhooks - HMAC-SHA512 signature required. |
 | `/api/webhooks/verification` | POST | ID verification provider webhooks. |
 
 ## Development-only

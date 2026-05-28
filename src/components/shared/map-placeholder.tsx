@@ -1,5 +1,5 @@
 /**
- * MapPlaceholder — neutral placeholder for hostel/event/hotspot maps until
+ * MapPlaceholder - neutral placeholder for hostel/event/hotspot maps until
  * the real map integration lands. Keeps layouts honest without pulling a
  * heavy map SDK on every page during the scaffolding phase.
  *

@@ -1,5 +1,5 @@
 /**
- * AppShell — authenticated student shell. Persistent sidebar (ModuleNav) on
+ * AppShell - authenticated student shell. Persistent sidebar (ModuleNav) on
  * md+, mobile bottom nav on small screens. Top bar has search + profile.
  *
  * Used by the (app) route group layout. Pages render inside <main>.

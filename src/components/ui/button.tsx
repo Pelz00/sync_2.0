@@ -1,5 +1,5 @@
 /**
- * Button — the primary interactive primitive.
+ * Button - the primary interactive primitive.
  * Used everywhere: forms, cards, headers, CTAs.
  * Pass `asChild` to forward styles to a different element (e.g. a Next `<Link>`).
  */

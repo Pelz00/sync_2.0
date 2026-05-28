@@ -1,5 +1,5 @@
 /**
- * Layout for /vendor/* (generic vendor dashboard — food, beauty, trades,
+ * Layout for /vendor/* (generic vendor dashboard - food, beauty, trades,
  * laundry, events). The landlord variant has its own layout at
  * /landlord/layout.tsx so the two can diverge cleanly.
  *

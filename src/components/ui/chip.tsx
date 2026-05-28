@@ -1,5 +1,5 @@
 /**
- * Chip — interactive filter/selection pill. Used in filter panels and tag inputs.
+ * Chip - interactive filter/selection pill. Used in filter panels and tag inputs.
  * For non-interactive labels use `Badge` instead.
  */
 'use client';

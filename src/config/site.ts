@@ -1,5 +1,5 @@
 /**
- * Site-wide constants — name, description, contact, support, social.
+ * Site-wide constants - name, description, contact, support, social.
  * Imported by marketing pages, metadata, footer.
  */
 export const SITE = {
@@ -7,7 +7,7 @@ export const SITE = {
   legalName: 'Raavon Limited',
   tagline: 'Your campus, in one app',
   description:
-    'Sync is the verified marketplace for Nigerian student life — hostels, food, events, beauty, trades, laundry and more.',
+    'Sync is the verified marketplace for Nigerian student life - hostels, food, events, beauty, trades, laundry and more.',
   launchMarket: 'KWASU, Malete',
   url: 'https://sync.ng',
   support: {

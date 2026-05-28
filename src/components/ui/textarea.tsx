@@ -1,5 +1,5 @@
 /**
- * Textarea — multi-line text input.
+ * Textarea - multi-line text input.
  * Defaults to a minimum height of 6 lines; pass `rows` to override.
  */
 import * as React from 'react';

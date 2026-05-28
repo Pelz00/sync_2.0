@@ -1,17 +1,24 @@
 /**
- * VerifiedBadge — the most important trust mark in Sync.
- * Rendered on every vendor surface (listing cards, profile headers, chat).
- * Only show when the vendor has completed all three verification steps.
+ * VerifiedBadge - the most important trust mark in Sync. Per the hi-fi
+ * design guide, it renders as a lime pill with a leading green dot and the
+ * label "Sync-verified". Apply liberally on listing cards, profile headers,
+ * chat headers - anywhere a vendor's authenticity matters.
  */
-import { BadgeCheck } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 export function VerifiedBadge({ className }: { className?: string }) {
   return (
-    <Badge variant="accent" className={cn('gap-1 pl-1.5', className)}>
-      <BadgeCheck className="h-3 w-3" strokeWidth={2.5} />
-      Verified
-    </Badge>
+    <span
+      className={cn(
+        'bg-lime text-ink inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-medium',
+        className,
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className="bg-lime-deep h-1.5 w-1.5 rounded-full"
+      />
+      Sync-verified
+    </span>
   );
 }

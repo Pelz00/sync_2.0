@@ -1,5 +1,5 @@
 /**
- * Input — single-line text field.
+ * Input - single-line text field.
  * Pair with `FormField` (components/forms) for labelled, validated usage.
  */
 import * as React from 'react';

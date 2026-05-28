@@ -1,5 +1,5 @@
 /**
- * Dialog (Modal) — Radix-backed centered modal.
+ * Dialog (Modal) - Radix-backed centered modal.
  * For side-mounted drawers (mobile filters, cart) use `Sheet` instead.
  *
  * Compose: <Dialog> → <DialogTrigger /> + <DialogContent><DialogHeader>...</DialogHeader>...</DialogContent>

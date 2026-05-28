@@ -1,5 +1,5 @@
 /**
- * ModuleNav — the persistent "services dock" on the authenticated student
+ * ModuleNav - the persistent "services dock" on the authenticated student
  * shell. Renders all 8 modules + the around-you hub from the module registry.
  * Highlights the current module based on the active pathname.
  *

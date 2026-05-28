@@ -1,5 +1,5 @@
 /**
- * Pagination — accessible numbered pagination. Server-driven: each link
+ * Pagination - accessible numbered pagination. Server-driven: each link
  * navigates to a URL with the new `?page=` param. No client state.
  */
 import * as React from 'react';
