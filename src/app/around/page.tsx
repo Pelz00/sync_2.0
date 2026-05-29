@@ -4,7 +4,7 @@
  * PURPOSE: Personalised feed surfacing what matters around the student's
  *          hostel right now - events, food, laundry, hotspots, hostel
  *          board posts, MTN sponsored slot, and a hostel-resume nudge.
- * BUILT HERE (per §02 Around you · Home Hub of the hi-fi PDF):
+ * BUILT HERE (per section 02 Around you · Home Hub of the hi-fi PDF):
  *   - Eyebrow date + verified-spots pill
  *   - Personalised hero "Hi Aisha - today in your radius."
  *   - QUICK STATS block (3 rooms left / 240 going / 28 min)

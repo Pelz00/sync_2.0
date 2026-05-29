@@ -9,6 +9,7 @@
  *   1. Hero with verified-count eyebrow, two-line headline with lime
  *      underline on the action word, smart-search row (Area / Budget /
  *      Room type → Search), and a 1-big-image + 3-thumbnail preview block.
+ *   1b. <LandingAboutTeaser> - condensed brand essay linking into /about.
  *   2. "Hostels students love" - featured rail of 3 <ListingCard>s.
  *   3. "How it works" - 3-step explainer.
  *   4. Verification trust band + landlord CTA.
@@ -41,6 +42,7 @@ import { ActivityTicker } from './activity-ticker';
 import { Testimonials } from './testimonials';
 import { Comparison } from './comparison';
 import { Reveal } from './reveal';
+import { LandingAboutTeaser } from '@/components/landing/landing-about-teaser';
 import { FEATURED_HOSTELS, HOSTEL_STATS } from '@/mock/hostels';
 import { FEATURED_EVENT, FEATURED_FOOD, HOTSPOTS_TRENDING } from '@/mock/around';
 import { SITE } from '@/config/site';
@@ -88,7 +90,7 @@ export default function LandingPage() {
             </p>
             <HeroHeadline />
             <p className="text-foreground text-lead mx-auto mt-5 max-w-lg font-semibold md:mx-0">
-              Verified rooms, events, and everything around campus - all in one place.
+              {SITE.summary}
             </p>
           </div>
 
@@ -105,7 +107,7 @@ export default function LandingPage() {
             method="get"
             className="flex w-full flex-col items-stretch gap-2 sm:flex-row sm:items-center"
           >
-            <div className="shadow-card divide-line/5 grid w-full flex-1 grid-cols-1 divide-y overflow-hidden rounded-2xl bg-panel sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            <div className="shadow-card divide-line/5 bg-panel grid w-full flex-1 grid-cols-1 divide-y overflow-hidden rounded-2xl sm:grid-cols-3 sm:divide-x sm:divide-y-0">
               <SearchCell label="Area / Campus" name="campus" defaultValue="UNILORIN PG" />
               <SearchCell label="Budget" name="budget" defaultValue="₦100k–₦150k" />
               <SearchCell label="Room type" name="type" defaultValue="Self-contain" />
@@ -114,12 +116,17 @@ export default function LandingPage() {
               Search <Search className="h-4 w-4" />
             </Button>
           </form>
-          <p className="text-content-muted mt-2 text-xs">↓ Single search · instant filtered results</p>
+          <p className="text-content-muted mt-2 text-xs">
+            ↓ Single search · instant filtered results
+          </p>
         </div>
       </section>
 
       {/* ─── Live activity ticker ────────────────────────────────────── */}
       <ActivityTicker />
+
+      {/* ─── About teaser (condensed brand essay → /about) ───────────── */}
+      <LandingAboutTeaser />
 
       {/* ─── Hostels students love ───────────────────────────────────── */}
       <section className="px-6 pt-20">
@@ -127,11 +134,13 @@ export default function LandingPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
             <div>
               <p className="eyebrow text-accent-fg">Featured · This week</p>
-              <h2 className="font-display text-section text-foreground mt-2">Hostels students love</h2>
+              <h2 className="font-display text-section text-foreground mt-2">
+                Hostels students love
+              </h2>
             </div>
             <Link
               href="/hostels"
-              className="text-foreground hover:text-accent-fg inline-flex shrink-0 items-center gap-1 self-end whitespace-nowrap text-xs sm:self-auto sm:text-sm"
+              className="text-foreground hover:text-accent-fg inline-flex shrink-0 items-center gap-1 self-end text-xs whitespace-nowrap sm:self-auto sm:text-sm"
             >
               See all {HOSTEL_STATS.verifiedCount} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -161,11 +170,13 @@ export default function LandingPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
             <div>
               <p className="eyebrow text-accent-fg">Around you · right now</p>
-              <h2 className="font-display text-section text-foreground mt-2">More than just a room.</h2>
+              <h2 className="font-display text-section text-foreground mt-2">
+                More than just a room.
+              </h2>
             </div>
             <Link
               href="/around"
-              className="text-foreground hover:text-accent-fg inline-flex shrink-0 items-center gap-1 self-end whitespace-nowrap text-xs sm:self-auto sm:text-sm"
+              className="text-foreground hover:text-accent-fg inline-flex shrink-0 items-center gap-1 self-end text-xs whitespace-nowrap sm:self-auto sm:text-sm"
             >
               Open Around you <ArrowRight className="h-4 w-4" />
             </Link>
@@ -181,7 +192,9 @@ export default function LandingPage() {
                 {FEATURED_EVENT.when}
               </span>
               <div>
-                <p className="text-cream/50 font-mono text-[10px] uppercase tracking-wider">Event</p>
+                <p className="text-cream/50 font-mono text-[10px] tracking-wider uppercase">
+                  Event
+                </p>
                 <p className="font-display mt-1 text-xl leading-tight">
                   {FEATURED_EVENT.title}{' '}
                   <span className="text-lime italic">{FEATURED_EVENT.performer}</span>
@@ -199,7 +212,9 @@ export default function LandingPage() {
                 {FEATURED_FOOD.etaMinutes} min delivery
               </span>
               <div>
-                <p className="text-content-muted font-mono text-[10px] uppercase tracking-wider">Food</p>
+                <p className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
+                  Food
+                </p>
                 <p className="font-display text-foreground mt-1 text-xl leading-tight">
                   {FEATURED_FOOD.name}
                 </p>
@@ -219,7 +234,9 @@ export default function LandingPage() {
                 {HOTSPOTS_TRENDING[0].hereCount} here
               </span>
               <div>
-                <p className="text-content-muted font-mono text-[10px] uppercase tracking-wider">Hot spot</p>
+                <p className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
+                  Hot spot
+                </p>
                 <p className="font-display text-foreground mt-1 text-xl leading-tight">
                   {HOTSPOTS_TRENDING[0].name}
                 </p>
@@ -267,7 +284,7 @@ export default function LandingPage() {
                 {/* Oversized ghost number */}
                 <span
                   aria-hidden="true"
-                  className="font-display text-foreground/4 pointer-events-none absolute -right-2 -top-4 text-[120px] leading-none"
+                  className="font-display text-foreground/4 pointer-events-none absolute -top-4 -right-2 text-[120px] leading-none"
                 >
                   {num}
                 </span>
@@ -275,7 +292,7 @@ export default function LandingPage() {
                   <span className="bg-lime text-ink flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-rotate-6">
                     <Icon className="h-5 w-5" />
                   </span>
-                  <span className="font-mono text-accent-fg text-xs tracking-wider">
+                  <span className="text-accent-fg font-mono text-xs tracking-wider">
                     Step {num}
                   </span>
                 </div>
@@ -287,7 +304,7 @@ export default function LandingPage() {
                 {i < 2 && (
                   <span
                     aria-hidden="true"
-                    className="bg-surface text-foreground absolute -right-2.5 top-1/2 z-10 hidden h-7 w-7 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full shadow-sm md:flex"
+                    className="bg-surface text-foreground absolute top-1/2 -right-2.5 z-10 hidden h-7 w-7 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-sm md:flex"
                   >
                     <ArrowRight className="h-3.5 w-3.5" />
                   </span>
@@ -300,42 +317,6 @@ export default function LandingPage() {
 
       {/* ─── Old way vs Sync ─────────────────────────────────────────── */}
       <Comparison />
-
-      {/* ─── About us ────────────────────────────────────────────────── */}
-      <section className="px-6 pt-20">
-        <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1fr_1.2fr] md:gap-16">
-          <div>
-            <p className="eyebrow text-accent-fg">About {SITE.name}</p>
-            <h2 className="font-display text-section text-foreground mt-2">
-              Built for student life in Nigeria.
-            </h2>
-          </div>
-          <div className="flex flex-col gap-6">
-            <p className="text-lead text-foreground text-justify">
-              {SITE.name} started with one problem every Nigerian student knows: finding a safe room
-              without trekking street to street or losing money to a fake agent.
-            </p>
-            <p className="text-body text-content-muted text-justify">
-              So we built a marketplace where every vendor is verified - ID-checked, business-proofed,
-              and visited in person before they ever go live. Today {SITE.name} is more than hostels:
-              events, food, laundry, beauty, trades, and the spots worth knowing, all in one feed.
-              Built by {SITE.legalName}, launching in {SITE.launchMarket}.
-            </p>
-            <dl className="border-line/10 mt-2 grid grid-cols-3 gap-6 border-t pt-6">
-              {[
-                { v: '412', l: 'Verified hostels' },
-                { v: '4', l: 'Campuses live' },
-                { v: '5%', l: 'Flat fee, not 20%' },
-              ].map((s) => (
-                <div key={s.l}>
-                  <dt className="font-display text-foreground text-[32px] leading-none">{s.v}</dt>
-                  <dd className="text-content-muted mt-1 text-xs">{s.l}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </section>
 
       {/* ─── Testimonials ────────────────────────────────────────────── */}
       <Testimonials />
@@ -351,7 +332,7 @@ export default function LandingPage() {
             {FAQS.map((f, i) => (
               <AccordionItem key={i} value={`faq-${i}`}>
                 <AccordionTrigger className="text-foreground text-base">{f.q}</AccordionTrigger>
-                <AccordionContent className="text-content-muted text-sm text-justify">
+                <AccordionContent className="text-content-muted text-justify text-sm">
                   {f.a}
                 </AccordionContent>
               </AccordionItem>
@@ -428,9 +409,11 @@ function SearchCell({
   return (
     <label
       htmlFor={id}
-      className="focus-within:bg-surface/40 flex cursor-text flex-col gap-0.5 bg-panel px-5 py-3 transition-colors"
+      className="focus-within:bg-surface/40 bg-panel flex cursor-text flex-col gap-0.5 px-5 py-3 transition-colors"
     >
-      <span className="text-content-muted font-mono text-[10px] tracking-wider uppercase">{label}</span>
+      <span className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
+        {label}
+      </span>
       <input
         id={id}
         name={name}

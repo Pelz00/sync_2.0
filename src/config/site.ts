@@ -5,7 +5,9 @@
 export const SITE = {
   name: 'Sync',
   legalName: 'Raavon Limited',
-  tagline: 'Your campus, in one app',
+  tagline: 'Your campus, in one place',
+  /** One-line value summary - used as the hero/landing subtitle and meta description. */
+  summary: 'Verified rooms, events, and everything around campus - all in one place.',
   description:
     'Sync is the verified marketplace for Nigerian student life - hostels, food, events, beauty, trades, laundry and more.',
   launchMarket: 'KWASU, Malete',

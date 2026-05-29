@@ -20,12 +20,13 @@ const LEFT_LINKS = [
   { href: '/hostels', label: 'Hostels' },
   { href: '/events', label: 'Events' },
   { href: '/food', label: 'Food' },
+  { href: '/beauty', label: 'Beauty' },
 ];
 
 const RIGHT_LINKS = [
-  { href: '/beauty', label: 'Beauty' },
   { href: '/workmanship', label: 'Workmanship' },
   { href: '/hotspots', label: 'Hot spots' },
+  { href: '/about', label: 'About' },
 ];
 
 function NavLink({ href, label }: { href: string; label: string }) {
@@ -72,8 +73,13 @@ export function MarketingHeader() {
           </nav>
           <ThemeToggle className="hidden md:inline-flex" />
           <div className="hidden items-center gap-2 md:flex">
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/login">Sign in</Link>
+            <Button
+              asChild
+              variant="ghost"
+              size="sm"
+              className="text-foreground hover:bg-foreground/10"
+            >
+              <Link href="/login">Sign in / Sign up</Link>
             </Button>
             <Button asChild size="sm">
               <Link href="/signup?role=vendor&category=landlord">

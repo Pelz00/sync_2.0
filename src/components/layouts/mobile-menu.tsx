@@ -11,7 +11,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import * as Dialog from '@radix-ui/react-dialog';
-import { ArrowRight, Menu, X } from 'lucide-react';
+import { ArrowRight, Info, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { MODULES } from '@/config/modules';
@@ -83,6 +83,17 @@ export function MobileMenu() {
                 </li>
               ))}
             </ul>
+
+            {/* Secondary marketing links (not service modules) */}
+            <Link
+              href="/about"
+              onClick={close}
+              className="hover:text-accent-fg font-display text-card mt-6 flex items-center gap-4 py-4 transition-colors"
+            >
+              <Info className="text-accent-fg h-5 w-5 shrink-0" aria-hidden="true" />
+              <span className="flex-1">About Sync</span>
+              <ArrowRight className="text-content-muted h-4 w-4" aria-hidden="true" />
+            </Link>
           </nav>
 
           {/* Sticky auth/CTA footer */}
@@ -92,8 +103,14 @@ export function MobileMenu() {
                 List a property <ArrowRight />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" onClick={close}>
-              <Link href="/login">Sign in</Link>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              onClick={close}
+              className="text-foreground border-foreground/20 hover:bg-foreground/10"
+            >
+              <Link href="/login">Sign in / Sign up</Link>
             </Button>
           </div>
         </Dialog.Content>

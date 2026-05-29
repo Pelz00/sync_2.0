@@ -1,7 +1,7 @@
 /**
  * HeroHeadline - the landing headline with a single restrained flourish:
  * the whole block fades up on load, then a lime marker stroke wipes across
- * "Start syncing." left-to-right. Minimalist - one motion, slow and clean.
+ * "Start Syncing." left-to-right. Minimalist - one motion, slow and clean.
  * Honours prefers-reduced-motion (renders static, stroke already drawn).
  */
 'use client';
@@ -22,8 +22,9 @@ export function HeroHeadline() {
     >
       Stop walking.
       <br />
-      {/* Full lime highlight with ink text - constant in light & dark (no
-          clash), matching the /around "your radius" treatment. */}
+      Start{' '}
+      {/* Lime highlight with ink text on "Syncing." only - constant in light &
+          dark (no clash), matching the /around "your radius" treatment. */}
       <span className="text-ink relative isolate inline-block px-1.5">
         <motion.span
           aria-hidden="true"
@@ -33,7 +34,7 @@ export function HeroHeadline() {
           style={{ originX: 0 }}
           className="bg-lime absolute inset-0 -z-10 rounded-[3px]"
         />
-        Start syncing.
+        Syncing.
       </span>
     </motion.h1>
   );
