@@ -1,7 +1,7 @@
 /**
  * ROUTE: /me
  * ACCESS: authenticated student
- * PURPOSE: Student dashboard hub — quick links to bookings, saved, messages, profile.
+ * PURPOSE: Student dashboard hub - quick links to bookings, saved, messages, profile.
  * BUILT HERE: Welcome header, stat cards, recent activity feed.
  * TODO: implement the full screen once dependent modules + data are wired.
  */
@@ -15,7 +15,7 @@ export default function Page() {
       <p className="eyebrow text-lime-deep">/me</p>
       <h1 className="font-display text-section text-ink">Account</h1>
       <p className="text-muted max-w-xl text-sm">
-        Placeholder — see the route header above for what gets built here.
+        Placeholder - see the route header above for what gets built here.
       </p>
     </section>
   );

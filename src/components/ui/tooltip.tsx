@@ -1,8 +1,8 @@
 /**
- * Tooltip — Radix-backed contextual hint. Wrap any element with `<Tooltip>` +
+ * Tooltip - Radix-backed contextual hint. Wrap any element with `<Tooltip>` +
  * `<TooltipTrigger asChild>{trigger}</TooltipTrigger>` + `<TooltipContent>...</TooltipContent>`.
  *
- * A `<TooltipProvider>` must exist higher in the tree — mount one in the root
+ * A `<TooltipProvider>` must exist higher in the tree - mount one in the root
  * providers tree (see Phase 6).
  */
 'use client';

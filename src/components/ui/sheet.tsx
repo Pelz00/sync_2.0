@@ -1,5 +1,5 @@
 /**
- * Sheet — side-mounted drawer built on Radix Dialog. Use for mobile filters,
+ * Sheet - side-mounted drawer built on Radix Dialog. Use for mobile filters,
  * cart, and nav. Pass `side="left" | "right" | "top" | "bottom"` on SheetContent.
  */
 'use client';

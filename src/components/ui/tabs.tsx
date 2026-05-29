@@ -1,5 +1,5 @@
 /**
- * Tabs — Radix-backed segmented control. Use for in-page section switching
+ * Tabs - Radix-backed segmented control. Use for in-page section switching
  * (e.g. vendor dashboard's Listings / Orders / Inbox).
  */
 'use client';

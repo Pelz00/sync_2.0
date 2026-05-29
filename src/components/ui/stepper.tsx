@@ -1,5 +1,5 @@
 /**
- * Stepper — horizontal step indicator for multi-step wizards (vendor
+ * Stepper - horizontal step indicator for multi-step wizards (vendor
  * onboarding, checkout, hostel booking). Visual only; wizard state lives in
  * Redux (`store/slices/wizard.ts`).
  */

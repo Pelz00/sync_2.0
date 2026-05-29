@@ -1,5 +1,5 @@
 /**
- * FormField — labelled input wrapper. Wires label ↔ control ↔ error message
+ * FormField - labelled input wrapper. Wires label ↔ control ↔ error message
  * with the right ARIA attributes. Pair with react-hook-form by spreading
  * `register('field')` onto the rendered control.
  *

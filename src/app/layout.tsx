@@ -12,6 +12,7 @@
 import type { Metadata } from 'next';
 import { Bricolage_Grotesque, Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { Providers } from '@/providers';
 
 const bricolage = Bricolage_Grotesque({
   variable: '--font-bricolage',
@@ -33,11 +34,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Sync — your campus, in one app',
+    default: 'Sync - your campus, in one app',
     template: '%s · Sync',
   },
   description:
-    'Sync is the verified marketplace for Nigerian student life — hostels, food, events, beauty, trades, laundry and more, all in one place.',
+    'Sync is the verified marketplace for Nigerian student life - hostels, food, events, beauty, trades, laundry and more, all in one place.',
 };
 
 export default function RootLayout({
@@ -51,7 +52,7 @@ export default function RootLayout({
       className={`${bricolage.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="bg-surface text-foreground flex min-h-full flex-col font-[family-name:var(--font-body)]">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

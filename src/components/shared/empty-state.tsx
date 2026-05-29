@@ -1,5 +1,5 @@
 /**
- * EmptyState — gentle "nothing here yet" placeholder. Use whenever a list
+ * EmptyState - gentle "nothing here yet" placeholder. Use whenever a list
  * query returns zero rows so the page never feels broken.
  */
 import type { ReactNode } from 'react';
@@ -11,7 +11,7 @@ interface EmptyStateProps {
   title: string;
   description?: string;
   icon?: LucideIcon;
-  /** A primary action — usually a button or link. */
+  /** A primary action - usually a button or link. */
   action?: ReactNode;
   className?: string;
 }

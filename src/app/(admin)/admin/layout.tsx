@@ -1,5 +1,5 @@
 /**
- * Layout for /admin/* — internal admin console (Raavon team only).
+ * Layout for /admin/* - internal admin console (Raavon team only).
  * Authorization (role=admin) enforced by middleware.ts.
  */
 import {

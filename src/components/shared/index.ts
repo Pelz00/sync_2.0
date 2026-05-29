@@ -10,7 +10,6 @@ export { SearchBar } from './search-bar';
 export { FilterPanel, FilterGroup } from './filter-panel';
 export { EmptyState } from './empty-state';
 export { ErrorState } from './error-state';
-export { ModuleNav } from './module-nav';
 export { MapPlaceholder } from './map-placeholder';
 export { ImageGallery } from './image-gallery';
 export { ReviewCard, type ReviewCardData } from './review-card';

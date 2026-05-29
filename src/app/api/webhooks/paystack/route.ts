@@ -1,15 +1,15 @@
 /**
  * ROUTE: POST /api/webhooks/paystack
  * ACCESS: public (Paystack-only); rejected unless HMAC-SHA512 signature matches.
- * PURPOSE: Process Paystack webhook events — payment success/failure, transfer
- *          updates, refunds — and drive the escrow state machine in
+ * PURPOSE: Process Paystack webhook events - payment success/failure, transfer
+ *          updates, refunds - and drive the escrow state machine in
  *          modules/payments/actions.ts.
  *
  * SECURITY:
  *   1. Read raw body BEFORE JSON parsing (signature is over the raw bytes).
  *   2. Verify `x-paystack-signature` (HMAC-SHA512) with PAYSTACK_SECRET_KEY.
  *   3. Reject unsigned/invalid requests with 401. Never throw the raw error
- *      back to the caller — log and respond 200 to acknowledge receipt.
+ *      back to the caller - log and respond 200 to acknowledge receipt.
  *   4. Idempotency: persist `event.data.reference` + status before mutating
  *      domain state (TODO once payments table exists).
  *
@@ -23,7 +23,7 @@ export const runtime = 'nodejs';
 export async function POST(req: NextRequest) {
   const secret = process.env.PAYSTACK_SECRET_KEY;
   if (!secret) {
-    // Don't leak which key is missing — log generically, fail closed.
+    // Don't leak which key is missing - log generically, fail closed.
     console.error('paystack webhook: server misconfigured');
     return NextResponse.json({ error: 'server' }, { status: 500 });
   }

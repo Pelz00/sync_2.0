@@ -1,5 +1,5 @@
 /**
- * PriceTag — formats Naira with an optional "per night" / "per session" suffix.
+ * PriceTag - formats Naira with an optional "per night" / "per session" suffix.
  * Use in ListingCard, booking sidebars, plan cards.
  */
 import { formatNaira } from '@/lib/utils';

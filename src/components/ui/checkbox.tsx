@@ -1,5 +1,5 @@
 /**
- * Checkbox — Radix-backed for full keyboard + screen-reader support.
+ * Checkbox - Radix-backed for full keyboard + screen-reader support.
  * Sync uses the lime accent for the checked state on cream surfaces.
  */
 'use client';

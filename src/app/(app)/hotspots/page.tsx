@@ -1,7 +1,7 @@
 /**
  * ROUTE: /hotspots
  * ACCESS: authenticated student
- * PURPOSE: Editorial hot-spots directory — lounges/places worth knowing. Curated, non-transactional.
+ * PURPOSE: Editorial hot-spots directory - lounges/places worth knowing. Curated, non-transactional.
  * BUILT HERE: Editorial card grid, optional category filter.
  * TODO: implement the full screen once dependent modules + data are wired.
  */
@@ -15,7 +15,7 @@ export default function Page() {
       <p className="eyebrow text-lime-deep">/hotspots</p>
       <h1 className="font-display text-section text-ink">Hot spots</h1>
       <p className="text-muted max-w-xl text-sm">
-        Placeholder — see the route header above for what gets built here.
+        Placeholder - see the route header above for what gets built here.
       </p>
     </section>
   );

@@ -1,7 +1,7 @@
 /**
  * ROUTE: /admin/editorial
  * ACCESS: admin only
- * PURPOSE: Editorial curation surface — hotspots writeups, around-you feed promotions, banner placements.
+ * PURPOSE: Editorial curation surface - hotspots writeups, around-you feed promotions, banner placements.
  * BUILT HERE: Content list, rich-text editor (sanitized), publish toggle.
  * TODO: implement the full screen once dependent modules + data are wired.
  */
@@ -15,7 +15,7 @@ export default function Page() {
       <p className="eyebrow text-lime-deep">/admin/editorial</p>
       <h1 className="font-display text-section text-ink">Editorial</h1>
       <p className="text-muted max-w-xl text-sm">
-        Placeholder — see the route header above for what gets built here.
+        Placeholder - see the route header above for what gets built here.
       </p>
     </section>
   );

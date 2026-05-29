@@ -1,0 +1,85 @@
+/**
+ * LoginForm - email + password sign-in form.
+ * Validates with the shared `loginSchema` (react-hook-form + zod). The
+ * submit handler is a stub until Supabase auth is wired - it surfaces a
+ * toast rather than faking a session (which would just loop back through
+ * the proxy gate).
+ *
+ * `next` is the path the user was trying to reach before being bounced here;
+ * it's preserved on the Sign up link so the flow resumes after they register.
+ */
+'use client';
+
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { FormField } from '@/components/forms';
+import { toast } from '@/components/ui/toast';
+import { loginSchema, type LoginInput } from '@/lib/validations';
+
+export function LoginForm({ next }: { next?: string }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
+
+  const signupHref = next ? `/signup?next=${encodeURIComponent(next)}` : '/signup';
+
+  async function onSubmit() {
+    // TODO: call the sign-in server action (Supabase) and redirect to `next`.
+    toast('Login isn’t connected yet — Supabase auth is coming.');
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <p className="eyebrow text-lime-deep">Welcome back</p>
+        <h1 className="font-display text-ink mt-2 text-[32px] leading-tight tracking-tight">
+          Log in to Sync
+        </h1>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+        <FormField label="Email" htmlFor="email" error={errors.email?.message}>
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="you@student.edu.ng"
+            {...register('email')}
+          />
+        </FormField>
+
+        <FormField label="Password" htmlFor="password" error={errors.password?.message}>
+          <Input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            placeholder="••••••••"
+            {...register('password')}
+          />
+        </FormField>
+
+        <div className="-mt-1 text-right">
+          <Link href="/login" className="text-muted hover:text-ink text-xs">
+            Forgot password?
+          </Link>
+        </div>
+
+        <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
+          {isSubmitting ? 'Logging in…' : 'Log in'}
+        </Button>
+      </form>
+
+      <p className="text-muted text-center text-sm">
+        Don&rsquo;t have an account?{' '}
+        <Link href={signupHref} className="text-lime-deep font-medium hover:underline">
+          Sign up
+        </Link>
+      </p>
+    </div>
+  );
+}

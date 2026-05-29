@@ -1,5 +1,5 @@
 /**
- * FilterPanel — generic filter shell used by every browse page (hostels, food,
+ * FilterPanel - generic filter shell used by every browse page (hostels, food,
  * events, beauty…). The panel itself is purely presentational; each module
  * composes its own filter inputs inside.
  *
@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 interface FilterPanelProps {
   title?: string;
   children: ReactNode;
-  /** Footer actions — e.g. <Button>Apply</Button>. */
+  /** Footer actions - e.g. <Button>Apply</Button>. */
   actions?: ReactNode;
   className?: string;
 }

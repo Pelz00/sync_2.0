@@ -1,5 +1,5 @@
 /**
- * RadioGroup + RadioGroupItem — Radix-backed. Use for mutually exclusive choices.
+ * RadioGroup + RadioGroupItem - Radix-backed. Use for mutually exclusive choices.
  * For complex choice cards (e.g. plan tiers), use `PlanCard` in shared/ instead.
  */
 'use client';

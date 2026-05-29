@@ -1,5 +1,5 @@
 /**
- * RatingStars — read-only star rating display.
+ * RatingStars - read-only star rating display.
  * For an interactive rating input (review form), use a separate `RatingInput`
  * built on RadioGroup. This one is purely display.
  */

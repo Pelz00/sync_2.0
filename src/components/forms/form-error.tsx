@@ -1,5 +1,5 @@
 /**
- * FormError — accessible inline error message. Used by FormField; can be
+ * FormError - accessible inline error message. Used by FormField; can be
  * used standalone for form-level errors (e.g. "Wrong password").
  */
 import type { ReactNode } from 'react';

@@ -1,5 +1,5 @@
 /**
- * Skeleton — animated placeholder for loading states.
+ * Skeleton - animated placeholder for loading states.
  * Sync prefers RSC streaming + Suspense over client-side spinners; use this
  * inside Suspense `fallback` props and in module-level `loading.tsx`.
  */

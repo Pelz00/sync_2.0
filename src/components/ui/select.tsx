@@ -1,5 +1,5 @@
 /**
- * Select — Radix-backed custom select. Keeps native a11y while letting us
+ * Select - Radix-backed custom select. Keeps native a11y while letting us
  * style the trigger/listbox to match Sync's design language.
  *
  * Compose: <Select> → <SelectTrigger><SelectValue /></SelectTrigger>

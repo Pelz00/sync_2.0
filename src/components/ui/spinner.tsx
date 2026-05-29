@@ -1,5 +1,5 @@
 /**
- * Spinner — small inline loading indicator. Prefer Skeleton for layout-level
+ * Spinner - small inline loading indicator. Prefer Skeleton for layout-level
  * loading; use Spinner inside buttons and inline actions.
  */
 import * as React from 'react';

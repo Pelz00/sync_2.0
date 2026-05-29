@@ -1,5 +1,5 @@
 /**
- * ErrorState — friendly error surface for `error.tsx` boundaries and inline
+ * ErrorState - friendly error surface for `error.tsx` boundaries and inline
  * failures. NEVER show raw error.message or stack traces; surface a generic
  * message and offer a retry. Real errors go to the logger, not the user.
  */
@@ -19,7 +19,7 @@ interface ErrorStateProps {
 
 export function ErrorState({
   title = 'Something went off-track',
-  description = 'We hit an issue loading this. Try again in a moment — if it keeps happening, reach out to support.',
+  description = 'We hit an issue loading this. Try again in a moment - if it keeps happening, reach out to support.',
   onRetry,
   className,
 }: ErrorStateProps) {

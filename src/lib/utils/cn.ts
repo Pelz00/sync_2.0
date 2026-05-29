@@ -1,5 +1,5 @@
 /**
- * `cn` — class-name combiner used by every component in the design system.
+ * `cn` - class-name combiner used by every component in the design system.
  *
  * Merges with `clsx` (handles falsy/conditional values) then resolves
  * Tailwind conflicts with `tailwind-merge` (e.g. `px-2 px-4` → `px-4`).

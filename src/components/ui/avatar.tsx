@@ -1,5 +1,5 @@
 /**
- * Avatar — circular user/vendor photo with safe fallback.
+ * Avatar - circular user/vendor photo with safe fallback.
  * Compose: <Avatar><AvatarImage src={...} alt={...} /><AvatarFallback>AB</AvatarFallback></Avatar>
  */
 'use client';

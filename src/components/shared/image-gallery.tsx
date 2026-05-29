@@ -1,9 +1,9 @@
 /**
- * ImageGallery — hero gallery for listing detail pages (hostel rooms, food
+ * ImageGallery - hero gallery for listing detail pages (hostel rooms, food
  * dishes, hotspots). Shows a primary image with a thumbnail strip; clicking
  * a thumbnail swaps the primary.
  *
- * Uses next/image for optimization. Pass at least one image — the component
+ * Uses next/image for optimization. Pass at least one image - the component
  * gracefully handles a single image (no strip).
  */
 'use client';

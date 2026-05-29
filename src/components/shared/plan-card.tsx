@@ -1,5 +1,5 @@
 /**
- * PlanCard — subscription tier card used on the vendor `plan` page and the
+ * PlanCard - subscription tier card used on the vendor `plan` page and the
  * marketing /for-vendors landing. Highlights the recommended tier.
  */
 import type { ReactNode } from 'react';

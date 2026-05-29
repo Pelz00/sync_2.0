@@ -1,5 +1,5 @@
 /**
- * SearchBar — global search input. URL-driven (no client state); submits to
+ * SearchBar - global search input. URL-driven (no client state); submits to
  * `/search?q=...`. Drop into headers and the around-you hero.
  */
 import { Search } from 'lucide-react';

@@ -1,5 +1,5 @@
 /**
- * VendorShell — sidebar shell for the (vendor) route group. Covers both the
+ * VendorShell - sidebar shell for the (vendor) route group. Covers both the
  * generic vendor dashboard and the landlord variant. Sidebar items are
  * passed in so we can swap them per role without forking the shell.
  */

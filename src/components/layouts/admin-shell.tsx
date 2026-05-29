@@ -1,5 +1,5 @@
 /**
- * AdminShell — sidebar shell for the (admin) route group. Same structure as
+ * AdminShell - sidebar shell for the (admin) route group. Same structure as
  * VendorShell but distinct so the two can diverge without conditional logic.
  */
 import Link from 'next/link';

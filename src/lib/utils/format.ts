@@ -2,7 +2,7 @@
  * Formatting helpers used across the app.
  *
  * Centralised so we can ensure consistent locale, currency symbol, and
- * date formats everywhere. Sync ships in Nigeria — default locale `en-NG`,
+ * date formats everywhere. Sync ships in Nigeria - default locale `en-NG`,
  * currency `NGN`.
  */
 import { format, formatDistanceToNowStrict } from 'date-fns';
@@ -23,7 +23,7 @@ export function formatNaira(
   }).format(amount);
 }
 
-/** Standard medium date — e.g. "12 Mar 2026". */
+/** Standard medium date - e.g. "12 Mar 2026". */
 export function formatDate(date: Date | string | number): string {
   return format(new Date(date), 'd MMM yyyy');
 }

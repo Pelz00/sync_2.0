@@ -1,5 +1,5 @@
 /**
- * Sync module registry — single source of truth for the 8 service modules
+ * Sync module registry - single source of truth for the 8 service modules
  * plus the "Around you" hub. Drives ModuleNav, the (app) sidebar, and the
  * mobile bottom nav.
  *
@@ -32,10 +32,10 @@ export interface ModuleEntry {
 export const MODULES: readonly ModuleEntry[] = [
   { slug: 'around', label: 'Around you', tagline: 'Everything nearby, right now', icon: Compass },
   { slug: 'hostels', label: 'Hostels', tagline: 'Verified rooms, no agent runaround', icon: Building2 },
-  { slug: 'food', label: 'Food', tagline: 'Order from kitchens you can trust', icon: UtensilsCrossed },
   { slug: 'events', label: 'Events', tagline: 'Tickets for what’s on this week', icon: Calendar },
-  { slug: 'beauty', label: 'Beauty', tagline: 'Stylists, nails, barbers — booked in a tap', icon: Sparkles },
-  { slug: 'workmanship', label: 'Trades', tagline: 'Plumbers, sparks, fixers — verified', icon: Hammer },
+  { slug: 'food', label: 'Food', tagline: 'Order from kitchens you can trust', icon: UtensilsCrossed },
+  { slug: 'beauty', label: 'Beauty', tagline: 'Stylists, nails, barbers - booked in a tap', icon: Sparkles },
+  { slug: 'workmanship', label: 'Workmanship', tagline: 'Plumbers, sparks, fixers - verified', icon: Hammer },
   { slug: 'laundry', label: 'Laundry', tagline: 'Pickup & dropoff, scheduled', icon: ShoppingBag },
   { slug: 'hotspots', label: 'Hot spots', tagline: 'Lounges & spots worth knowing', icon: Sofa },
 ];

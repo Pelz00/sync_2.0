@@ -1,5 +1,5 @@
 /**
- * Switch — Radix-backed boolean toggle. Use for "on/off" settings and notifications.
+ * Switch - Radix-backed boolean toggle. Use for "on/off" settings and notifications.
  * For form choices that aren't preferences, use Checkbox.
  */
 'use client';

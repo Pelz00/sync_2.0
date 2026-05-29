@@ -1,5 +1,5 @@
 /**
- * Layout for /landlord — landlord-specific dashboard. Distinct from /vendor
+ * Layout for /landlord - landlord-specific dashboard. Distinct from /vendor
  * because landlords run a fundamentally different flow (long-term tenancy
  * with caution fees) and need their own navigation.
  *

@@ -1,5 +1,5 @@
 /**
- * FormSection — visual grouping for related fields in long forms (vendor
+ * FormSection - visual grouping for related fields in long forms (vendor
  * onboarding, profile settings). Eyebrow + title + optional description,
  * with children laid out in a vertical stack.
  */
