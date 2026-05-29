@@ -302,3 +302,105 @@ body {
   box-shadow: var(--shadow-focus);
   border-radius: var(--radius-sm);
 }
+
+/* ─── AroundMap (Leaflet) custom markers ──────────────────────────── */
+.leaflet-container {
+  font: inherit;
+  background: var(--color-cream-deep);
+}
+/* Strip Leaflet's default white box around divIcons. */
+.leaflet-div-icon.amap-pin-wrap {
+  background: transparent;
+  border: 0;
+}
+.amap-pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #0e0e12;
+  padding: 4px 10px;
+  border-radius: 14px;
+  white-space: nowrap;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+.amap-pin__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+.amap-pin__name {
+  font-size: 12px;
+  font-weight: 600;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.amap-pin__dist {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.6;
+}
+.amap-pin--featured {
+  background: var(--color-lime);
+  box-shadow:
+    0 0 0 2px rgba(14, 14, 18, 0.8),
+    0 2px 10px rgba(0, 0, 0, 0.18);
+}
+.amap-pin__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+}
+.amap-you {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transform: translate(-50%, -50%);
+}
+.amap-you__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--color-lime);
+  border: 2px solid #fff;
+  animation: amap-pulse 2s infinite;
+}
+.amap-you__label {
+  background: #0e0e12;
+  color: #f4efe2;
+  border-radius: 9999px;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 500;
+}
+.amap-campus {
+  transform: translate(-50%, -50%);
+  background: rgba(197, 255, 74, 0.18);
+  border: 1px dashed rgba(90, 120, 20, 0.7);
+  color: #0e0e12;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+@keyframes amap-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(197, 255, 74, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(197, 255, 74, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(197, 255, 74, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .amap-you__dot {
+    animation: none;
+  }
+}

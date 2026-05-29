@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { ArrowRight, ChevronDown, Plus, Search, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AroundMap } from '@/components/shared/around-map';
 import {
   FEATURED_EVENT,
   FEATURED_FOOD,
@@ -53,10 +54,10 @@ export default async function AroundPage() {
   const dateLine = `${format(today, 'EEE').toUpperCase()} · ${format(today, 'MMM d').toUpperCase()} · ${MOCK_USER.campus.toUpperCase()}`;
 
   return (
-    <main className="mx-auto max-w-7xl px-6 pb-12 pt-8">
+    <main className="mx-auto max-w-7xl px-6 pt-8 pb-12">
       {/* ─── Eyebrow row ────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-3">
-        <p className="font-mono text-content-muted text-[11px] tracking-wider">{dateLine}</p>
+        <p className="text-content-muted font-mono text-[11px] tracking-wider">{dateLine}</p>
         <span className="bg-lime text-ink inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium">
           <span className="bg-lime-deep h-1.5 w-1.5 rounded-full" />
           {VERIFIED_SPOTS_COUNT} verified spots near you
@@ -66,7 +67,7 @@ export default async function AroundPage() {
       {/* ─── Hero + Quick stats ─────────────────────────────────────── */}
       <header className="mt-6 grid gap-8 lg:grid-cols-[1.5fr_1fr] lg:items-end">
         <div>
-          <h1 className="font-display text-[44px] font-bold leading-[0.98] tracking-[-0.035em] md:text-[64px] md:leading-[0.96] md:tracking-[-0.04em]">
+          <h1 className="font-display text-[44px] leading-[0.98] font-bold tracking-[-0.035em] md:text-[64px] md:leading-[0.96] md:tracking-[-0.04em]">
             {firstName ? (
               <>
                 Hi <span className="text-accent-fg italic">{firstName}</span>
@@ -83,8 +84,8 @@ export default async function AroundPage() {
             .
           </h1>
           <p className="text-content-muted text-lead mt-4 max-w-2xl">
-            Tonight&rsquo;s events, food near your hostel, who&rsquo;s free for braids, the plumber 4
-            minutes away. Everything Sync, in one place.
+            Tonight&rsquo;s events, food near your hostel, who&rsquo;s free for braids, the plumber
+            4 minutes away. Everything Sync, in one place.
           </p>
         </div>
         <QuickStats />
@@ -92,6 +93,20 @@ export default async function AroundPage() {
 
       {/* ─── Smart search row ───────────────────────────────────────── */}
       <SmartSearch />
+
+      {/* ─── On the map (radius view with distances) ────────────────── */}
+      <section aria-labelledby="around-map-heading" className="mt-8">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow text-content-muted">On the map</p>
+            <h2 id="around-map-heading" className="font-display text-section text-foreground mt-1">
+              Everything within your radius
+            </h2>
+          </div>
+          <p className="text-content-muted text-xs">Tap a pin · distances from your hostel</p>
+        </div>
+        <AroundMap className="mt-5" />
+      </section>
 
       {/* ─── 3-column mosaic ────────────────────────────────────────── */}
       <section className="mt-6 grid gap-5 lg:grid-cols-12">
@@ -121,7 +136,7 @@ function QuickStats() {
         {QUICK_STATS.map((s) => (
           <div
             key={s.label}
-            className="border-line/5 flex flex-col gap-1.5 rounded-xl border bg-panel/70 p-4"
+            className="border-line/5 bg-panel/70 flex gap-1.5 rounded-xl border p-4"
           >
             <p
               className={cn(
@@ -181,7 +196,9 @@ function SearchCell({
       htmlFor={id}
       className="border-line/5 focus-within:bg-surface/40 flex cursor-text flex-col gap-1 border-r px-4 py-3 transition-colors last:border-r-0"
     >
-      <span className="font-mono text-content-muted text-[10px] uppercase tracking-wider">{label}</span>
+      <span className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
+        {label}
+      </span>
       <input
         id={id}
         name={name}
@@ -198,7 +215,7 @@ function FeaturedEventCard({ className }: { className?: string }) {
     <Link
       href={`/events/${FEATURED_EVENT.slug}`}
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-[#3a2150] via-[#1e1530] to-[#0a0a14] text-cream',
+        'group text-cream relative flex flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-[#3a2150] via-[#1e1530] to-[#0a0a14]',
         'min-h-[420px]',
         className,
       )}
@@ -216,7 +233,7 @@ function FeaturedEventCard({ className }: { className?: string }) {
 
       {/* Title block - pushed near the bottom */}
       <div className="mt-auto px-5 pb-2">
-        <h2 className="font-display text-[40px] font-bold leading-[0.95] tracking-[-0.035em] md:text-[48px]">
+        <h2 className="font-display text-[40px] leading-[0.95] font-bold tracking-[-0.035em] md:text-[48px]">
           {FEATURED_EVENT.title}
           <br />
           <span className="text-lime italic">{FEATURED_EVENT.performer}</span>
@@ -236,7 +253,7 @@ function FeaturedEventCard({ className }: { className?: string }) {
         </div>
         <div className="flex shrink-0 items-end gap-3">
           <div className="text-right">
-            <p className="text-content-muted text-[10px] uppercase tracking-wider">From</p>
+            <p className="text-content-muted text-[10px] tracking-wider uppercase">From</p>
             <p className="font-display text-card text-foreground leading-none">
               {formatNaira(FEATURED_EVENT.priceFrom)}
             </p>
@@ -269,9 +286,11 @@ function FriendStack() {
 
 function FoodCard({ className }: { className?: string }) {
   return (
-    <article className={cn('bg-panel shadow-card flex flex-col overflow-hidden rounded-2xl', className)}>
+    <article
+      className={cn('bg-panel shadow-card flex flex-col overflow-hidden rounded-2xl', className)}
+    >
       <div className="flex flex-col gap-2 p-5">
-        <p className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
+        <p className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
           Food · {FEATURED_FOOD.etaMinutes} min
         </p>
         {/* Stylised food swatch (cream → coral gradient) - no external image needed. */}
@@ -297,7 +316,8 @@ function FoodCard({ className }: { className?: string }) {
         </div>
         <div className="border-line/5 mt-3 flex items-center justify-between border-t pt-3">
           <p className="text-foreground text-sm">
-            From <span className="font-display text-card">{formatNaira(FEATURED_FOOD.priceFrom)}</span>
+            From{' '}
+            <span className="font-display text-card">{formatNaira(FEATURED_FOOD.priceFrom)}</span>
           </p>
           <Button asChild variant="outline" size="sm">
             <Link href={`/food/${FEATURED_FOOD.slug}`}>
@@ -313,13 +333,16 @@ function FoodCard({ className }: { className?: string }) {
 function LaundryCard({ className }: { className?: string }) {
   return (
     <article
-      className={cn('bg-surface-deep flex flex-col justify-between gap-5 rounded-2xl p-5', className)}
+      className={cn(
+        'bg-surface-deep flex flex-col justify-between gap-5 rounded-2xl p-5',
+        className,
+      )}
     >
       <div>
-        <p className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
+        <p className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
           Laundry · Pickup today
         </p>
-        <h3 className="font-display text-foreground mt-3 text-[22px] font-semibold leading-tight tracking-[-0.02em]">
+        <h3 className="font-display text-foreground mt-3 text-[22px] leading-tight font-semibold tracking-[-0.02em]">
           {LAUNDRY_PROMO.headlineParts.lead}
           <br />
           {LAUNDRY_PROMO.headlineParts.tail}{' '}
@@ -350,14 +373,14 @@ function SponsoredCard({ className }: { className?: string }) {
   return (
     <article className={cn('bg-ink text-cream flex flex-col gap-4 rounded-2xl p-5', className)}>
       <header className="flex items-center justify-between">
-        <span className="font-mono text-cream/50 text-[10px] uppercase tracking-wider">
+        <span className="text-cream/50 font-mono text-[10px] tracking-wider uppercase">
           Sponsored
         </span>
         <span className="bg-surface text-foreground rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wider">
           {SPONSORED_SLOT.brand}
         </span>
       </header>
-      <h3 className="font-display text-[22px] font-semibold leading-tight tracking-[-0.02em]">
+      <h3 className="font-display text-[22px] leading-tight font-semibold tracking-[-0.02em]">
         <span className="text-lime italic">{SPONSORED_SLOT.headlineLead}</span>
         <br />
         {SPONSORED_SLOT.headlineTail.split(/(Saturday\.)/).map((part, i) =>
@@ -384,10 +407,12 @@ function HotspotsCard({ className }: { className?: string }) {
   return (
     <article className={cn('bg-panel shadow-card flex flex-col gap-3 rounded-2xl p-5', className)}>
       <header className="flex items-center justify-between">
-        <p className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
+        <p className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
           Hot spots · {HOTSPOTS_TRENDING.length} trending
         </p>
-        <span aria-hidden="true" className="text-[14px]">🔥</span>
+        <span aria-hidden="true" className="text-[14px]">
+          🔥
+        </span>
       </header>
       <ul className="divide-line/5 -mx-1 divide-y">
         {HOTSPOTS_TRENDING.map((h) => (
@@ -416,7 +441,7 @@ function HostelBoardCard({ className }: { className?: string }) {
   return (
     <article className={cn('bg-panel shadow-card flex flex-col gap-3 rounded-2xl p-5', className)}>
       <header className="flex items-center justify-between">
-        <p className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
+        <p className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
           Hostel board · {HOSTEL_BOARD.hostel}
         </p>
         <button
@@ -450,7 +475,7 @@ function ResumeBookingCard({ className }: { className?: string }) {
   return (
     <article
       className={cn(
-        'border-line/10 flex flex-col gap-4 rounded-2xl border border-dashed bg-panel p-5',
+        'border-line/10 bg-panel flex flex-col gap-4 rounded-2xl border border-dashed p-5',
         className,
       )}
     >
@@ -459,18 +484,19 @@ function ResumeBookingCard({ className }: { className?: string }) {
           <ChevronDown className="h-3 w-3 -rotate-90" />
           Resume
         </span>
-        <span className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
+        <span className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
           Hostels
         </span>
       </div>
       <h3 className="font-display text-card text-foreground">
-        Still searching for a{' '}
-        <span className="text-accent-fg italic">hostel?</span>
+        Still searching for a <span className="text-accent-fg italic">hostel?</span>
       </h3>
       <div className="border-line/5 flex items-center gap-3 rounded-xl border p-3">
-        <div className="bg-gradient-to-br from-[#caa17a] via-[#a07a52] to-[#5e4530] h-12 w-12 shrink-0 rounded-lg" />
+        <div className="h-12 w-12 shrink-0 rounded-lg bg-gradient-to-br from-[#caa17a] via-[#a07a52] to-[#5e4530]" />
         <div className="min-w-0 flex-1">
-          <p className="text-foreground truncate text-sm font-medium">{RESUME_BOOKING.hostelName}</p>
+          <p className="text-foreground truncate text-sm font-medium">
+            {RESUME_BOOKING.hostelName}
+          </p>
           <p className="text-content-muted text-xs">
             {RESUME_BOOKING.roomsLeft} rooms left · {formatNaira(RESUME_BOOKING.pricePerYear)}/yr
           </p>

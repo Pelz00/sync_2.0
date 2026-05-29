@@ -58,7 +58,7 @@ const FAQS = [
   },
   {
     q: 'Which campuses are live?',
-    a: 'We launched in KWASU, Malete and cover UNILORIN, Al-Hikmah, and Ilorin Poly. More campuses are rolling out each semester.',
+    a: 'We launched at KWASU, Malete - that is our home base for now, covering Safari, Malete Town, and the areas around the gate. UNILORIN, Al-Hikmah, and Ilorin Poly are next on the roadmap.',
   },
   {
     q: 'Is Sync only for hostels?',
@@ -86,7 +86,7 @@ export default function LandingPage() {
           <div className="text-center md:text-left">
             <p className="text-ink bg-lime/90 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium">
               <span className="bg-lime-deep h-2 w-2 rounded-full" />
-              {HOSTEL_STATS.verifiedCount} verified hostels · {HOSTEL_STATS.campusCount} campuses
+              {HOSTEL_STATS.verifiedCount} verified hostels · {HOSTEL_STATS.market}
             </p>
             <HeroHeadline />
             <p className="text-foreground text-lead mx-auto mt-5 max-w-lg font-semibold md:mx-0">
@@ -108,7 +108,7 @@ export default function LandingPage() {
             className="flex w-full flex-col items-stretch gap-2 sm:flex-row sm:items-center"
           >
             <div className="shadow-card divide-line/5 bg-panel grid w-full flex-1 grid-cols-1 divide-y overflow-hidden rounded-2xl sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-              <SearchCell label="Area / Campus" name="campus" defaultValue="UNILORIN PG" />
+              <SearchCell label="Area / Campus" name="campus" defaultValue="Safari, Malete" />
               <SearchCell label="Budget" name="budget" defaultValue="₦100k–₦150k" />
               <SearchCell label="Room type" name="type" defaultValue="Self-contain" />
             </div>
