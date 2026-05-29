@@ -125,3 +125,51 @@ export const HOSTEL_STATS = {
   verifiedCount: 412,
   campusCount: 4,
 };
+
+export interface Hostel {
+  id: string;
+  name: string;
+  price: number;
+  distanceMinutes: number;
+  landmark: string;
+  imageUrl?: string;
+}
+
+export const hostels: Hostel[] = [
+  {
+    id: '1',
+    name: 'Hostel 1',
+    price: 165000,
+    distanceMinutes: 5,
+    landmark: 'UNILORIN',
+    imageUrl:
+      'https://images.unsplash.com/photo-1633411187642-f84216917af1?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
+  },
+  {
+    id: '2',
+    name: 'Hostel 2',
+    price: 150000,
+    distanceMinutes: 6,
+    landmark: 'UNILORIN',
+    imageUrl:
+      'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
+  },
+  {
+    id: '3',
+    name: 'Hostel 3',
+    price: 135000,
+    distanceMinutes: 7,
+    landmark: 'UNILORIN',
+    imageUrl:
+      'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG9zdGVsc3xlbnwwfHwwfHx8MA%3D%3D',
+  },
+  {
+    id: '4',
+    name: 'Hostel 3',
+    price: 135000,
+    distanceMinutes: 7,
+    landmark: 'UNILORIN',
+    imageUrl:
+      'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG9zdGVsc3xlbnwwfHwwfHx8MA%3D%3D',
+  },
+];
