@@ -12,7 +12,7 @@ const TESTIMONIALS = [
     quote:
       'Booked my room from my phone without a single agent. Paid into escrow, moved in, money released. That easy.',
     name: 'Aisha O.',
-    detail: '300L · UNILORIN',
+    detail: '300L · KWASU',
     rating: 5,
   },
   {
@@ -26,7 +26,7 @@ const TESTIMONIALS = [
     quote:
       "Around you is my home screen now - got Fresher's Night tickets and ordered food the same night.",
     name: 'Zainab M.',
-    detail: '100L · Al-Hikmah',
+    detail: '100L · KWASU',
     rating: 5,
   },
 ];

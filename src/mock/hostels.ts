@@ -1,6 +1,6 @@
 /**
- * Mock hostel data for the marketing landing and /hostels browse. Realistic
- * Nigerian student-housing names/locations around KWASU + UNILORIN.
+ * Mock hostel data for the marketing landing and /hostels browse. Real
+ * student-housing names + areas around KWASU, Malete (our launch market).
  *
  * Each entry maps cleanly to <ListingCard> props plus a few hostel-specific
  * extras (amenities chip list). Swap for `modules/hostels/queries.ts` calls
@@ -10,9 +10,9 @@
 export interface MockHostel {
   slug: string;
   name: string;
-  /** Short location e.g. "6 min walk · UNILORIN PG". */
+  /** Short location e.g. "4 min walk · KWASU Gate". */
   location: string;
-  /** Hero image URL. Unsplash for now. */
+  /** Hero image URL. */
   image: string;
   /** Price per session in Naira. */
   pricePerSession: number;
@@ -23,15 +23,18 @@ export interface MockHostel {
   ribbon?: string;
   /** Amenity chips shown under the location row. */
   amenities: string[];
-  campus: 'UNILORIN PG' | 'UNILORIN Main' | 'KWASU' | 'Al-Hikmah' | 'Ilorin Poly';
+  /** Launch market is KWASU only for now. */
+  campus: 'KWASU';
+  /** Malete area/zone the hostel sits in. */
+  area: 'KWASU Gate' | 'Safari' | 'Malete Town' | 'Amao' | 'Nifeskwasu';
   type: 'Self-contain' | 'Sharing' | 'Female only' | 'Male only';
 }
 
 export const MOCK_HOSTELS: MockHostel[] = [
   {
-    slug: 'tanke-crescent-lodge',
-    name: 'Tanke Crescent Lodge',
-    location: '6 min walk · UNILORIN PG',
+    slug: 'woss-hostel',
+    name: 'Woss Hostel',
+    location: '4 min walk · KWASU Gate',
     image: '/images/hostel.jpeg',
     pricePerSession: 180_000,
     rating: 4.9,
@@ -39,13 +42,14 @@ export const MOCK_HOSTELS: MockHostel[] = [
     verified: true,
     ribbon: 'Top rated',
     amenities: ['Wi-Fi', 'Water', '24h light'],
-    campus: 'UNILORIN PG',
+    campus: 'KWASU',
+    area: 'KWASU Gate',
     type: 'Self-contain',
   },
   {
-    slug: 'safari-self-contain',
-    name: 'Safari Self-Contain',
-    location: '8 min walk · UNILORIN',
+    slug: 'la-marida-malete',
+    name: 'La Marida Hotel',
+    location: '9 min walk · Malete Town',
     image: '/images/hostel1.jpeg',
     pricePerSession: 150_000,
     rating: 4.7,
@@ -53,13 +57,14 @@ export const MOCK_HOSTELS: MockHostel[] = [
     verified: true,
     ribbon: 'Verified',
     amenities: ['Wi-Fi', 'Water', '24h light'],
-    campus: 'UNILORIN Main',
+    campus: 'KWASU',
+    area: 'Malete Town',
     type: 'Self-contain',
   },
   {
-    slug: 'oke-odo-female-hall',
-    name: 'Oke-Odo Female Hall',
-    location: '12 min walk · KWASU shuttle',
+    slug: 'amina-villa',
+    name: 'Amina Villa',
+    location: '12 min walk · Malete Town',
     image: '/images/hostelariel.jpeg',
     pricePerSession: 95_000,
     rating: 4.6,
@@ -68,45 +73,49 @@ export const MOCK_HOSTELS: MockHostel[] = [
     ribbon: 'New',
     amenities: ['Wi-Fi', 'Water', '24h light'],
     campus: 'KWASU',
+    area: 'Malete Town',
     type: 'Female only',
   },
   {
-    slug: 'pipeline-court',
-    name: 'Pipeline Court',
-    location: '14 min walk · Ilorin Poly',
+    slug: 'success-hostel',
+    name: 'Success Hostel',
+    location: '15 min walk · Malete Town',
     image: '/images/hostel1.jpeg',
     pricePerSession: 70_000,
     rating: 4.5,
     reviewCount: 38,
     verified: true,
     amenities: ['Water', '24h light'],
-    campus: 'Ilorin Poly',
+    campus: 'KWASU',
+    area: 'Malete Town',
     type: 'Sharing',
   },
   {
-    slug: 'basin-view-lodge',
-    name: 'Basin View Lodge',
-    location: '9 min walk · UNILORIN PG',
+    slug: 'montresor-capitol',
+    name: 'MonTresor Capitol Hostel',
+    location: '11 min walk · Safari',
     image: '/images/hostelariel.jpeg',
     pricePerSession: 165_000,
     rating: 4.8,
     reviewCount: 112,
     verified: true,
     amenities: ['Wi-Fi', 'Water', '24h light', 'Security'],
-    campus: 'UNILORIN PG',
+    campus: 'KWASU',
+    area: 'Safari',
     type: 'Self-contain',
   },
   {
-    slug: 'al-hikmah-male-block',
-    name: 'Al-Hikmah Male Block',
-    location: '11 min walk · Al-Hikmah',
+    slug: 'eniduro-villa',
+    name: 'Eniduro Villa',
+    location: '13 min walk · Malete Town',
     image: '/images/hostel.jpeg',
     pricePerSession: 110_000,
     rating: 4.6,
     reviewCount: 51,
     verified: true,
     amenities: ['Wi-Fi', 'Water'],
-    campus: 'Al-Hikmah',
+    campus: 'KWASU',
+    area: 'Malete Town',
     type: 'Male only',
   },
 ];
@@ -117,11 +126,12 @@ export const FEATURED_HOSTELS = MOCK_HOSTELS.slice(0, 3);
 /** Compact preview thumbnails for the hero block. */
 export const HERO_THUMBS = MOCK_HOSTELS.slice(0, 3).map((h) => ({
   slug: h.slug,
-  name: h.name.replace(/ (Lodge|Self-Contain|Hall)$/, ''),
+  name: h.name.replace(/ (Hostel|Hotel|Villa)$/, ''),
   image: h.image,
 }));
 
 export const HOSTEL_STATS = {
   verifiedCount: 412,
-  campusCount: 4,
+  /** Launch market label - KWASU, Malete only for now. */
+  market: 'KWASU, Malete',
 };

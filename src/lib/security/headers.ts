@@ -16,6 +16,10 @@ const PAYSTACK_ORIGINS = 'https://js.paystack.co https://checkout.paystack.com';
 // Allow Supabase storage + signed URLs for images, and Supabase realtime / REST.
 const SUPABASE_ORIGINS = 'https://*.supabase.co https://*.supabase.in wss://*.supabase.co';
 
+// OpenStreetMap raster tiles for the AroundMap (Leaflet). The {s} subdomain
+// expands to a/b/c.tile.openstreetmap.org - all covered by the wildcard.
+const MAP_TILE_ORIGINS = 'https://*.tile.openstreetmap.org';
+
 // React + Next dev tooling (HMR, error overlay, call-stack reconstruction)
 // requires `eval()` in dev mode. Production never needs it.
 //
@@ -34,7 +38,7 @@ export const contentSecurityPolicy = [
   `default-src 'self'`,
   `script-src 'self' 'unsafe-inline' ${DEV_SCRIPT_RELAXATIONS} ${PAYSTACK_ORIGINS}`,
   `style-src 'self' 'unsafe-inline'`,
-  `img-src 'self' data: blob: ${SUPABASE_ORIGINS}`,
+  `img-src 'self' data: blob: ${SUPABASE_ORIGINS} ${MAP_TILE_ORIGINS}`,
   `font-src 'self' data:`,
   `connect-src 'self' ${SUPABASE_ORIGINS} ${PAYSTACK_ORIGINS}${isDev ? ' ws: http://localhost:* ws://localhost:*' : ''}`,
   `frame-src ${PAYSTACK_ORIGINS}`,

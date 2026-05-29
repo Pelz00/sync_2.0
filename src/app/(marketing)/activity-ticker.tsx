@@ -11,12 +11,12 @@
 import { CalendarCheck, Home, ShoppingBag, Ticket } from 'lucide-react';
 
 const ACTIVITY = [
-  { icon: Home, text: 'Aisha booked Tanke Crescent Lodge', age: '2m ago' },
+  { icon: Home, text: 'Aisha booked Woss Hostel', age: '2m ago' },
   { icon: Ticket, text: "David grabbed tickets to Fresher's Night", age: '5m ago' },
-  { icon: ShoppingBag, text: 'Bisi ordered jollof from Mama Put Tanke', age: '8m ago' },
-  { icon: Home, text: 'Tunde booked Safari Self-Contain', age: '12m ago' },
+  { icon: ShoppingBag, text: 'Bisi ordered jollof from Mama Put Malete', age: '8m ago' },
+  { icon: Home, text: 'Tunde booked MonTresor Capitol Hostel', age: '12m ago' },
   { icon: CalendarCheck, text: 'Zainab scheduled a laundry pickup', age: '15m ago' },
-  { icon: Home, text: 'Chidi saved Oke-Odo Female Hall', age: '21m ago' },
+  { icon: Home, text: 'Chidi saved Amina Villa', age: '21m ago' },
 ];
 
 export function ActivityTicker() {
