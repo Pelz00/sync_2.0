@@ -20,8 +20,7 @@ export default function SignupPage() {
   const [school, setSchool]   = useState('')
   const [pw, setPw]           = useState('')
   const [conf, setConf]       = useState('')
-  const [agreed, setAgreed]   = useState(true)
-  const [showPw, setShowPw]   = useState(false)
+  const [agreed, setAgreed]   = useState(false)  const [showPw, setShowPw]   = useState(false)
   const [showConf, setShowConf] = useState(false)
   const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
@@ -92,7 +91,8 @@ export default function SignupPage() {
         onChange={e => setEmail(e.target.value)} placeholder="you@school.edu.ng" />
 
       {/* Phone */}
-      <p className="text-[10px] tracking-widest uppercase text-[#aaa] mb-1">Phone number</p>
+      <p className="text-[10px] tracking-widest uppercase text-[#aaa] mb-1">Phone number <span className="normal-case">(optional)</span></p>
+
       <input className={inputCls + ' mb-3'} type="tel" value={phone}
         onChange={e => setPhone(e.target.value)} placeholder="+234 800 000 0000" />
 
@@ -141,12 +141,14 @@ export default function SignupPage() {
       {/* Terms */}
       <div className="flex items-center gap-3 my-4">
         <button onClick={() => setAgreed(!agreed)}
+          role="checkbox"
+          aria-checked={agreed}
+          aria-label="Agree to Terms and Privacy Policy"
           className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex items-center justify-center flex-shrink-0 transition-colors ${
             agreed ? 'bg-[#c8f135] border-[#c8f135]' : 'bg-white border-[#d6d2c8]'
           }`}>
           {agreed && <span className="text-[#1a1a1a] text-[11px] font-bold">✓</span>}
-        </button>
-        <p className="text-xs text-[#888]">
+        </button>        <p className="text-xs text-[#888]">
           I agree to Sync's{' '}
           <Link href="/terms" className="text-[#1a1a1a] underline">Terms &amp; Privacy Policy</Link>
         </p>

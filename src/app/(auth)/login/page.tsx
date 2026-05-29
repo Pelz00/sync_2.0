@@ -108,10 +108,9 @@ export default function SignupPage() {
             className="w-full bg-white border-[1.5px] border-gray-200 rounded-xl px-4 py-3 text-sm outline-none appearance-none focus:border-[#b8e020]"
           >
             <option value="">Select school…</option>
-            <option value="unilorin">MALETE</option>
-            <option value="unilag">UNILORIN</option>
-          
-          </select>
+            <option value="malete">MALETE</option>
+            <option value="unilorin">UNILORIN</option>
+            <option value="unilag">UNILAG</option>          </select>
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">▾</span>
         </div>
       </div>
@@ -120,13 +119,15 @@ export default function SignupPage() {
       <div className="flex items-center gap-3 my-4">
         <button
           onClick={() => setAgreed(!agreed)}
+          role="checkbox"
+          aria-checked={agreed}
+          aria-label="Agree to Terms and Privacy Policy"
           className={`w-5 h-5 rounded-md border-[1.5px] flex items-center justify-center flex-shrink-0 ${
             agreed ? 'bg-[#c8f135] border-[#c8f135]' : 'bg-white border-gray-300'
           }`}
         >
           {agreed && <span className="text-black text-xs font-bold">✓</span>}
-        </button>
-        <p className="text-xs text-gray-500">
+        </button>        <p className="text-xs text-gray-500">
           I agree to Sync's{' '}
           <Link href="/terms" className="text-black underline">Terms &amp; Privacy Policy</Link>
         </p>
