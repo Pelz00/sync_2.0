@@ -1,14 +1,11 @@
 /**
  * ROUTE: /landlord
  * ACCESS: authenticated vendor (category=landlord)
- * PURPOSE: Landlord dashboard - properties, occupancy, booking requests, monthly earnings, tenant contacts.
+ * PURPOSE: Landlord dashboard — properties, occupancy, booking requests, monthly earnings, tenant contacts.
  * BUILT HERE: Property cards, occupancy KPI, recent booking-request feed.
  * TODO: implement the full screen once dependent modules + data are wired.
  */
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Badge,
   Button,
   Card,
@@ -49,22 +46,13 @@ export default function Page() {
         <h2 className="text-section text-ink font-display mt-2 font-medium">
           {requestsNumber} new requests <span className="text-lime-deep">this week.</span>
         </h2>
-        <div className="flex items-center gap-3">
-          <Badge
-            variant="accent"
-            className="border-ink flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
-          >
-            <Dot size={20} />
-            Verified landlord
-          </Badge>
-          <Avatar className="size-10">
-            <AvatarImage
-              src="https://images.unsplash.com/photo-1535745318714-da922ca9cc81?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTB8fGJsYWNrJTIwcGVvcGxlfGVufDB8fDB8fHww"
-              alt="Aisha O."
-            />
-            <AvatarFallback>AO</AvatarFallback>
-          </Avatar>
-        </div>
+        <Badge
+          variant="accent"
+          className="border-ink flex items-center self-start border whitespace-nowrap sm:self-auto sm:whitespace-nowrap"
+        >
+          <Dot size={20} />
+          Verified landlord
+        </Badge>
       </div>
       {/* New section for stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">

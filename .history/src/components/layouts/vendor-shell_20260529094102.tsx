@@ -1,5 +1,5 @@
 /**
- * VendorShell - sidebar shell for the (vendor) route group. Covers both the
+ * VendorShell — sidebar shell for the (vendor) route group. Covers both the
  * generic vendor dashboard and the landlord variant. Sidebar items are
  * passed in so we can swap them per role without forking the shell.
  */
@@ -29,8 +29,8 @@ export function VendorShell({
   shellLabel = 'Vendor',
 }: VendorShellProps) {
   return (
-    <div className="bg-cream text-ink min-h-screen">
-      <div className="mx-auto flex max-w-full">
+    <div className="bg-cream text-ink min-h-screen w-full">
+      <div className="mx-auto flex max-w-7xl">
         <aside className="border-ink/10 sticky top-0 hidden h-screen w-60 shrink-0 border-r bg-white p-4 md:flex md:flex-col">
           <Link href="/" className="font-display text-card text-ink px-2 py-3">
             {SITE.name}

@@ -1,7 +1,7 @@
 /**
  * ROUTE: /landlord
  * ACCESS: authenticated vendor (category=landlord)
- * PURPOSE: Landlord dashboard - properties, occupancy, booking requests, monthly earnings, tenant contacts.
+ * PURPOSE: Landlord dashboard — properties, occupancy, booking requests, monthly earnings, tenant contacts.
  * BUILT HERE: Property cards, occupancy KPI, recent booking-request feed.
  * TODO: implement the full screen once dependent modules + data are wired.
  */

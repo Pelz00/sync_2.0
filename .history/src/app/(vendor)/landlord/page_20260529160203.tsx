@@ -1,7 +1,7 @@
 /**
  * ROUTE: /landlord
  * ACCESS: authenticated vendor (category=landlord)
- * PURPOSE: Landlord dashboard - properties, occupancy, booking requests, monthly earnings, tenant contacts.
+ * PURPOSE: Landlord dashboard — properties, occupancy, booking requests, monthly earnings, tenant contacts.
  * BUILT HERE: Property cards, occupancy KPI, recent booking-request feed.
  * TODO: implement the full screen once dependent modules + data are wired.
  */
@@ -57,7 +57,7 @@ export default function Page() {
             <Dot size={20} />
             Verified landlord
           </Badge>
-          <Avatar className="size-10">
+          <Avatar>
             <AvatarImage
               src="https://images.unsplash.com/photo-1535745318714-da922ca9cc81?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTB8fGJsYWNrJTIwcGVvcGxlfGVufDB8fDB8fHww"
               alt="Aisha O."
