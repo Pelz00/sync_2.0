@@ -15,14 +15,13 @@ import {
   CardTitle,
 } from '@/components/ui';
 import { stats } from '@/mock/StatsCard';
-import { ArrowRight, ArrowUp, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { ArrowRight, ArrowUp, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = { title: 'Landlord dashboard' };
 
 export default function Page() {
   const requestsNumber = 8;
-
   return (
     <section className="flex flex-col gap-3">
       <h1 className="text-muted max-w-xl font-mono text-sm tracking-wide">LANDLORD DASHBOARD</h1>
@@ -66,19 +65,8 @@ export default function Page() {
 
           {/* STATISTICS CHART */}
           <div className="flex-1">
-            <Card className="border-ink h-7xl mb-4 border bg-transparent">
-              <CardHeader>
-                <CardTitle className="text-muted flex items-center justify-between font-mono tracking-wide">
-                  <p>REVENUE . LAST 12 WEEKS</p>
-                  <Button
-                    variant={'outline'}
-                    className="gap-1text-muted mt-2 flex items-center border-transparent font-light"
-                  >
-                    Weekly
-                    <ChevronDown className="size-[15px]" />
-                  </Button>
-                </CardTitle>
-              </CardHeader>
+            <Card className="border-ink mb-4 border bg-transparent">
+              <h2 className="text-muted text-body font-mono">STATISTICS CHART</h2>
             </Card>
             {/* chart content */}
           </div>

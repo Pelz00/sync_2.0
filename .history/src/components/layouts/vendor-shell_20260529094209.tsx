@@ -29,7 +29,7 @@ export function VendorShell({
   shellLabel = 'Vendor',
 }: VendorShellProps) {
   return (
-    <div className="bg-cream text-ink min-h-screen">
+    <div className="bg-cream text-ink min-h-screen w-full">
       <div className="mx-auto flex max-w-full">
         <aside className="border-ink/10 sticky top-0 hidden h-screen w-60 shrink-0 border-r bg-white p-4 md:flex md:flex-col">
           <Link href="/" className="font-display text-card text-ink px-2 py-3">

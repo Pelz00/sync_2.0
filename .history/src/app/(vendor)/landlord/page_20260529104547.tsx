@@ -6,7 +6,6 @@
  * TODO: implement the full screen once dependent modules + data are wired.
  */
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
@@ -15,14 +14,13 @@ import {
   CardTitle,
 } from '@/components/ui';
 import { stats } from '@/mock/StatsCard';
-import { ArrowRight, ArrowUp, ChevronDown, ChevronUp, Plus } from 'lucide-react';
+import { ArrowUp, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = { title: 'Landlord dashboard' };
 
 export default function Page() {
   const requestsNumber = 8;
-
   return (
     <section className="flex flex-col gap-3">
       <h1 className="text-muted max-w-xl font-mono text-sm tracking-wide">LANDLORD DASHBOARD</h1>
@@ -50,39 +48,9 @@ export default function Page() {
       </div>
       {/* PENDING BOOKING REQUESTS SECTION */}
       <section className="mt-5">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          {/* PENDING BOOKING REQUESTS */}
-          <div className="flex-1">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-muted text-body font-mono">
-                PENDING BOOKING REQUESTS . {requestsNumber}
-              </h2>
-              <Button variant={'outline'} className="text-muted border-transparent font-light">
-                View all <ArrowRight />
-              </Button>
-            </div>
-            {/* booking requests content */}
-          </div>
-
-          {/* STATISTICS CHART */}
-          <div className="flex-1">
-            <Card className="border-ink h-7xl mb-4 border bg-transparent">
-              <CardHeader>
-                <CardTitle className="text-muted flex items-center justify-between font-mono tracking-wide">
-                  <p>REVENUE . LAST 12 WEEKS</p>
-                  <Button
-                    variant={'outline'}
-                    className="gap-1text-muted mt-2 flex items-center border-transparent font-light"
-                  >
-                    Weekly
-                    <ChevronDown className="size-[15px]" />
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-            </Card>
-            {/* chart content */}
-          </div>
-        </div>
+        <h2 className="text-muted text-body font-mono">
+          PENDING BOOKING REQUESTS . {requestsNumber}
+        </h2>
       </section>
     </section>
   );

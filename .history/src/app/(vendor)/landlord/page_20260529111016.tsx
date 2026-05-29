@@ -1,3 +1,4 @@
+'use client';
 /**
  * ROUTE: /landlord
  * ACCESS: authenticated vendor (category=landlord)
@@ -17,11 +18,14 @@ import {
 import { stats } from '@/mock/StatsCard';
 import { ArrowRight, ArrowUp, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
+import { useState } from 'react';
 
 export const metadata: Metadata = { title: 'Landlord dashboard' };
 
 export default function Page() {
   const requestsNumber = 8;
+
+  const [toggled, setToggled] = useState(false);
 
   return (
     <section className="flex flex-col gap-3">
@@ -72,10 +76,15 @@ export default function Page() {
                   <p>REVENUE . LAST 12 WEEKS</p>
                   <Button
                     variant={'outline'}
+                    onClick={() => setToggled(!toggled)}
                     className="gap-1text-muted mt-2 flex items-center border-transparent font-light"
                   >
                     Weekly
-                    <ChevronDown className="size-[15px]" />
+                    {toggled ? (
+                      <ChevronDown className="size-[15px]" />
+                    ) : (
+                      <ChevronUp className="size-[15px]" />
+                    )}
                   </Button>
                 </CardTitle>
               </CardHeader>
