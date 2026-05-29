@@ -1,7 +1,7 @@
 /**
  * MobileBottomNav - fixed bottom nav for the authenticated student app on
  * small screens. Five slots: Home / Browse / Saved / Inbox / Me. Hidden on
- * md+ (where ModuleNav sidebar takes over).
+ * md+ (where the ServicesDock takes over).
  */
 'use client';
 

@@ -34,8 +34,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { HeroHeadline } from './hero-headline';
 import { HeroHighlights } from './hero-highlights';
 import { Newsletter } from './newsletter';
+import { ActivityTicker } from './activity-ticker';
+import { Testimonials } from './testimonials';
+import { Comparison } from './comparison';
+import { Reveal } from './reveal';
 import { FEATURED_HOSTELS, HOSTEL_STATS } from '@/mock/hostels';
 import { FEATURED_EVENT, FEATURED_FOOD, HOTSPOTS_TRENDING } from '@/mock/around';
 import { SITE } from '@/config/site';
@@ -81,19 +86,9 @@ export default function LandingPage() {
               <span className="bg-lime-deep h-2 w-2 rounded-full" />
               {HOSTEL_STATS.verifiedCount} verified hostels · {HOSTEL_STATS.campusCount} campuses
             </p>
-            <h1 className="font-display text-ink mt-4 text-[44px] font-bold leading-[0.98] tracking-[-0.035em] md:text-[60px] md:leading-[0.96] md:tracking-[-0.04em] lg:text-[68px]">
-              Stop walking.
-              <br />
-              <span className="relative isolate inline-block">
-                <span
-                  aria-hidden="true"
-                  className="bg-lime absolute inset-x-0 bottom-[0.08em] -z-10 h-[0.28em]"
-                />
-                Start syncing.
-              </span>
-            </h1>
-            <p className="text-muted text-lead mx-auto mt-5 max-w-lg md:mx-0">
-              Verified rooms, events, and everything around campus - all in one place.
+            <HeroHeadline />
+            <p className="text-ink text-lead mx-auto mt-5 max-w-lg font-semibold md:mx-0">
+              Verified rooms, events, and everything around campus — all in one place.
             </p>
           </div>
 
@@ -122,6 +117,9 @@ export default function LandingPage() {
           <p className="text-muted mt-2 text-xs">↓ Single search · instant filtered results</p>
         </div>
       </section>
+
+      {/* ─── Live activity ticker ────────────────────────────────────── */}
+      <ActivityTicker />
 
       {/* ─── Hostels students love ───────────────────────────────────── */}
       <section className="px-6 pt-20">
@@ -235,10 +233,12 @@ export default function LandingPage() {
       {/* ─── How it works ────────────────────────────────────────────── */}
       <section className="px-6 pt-20">
         <div className="mx-auto max-w-7xl">
-          <p className="eyebrow text-lime-deep">How it works</p>
-          <h2 className="font-display text-section text-ink mt-2">
-            Three steps. No agent runaround.
-          </h2>
+          <Reveal>
+            <p className="eyebrow text-lime-deep">How it works</p>
+            <h2 className="font-display text-section text-ink mt-2">
+              Three steps. No agent runaround.
+            </h2>
+          </Reveal>
           <div className="relative mt-12 grid gap-5 md:grid-cols-3">
             {[
               {
@@ -267,7 +267,7 @@ export default function LandingPage() {
                 {/* Oversized ghost number */}
                 <span
                   aria-hidden="true"
-                  className="font-display text-ink/[0.04] pointer-events-none absolute -right-2 -top-4 text-[120px] leading-none"
+                  className="font-display text-ink/4 pointer-events-none absolute -right-2 -top-4 text-[120px] leading-none"
                 >
                   {num}
                 </span>
@@ -297,6 +297,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ─── Old way vs Sync ─────────────────────────────────────────── */}
+      <Comparison />
 
       {/* ─── About us ────────────────────────────────────────────────── */}
       <section className="px-6 pt-20">
@@ -333,6 +336,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* ─── Testimonials ────────────────────────────────────────────── */}
+      <Testimonials />
 
       {/* ─── FAQ ─────────────────────────────────────────────────────── */}
       <section className="px-6 pt-20">

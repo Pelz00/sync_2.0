@@ -277,7 +277,7 @@ export default function DesignSystemPage() {
 
         <Section eyebrow="11 - Composites" title="Coming in Phase 4">
           <p className="text-body text-muted">
-            ListingCard, VerifiedBadge, FilterPanel, EmptyState, ModuleNav, OrderStageTracker -
+            ListingCard, VerifiedBadge, FilterPanel, EmptyState, ServicesDock, OrderStageTracker -
             all land in Phase 4.
           </p>
         </Section>

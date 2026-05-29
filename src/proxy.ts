@@ -12,8 +12,9 @@
  * user can't load) and a defence in depth.
  *
  * If Supabase env vars are missing (dev without `.env.local` filled in) we
- * fail open - let the request through. Pages that actually query Supabase
- * will then surface a clearer error than every navigation 500-ing.
+ * can't verify a session, so we treat every visitor as logged-out: public
+ * routes pass through, protected routes still redirect to /login. This keeps
+ * the auth gate demoable before Supabase is wired.
  *
  * NOTE: role lookup currently uses `user_metadata.role`, set on signup.
  * Once we add a `profiles` table with a `role` column we should fetch from
@@ -46,31 +47,33 @@ const PROTECTED_PREFIXES: { prefix: string; roles: Role[] }[] = [
 ];
 
 const supabaseConfigured = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
 );
 
+function redirectToLogin(request: NextRequest, pathname: string) {
+  const url = request.nextUrl.clone();
+  url.pathname = '/login';
+  url.searchParams.set('next', pathname);
+  return NextResponse.redirect(url);
+}
+
 export async function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const guarded = PROTECTED_PREFIXES.find(({ prefix }) => pathname.startsWith(prefix));
+
+  // Supabase not configured yet → no session can exist → everyone is
+  // logged-out. Gate protected routes, let public ones through.
   if (!supabaseConfigured) {
     if (process.env.NODE_ENV !== 'production') {
-      console.warn(
-        '[proxy] Supabase env vars missing - auth checks skipped. Copy .env.example to .env.local.',
-      );
+      console.warn('[proxy] Supabase env vars missing - treating visitor as logged-out.');
     }
-    return NextResponse.next({ request });
+    return guarded ? redirectToLogin(request, pathname) : NextResponse.next({ request });
   }
 
   const { response, user } = await updateSession(request);
-  const pathname = request.nextUrl.pathname;
-
-  const guarded = PROTECTED_PREFIXES.find(({ prefix }) => pathname.startsWith(prefix));
   if (!guarded) return response;
 
-  if (!user) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    url.searchParams.set('next', pathname);
-    return NextResponse.redirect(url);
-  }
+  if (!user) return redirectToLogin(request, pathname);
 
   const role = (user.user_metadata?.role as Role | undefined) ?? 'student';
   if (!guarded.roles.includes(role)) {

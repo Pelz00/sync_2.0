@@ -105,20 +105,23 @@ export default async function AroundPage() {
 
 function QuickStats() {
   return (
-    <aside aria-label="Quick stats" className="flex items-end justify-end gap-6 lg:gap-8">
-      <p className="eyebrow text-muted shrink-0 self-start">Quick stats</p>
-      <div className="flex items-end gap-8">
+    <aside aria-label="Quick stats" className="flex flex-col gap-3">
+      <p className="eyebrow text-muted">Quick stats</p>
+      <div className="grid grid-cols-3 gap-3">
         {QUICK_STATS.map((s) => (
-          <div key={s.label} className="text-right">
+          <div
+            key={s.label}
+            className="border-ink/5 flex flex-col gap-1.5 rounded-xl border bg-white/70 p-4"
+          >
             <p
               className={cn(
-                'font-display text-[32px] leading-none tracking-tight',
+                'font-display text-[28px] leading-none tracking-tight whitespace-nowrap',
                 s.accent ? 'text-lime-deep' : 'text-ink',
               )}
             >
               {s.value}
             </p>
-            <p className="text-muted mt-1 max-w-[8rem] text-[11px] leading-tight">{s.label}</p>
+            <p className="text-muted text-[11px] leading-tight">{s.label}</p>
           </div>
         ))}
       </div>
