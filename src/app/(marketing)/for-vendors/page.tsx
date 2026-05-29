@@ -12,9 +12,9 @@ export const metadata: Metadata = { title: 'For vendors' };
 export default function Page() {
   return (
     <section className="flex flex-col gap-3">
-      <p className="eyebrow text-lime-deep">/for-vendors</p>
-      <h1 className="font-display text-section text-ink">For vendors</h1>
-      <p className="text-muted max-w-xl text-sm">
+      <p className="eyebrow text-accent-fg">/for-vendors</p>
+      <h1 className="font-display text-section text-foreground">For vendors</h1>
+      <p className="text-content-muted max-w-xl text-sm">
         Placeholder - see the route header above for what gets built here.
       </p>
     </section>

@@ -1,5 +1,5 @@
 /**
- * Testimonials — social-proof rail of student quotes with avatars + ratings.
+ * Testimonials - social-proof rail of student quotes with avatars + ratings.
  * The trust layer the landing was missing. Static for now; could later pull
  * from a curated reviews table.
  */
@@ -24,7 +24,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "Around you is my home screen now — got Fresher's Night tickets and ordered food the same night.",
+      "Around you is my home screen now - got Fresher's Night tickets and ordered food the same night.",
     name: 'Zainab M.',
     detail: '100L · Al-Hikmah',
     rating: 5,
@@ -36,19 +36,19 @@ export function Testimonials() {
     <section className="px-6 pt-20">
       <div className="mx-auto max-w-7xl">
         <Reveal>
-          <p className="eyebrow text-lime-deep">Loved by students</p>
-          <h2 className="font-display text-section text-ink mt-2">Don&rsquo;t take our word for it.</h2>
+          <p className="eyebrow text-accent-fg">Loved by students</p>
+          <h2 className="font-display text-section text-foreground mt-2">Don&rsquo;t take our word for it.</h2>
         </Reveal>
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {TESTIMONIALS.map((t, i) => (
             <Reveal key={t.name} delay={i * 0.08}>
-              <figure className="bg-white shadow-card flex h-full flex-col gap-4 rounded-2xl p-6">
+              <figure className="bg-panel shadow-card flex h-full flex-col gap-4 rounded-2xl p-6">
                 <div aria-label={`${t.rating} out of 5`} className="flex gap-0.5">
                   {Array.from({ length: t.rating }).map((_, s) => (
                     <Star key={s} className="fill-lime text-lime h-4 w-4" strokeWidth={1.5} />
                   ))}
                 </div>
-                <blockquote className="text-ink flex-1 text-[15px] leading-relaxed">
+                <blockquote className="text-foreground flex-1 text-[15px] leading-relaxed">
                   &ldquo;{t.quote}&rdquo;
                 </blockquote>
                 <figcaption className="flex items-center gap-3">
@@ -61,8 +61,8 @@ export function Testimonials() {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-ink text-sm font-medium">{t.name}</p>
-                    <p className="text-muted text-xs">{t.detail}</p>
+                    <p className="text-foreground text-sm font-medium">{t.name}</p>
+                    <p className="text-content-muted text-xs">{t.detail}</p>
                   </div>
                 </figcaption>
               </figure>

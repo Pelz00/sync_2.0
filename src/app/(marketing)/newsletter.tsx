@@ -58,7 +58,7 @@ export function Newsletter() {
                 placeholder="you@school.edu.ng"
                 aria-label="Email address"
                 aria-invalid={!!error}
-                className="bg-white text-ink placeholder:text-muted h-12 w-full rounded-full px-5 text-sm outline-none"
+                className="bg-white text-ink placeholder:text-ink/40 h-12 w-full rounded-full px-5 text-sm outline-none"
               />
               <Button type="submit" variant="dark" size="lg" className="shrink-0 sm:rounded-full">
                 Subscribe <ArrowRight />

@@ -45,7 +45,7 @@ export function MarketingFooter() {
         <div className="border-cream/10 flex flex-col gap-4 border-b pb-10 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <span aria-hidden="true" className="flex items-center gap-1">
-              <span className="bg-cream block h-2 w-2 rounded-full" />
+              <span className="bg-surface block h-2 w-2 rounded-full" />
               <span className="bg-lime block h-1.5 w-1.5 rounded-full" />
             </span>
             <span className="font-display text-card">{SITE.name}</span>
@@ -62,7 +62,7 @@ export function MarketingFooter() {
         <div className="grid gap-12 pt-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           {/* Brand column */}
           <div className="flex flex-col gap-6">
-            <span className="bg-cream/5 text-lime flex h-10 w-10 items-center justify-center rounded-xl">
+            <span className="bg-surface/5 text-lime flex h-10 w-10 items-center justify-center rounded-xl">
               <Sparkles className="h-5 w-5" />
             </span>
             <p className="text-cream/70 max-w-xs text-sm">{SITE.description}</p>

@@ -40,7 +40,7 @@ export function HeroHighlights() {
       {/* Big highlight card */}
       <Link
         href={big.href}
-        className="group bg-cream-deep shadow-card relative block aspect-[4/3] w-full overflow-hidden rounded-2xl"
+        className="group bg-surface-deep shadow-card relative block aspect-[4/3] w-full overflow-hidden rounded-2xl"
       >
         <Image
           src={big.image}
@@ -66,7 +66,7 @@ export function HeroHighlights() {
       <div className="grid grid-cols-3 gap-3">
         {thumbs.map((t) => (
           <Link key={t.id} href={t.href} className="group flex flex-col gap-2">
-            <div className="bg-cream-deep shadow-card relative aspect-[5/4] w-full overflow-hidden rounded-lg">
+            <div className="bg-surface-deep shadow-card relative aspect-[5/4] w-full overflow-hidden rounded-lg">
               <Image
                 src={t.image}
                 alt=""
@@ -75,7 +75,7 @@ export function HeroHighlights() {
                 className="object-cover transition-transform group-hover:scale-105"
               />
             </div>
-            <p className="text-ink truncate text-xs font-medium">{t.title}</p>
+            <p className="text-foreground truncate text-xs font-medium">{t.title}</p>
           </Link>
         ))}
       </div>

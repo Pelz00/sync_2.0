@@ -17,8 +17,8 @@ interface PriceTagProps {
 export function PriceTag({ amount, unit, withDecimals, className }: PriceTagProps) {
   return (
     <span className={cn('inline-flex items-baseline gap-1', className)}>
-      <span className="font-display text-card text-ink">{formatNaira(amount, { withDecimals })}</span>
-      {unit && <span className="text-muted text-xs">{unit}</span>}
+      <span className="font-display text-card text-foreground">{formatNaira(amount, { withDecimals })}</span>
+      {unit && <span className="text-content-muted text-xs">{unit}</span>}
     </span>
   );
 }

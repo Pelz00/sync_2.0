@@ -13,14 +13,14 @@ import { ServicesDock } from '@/components/layouts/services-dock';
 
 export default function AroundLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-cream text-ink flex min-h-screen flex-col">
+    <div className="bg-surface text-foreground flex min-h-screen flex-col">
       <MarketingHeader />
       <ServicesDock />
       <div className="flex-1">{children}</div>
-      <footer className="border-ink/5 mt-12 border-t">
-        <div className="text-muted mx-auto flex max-w-7xl items-center justify-between px-6 py-6 text-xs">
+      <footer className="border-line/5 mt-12 border-t">
+        <div className="text-content-muted mx-auto flex max-w-7xl items-center justify-between px-6 py-6 text-xs">
           <span>© {new Date().getFullYear()} Sync</span>
-          <Link href="/" className="hover:text-ink transition-colors">
+          <Link href="/" className="hover:text-foreground transition-colors">
             Around you · feed
           </Link>
         </div>

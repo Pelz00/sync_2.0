@@ -1,5 +1,5 @@
 /**
- * Comparison — "the old way vs Sync" value-prop contrast. Sharpens why Sync
+ * Comparison - "the old way vs Sync" value-prop contrast. Sharpens why Sync
  * exists: trekking + fake agents + 20% fees vs verified + escrow + 5%.
  */
 import { Check, X } from 'lucide-react';
@@ -26,18 +26,18 @@ export function Comparison() {
     <section className="px-6 pt-20">
       <div className="mx-auto max-w-7xl">
         <Reveal>
-          <p className="eyebrow text-lime-deep">Why Sync</p>
-          <h2 className="font-display text-section text-ink mt-2">The old way vs syncing.</h2>
+          <p className="eyebrow text-accent-fg">Why Sync</p>
+          <h2 className="font-display text-section text-foreground mt-2">The old way vs syncing.</h2>
         </Reveal>
         <div className="mt-10 grid gap-5 md:grid-cols-2">
           {/* Old way */}
           <Reveal>
-            <div className="border-ink/10 h-full rounded-2xl border border-dashed bg-transparent p-7">
-              <p className="font-mono text-muted text-xs tracking-wider uppercase">The old way</p>
+            <div className="border-line/10 h-full rounded-2xl border border-dashed bg-transparent p-7">
+              <p className="font-mono text-content-muted text-xs tracking-wider uppercase">The old way</p>
               <ul className="mt-6 flex flex-col gap-4">
                 {OLD_WAY.map((item) => (
-                  <li key={item} className="text-muted flex items-start gap-3 text-sm">
-                    <span className="border-muted/40 text-muted mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border">
+                  <li key={item} className="text-content-muted flex items-start gap-3 text-sm">
+                    <span className="border-muted/40 text-content-muted mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border">
                       <X className="h-3 w-3" />
                     </span>
                     <span className="line-through decoration-muted/40">{item}</span>

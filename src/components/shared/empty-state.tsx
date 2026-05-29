@@ -20,13 +20,13 @@ export function EmptyState({ title, description, icon: Icon = Inbox, action, cla
   return (
     <div
       className={cn(
-        'border-ink/10 bg-cream flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-12 text-center',
+        'border-line/10 bg-surface flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-12 text-center',
         className,
       )}
     >
-      <Icon className="text-muted h-8 w-8" aria-hidden="true" />
-      <h3 className="font-display text-card text-ink mt-2">{title}</h3>
-      {description && <p className="text-muted max-w-md text-sm">{description}</p>}
+      <Icon className="text-content-muted h-8 w-8" aria-hidden="true" />
+      <h3 className="font-display text-card text-foreground mt-2">{title}</h3>
+      {description && <p className="text-content-muted max-w-md text-sm">{description}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
   );

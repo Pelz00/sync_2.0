@@ -2,7 +2,7 @@
  * ROUTE: /login
  * ACCESS: public
  * PURPOSE: Email + password login. Reached directly or via the proxy gate
- *          when a logged-out visitor clicks a protected module tab — the
+ *          when a logged-out visitor clicks a protected module tab - the
  *          original destination arrives as `?next=`.
  * BUILT HERE: <LoginForm> (validated email + password) + Sign up link that
  *             preserves `next`.

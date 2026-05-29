@@ -34,7 +34,7 @@ export default function AroundLoading() {
 
       {/* Bottom row */}
       <section className="mt-5 grid gap-5 lg:grid-cols-12">
-        <div className="border-ink/10 flex flex-col gap-4 rounded-2xl border border-dashed bg-white p-5 lg:col-span-4">
+        <div className="border-line/10 flex flex-col gap-4 rounded-2xl border border-dashed bg-panel p-5 lg:col-span-4">
           <Skeleton className="h-3 w-40" />
           <div className="flex items-center gap-4">
             <Skeleton className="h-16 w-16 rounded-lg" />
@@ -55,7 +55,7 @@ export default function AroundLoading() {
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-white shadow-card flex items-center gap-3 overflow-hidden rounded-xl p-2"
+                className="bg-panel shadow-card flex items-center gap-3 overflow-hidden rounded-xl p-2"
               >
                 <Skeleton className="h-14 w-20 rounded-md" />
                 <div className="flex-1 space-y-2">
@@ -81,7 +81,7 @@ function CardSkeleton({
   className?: string;
 }) {
   return (
-    <div className={`bg-white shadow-card flex flex-col overflow-hidden rounded-2xl ${className ?? ''}`}>
+    <div className={`bg-panel shadow-card flex flex-col overflow-hidden rounded-2xl ${className ?? ''}`}>
       <Skeleton
         className={
           hero
@@ -122,12 +122,12 @@ function ListCardSkeleton({
   className?: string;
 }) {
   return (
-    <div className={`bg-white shadow-card flex flex-col gap-3 rounded-2xl p-5 ${className ?? ''}`}>
+    <div className={`bg-panel shadow-card flex flex-col gap-3 rounded-2xl p-5 ${className ?? ''}`}>
       <div className="flex items-center justify-between">
         <Skeleton className="h-3 w-32" />
         <Skeleton className="h-3 w-10" />
       </div>
-      <ul className="divide-ink/5 -mx-1 divide-y">
+      <ul className="divide-line/5 -mx-1 divide-y">
         {Array.from({ length: rows }).map((_, i) => (
           <li key={i} className="flex items-center justify-between gap-3 px-1 py-3">
             <div className="min-w-0 flex-1 space-y-2">

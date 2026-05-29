@@ -21,13 +21,13 @@ export function FilterPanel({ title = 'Filters', children, actions, className }:
   return (
     <aside
       className={cn(
-        'bg-white shadow-card flex flex-col gap-5 rounded-xl p-5',
+        'bg-panel shadow-card flex flex-col gap-5 rounded-xl p-5',
         className,
       )}
     >
-      <p className="eyebrow text-lime-deep">{title}</p>
+      <p className="eyebrow text-accent-fg">{title}</p>
       <div className="flex flex-col gap-5">{children}</div>
-      {actions && <div className="border-ink/5 mt-2 flex items-center gap-2 border-t pt-4">{actions}</div>}
+      {actions && <div className="border-line/5 mt-2 flex items-center gap-2 border-t pt-4">{actions}</div>}
     </aside>
   );
 }
@@ -41,7 +41,7 @@ export function FilterGroup({
 }) {
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className="text-ink text-sm font-medium">{label}</legend>
+      <legend className="text-foreground text-sm font-medium">{label}</legend>
       {children}
     </fieldset>
   );

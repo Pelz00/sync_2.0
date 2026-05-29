@@ -23,7 +23,7 @@ interface ServicesDockProps {
 export function ServicesDock({ location = 'Tanke, Ilorin' }: ServicesDockProps) {
   const pathname = usePathname();
   return (
-    <div className="border-ink/5 border-b">
+    <div className="border-line/5 border-b">
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-6 py-3">
         <nav
           aria-label="Sync services"
@@ -41,8 +41,8 @@ export function ServicesDock({ location = 'Tanke, Ilorin' }: ServicesDockProps) 
                   'inline-flex h-9 shrink-0 items-center gap-2 rounded-full px-3 text-sm transition-colors',
                   active
                     ? 'bg-lime text-ink font-medium'
-                    : 'text-ink hover:bg-ink/5 border border-transparent',
-                  !active && 'border-ink/15',
+                    : 'text-foreground hover:bg-ink/5 border border-transparent',
+                  !active && 'border-line/15',
                 )}
               >
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
@@ -54,12 +54,12 @@ export function ServicesDock({ location = 'Tanke, Ilorin' }: ServicesDockProps) 
 
         <button
           type="button"
-          className="border-ink/15 hover:bg-ink/5 inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm"
+          className="border-line/15 hover:bg-ink/5 inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm"
           aria-label="Change location"
         >
-          <MapPin className="text-lime-deep h-3.5 w-3.5" aria-hidden="true" />
+          <MapPin className="text-accent-fg h-3.5 w-3.5" aria-hidden="true" />
           <span className="font-medium">{location}</span>
-          <ChevronDown className="text-muted h-3.5 w-3.5" aria-hidden="true" />
+          <ChevronDown className="text-content-muted h-3.5 w-3.5" aria-hidden="true" />
         </button>
       </div>
     </div>
