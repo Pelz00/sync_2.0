@@ -45,12 +45,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      {/* Body */}
-      <div className="mx-auto max-w-7xl flex-col gap-8 px-4 pt-6 pb-24 md:px-6 md:pb-12">
-        <aside className="sticky top-20 mb-[20px] hidden h-fit w-full shrink-0 md:block">
-          <ModuleNav variant="rail" />
-        </aside>
-        <main className="min-w-0 flex-1">{children}</main>
+      {/* General horizontal nav - same dock as /around */}
+      <ServicesDock />
+
+      {/* Mobile search - the topbar search is md+ only */}
+      <div className="border-ink/5 border-b px-4 py-3 md:hidden">
+        <SearchBar />
       </div>
 
       <main className="mx-auto min-w-0 max-w-7xl px-4 pb-24 pt-6 md:px-6 md:pb-12">{children}</main>
