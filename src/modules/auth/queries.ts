@@ -1,10 +1,39 @@
 /**
- * Server-side data fetching for the 'auth' module.
- * Called from RSC pages. Uses the server Supabase client.
- * RLS is the real authorization layer - these queries return only what the
- * caller is allowed to see.
+ * Server-side auth reads for the 'auth' module.
+ * RSC pages call these to personalise based on the signed-in user.
  */
 import 'server-only';
+import type { User } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/server';
 
-// TODO: implement queries as features land.
-export {};
+const configured = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+);
+
+/**
+ * The current signed-in user, or null. Always uses `getUser()` (verified),
+ * never `getSession()`. Safe before Supabase is configured - returns null so
+ * public pages render their signed-out state.
+ */
+export async function getCurrentUser(): Promise<User | null> {
+  if (!configured) return null;
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return user;
+  } catch {
+    return null;
+  }
+}
+
+/** Best-effort first name: metadata full_name/name, else the email local part. */
+export function getFirstName(user: User | null): string | null {
+  if (!user) return null;
+  const meta = user.user_metadata ?? {};
+  const full = (meta.full_name as string | undefined) ?? (meta.name as string | undefined);
+  if (full?.trim()) return full.trim().split(/\s+/)[0];
+  if (user.email) return user.email.split('@')[0];
+  return null;
+}

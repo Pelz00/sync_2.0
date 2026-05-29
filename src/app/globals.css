@@ -22,13 +22,22 @@
   --color-muted: #6a6a72;
   --color-coral: #ff8b5c;
 
-  /* Semantic aliases - keep visual layer (above) separate from intent (below). */
-  --color-surface: var(--color-cream);
-  --color-surface-deep: var(--color-cream-deep);
-  --color-foreground: var(--color-ink);
-  --color-accent: var(--color-lime);
-  --color-accent-fg: var(--color-lime-deep);
+  /* Semantic, THEME-AWARE tokens - these flip under dark mode (values defined
+     in the :root / dark layer below). Convert page surfaces to these
+     (bg-surface, text-content, bg-card, …) to get automatic dark mode.
+     The raw brand colours above stay constant: `lime` is always lime, and
+     `bg-ink`/`text-cream` panels stay dark in BOTH modes by design. */
+  --color-surface: var(--sf); /* page background */
+  --color-surface-deep: var(--sf-2); /* hover / sunken panel */
+  --color-panel: var(--sf-card); /* card surface (was bg-white) — NOT "card": text-card is a font-size */
+  --color-content: var(--ct); /* primary text (was text-ink) */
+  --color-content-muted: var(--ct-muted); /* meta text (was text-muted) */
+  --color-line: var(--ln); /* borders (use with /opacity) */
+  --color-accent: var(--color-lime); /* constant */
+  --color-accent-fg: var(--ac-fg); /* accent text: lime-deep ↔ lime */
   --color-warning: var(--color-coral);
+  /* Back-compat alias - `text-foreground` still works, maps to content. */
+  --color-foreground: var(--ct);
 
   /* ─── Typography ────────────────────────────────────────────────── */
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
@@ -78,14 +87,47 @@
   --shadow-focus: 0 0 0 3px rgb(197 255 74 / 0.6);
 }
 
-/* ─── Base layer ──────────────────────────────────────────────────── */
+/* ─── Theme variables (light default, dark follows the system) ─────────
+   Default = light. Dark applies when the OS prefers dark (unless .light is
+   set to force light), or when .dark is set explicitly (future manual toggle). */
 :root {
+  --sf: #f4f1e8; /* cream */
+  --sf-2: #ece7d8; /* cream-deep */
+  --sf-card: #ffffff; /* white */
+  --ct: #0e0e12; /* ink */
+  --ct-muted: #6a6a72; /* muted */
+  --ac-fg: #4a8500; /* lime-deep */
+  --ln: #0e0e12; /* ink (borders use /opacity) */
   color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --sf: #0e0e12;
+    --sf-2: #1b1b22;
+    --sf-card: #17171c;
+    --ct: #f4f1e8;
+    --ct-muted: #9b9ba3;
+    --ac-fg: #c5ff4a; /* bright lime for contrast on dark */
+    --ln: #f4f1e8;
+    color-scheme: dark;
+  }
+}
+
+.dark {
+  --sf: #0e0e12;
+  --sf-2: #1b1b22;
+  --sf-card: #17171c;
+  --ct: #f4f1e8;
+  --ct-muted: #9b9ba3;
+  --ac-fg: #c5ff4a;
+  --ln: #f4f1e8;
+  color-scheme: dark;
 }
 
 html {
   background: var(--color-surface);
-  color: var(--color-foreground);
+  color: var(--color-content);
 }
 
 body {
@@ -94,6 +136,29 @@ body {
   line-height: var(--text-body--line-height);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Theme-toggle icons: show the moon in light, the sun in dark. Driven by CSS
+   (not React state) so the toggle button has no SSR/client hydration mismatch. */
+.theme-icon-sun {
+  display: none;
+}
+.theme-icon-moon {
+  display: inline-block;
+}
+.dark .theme-icon-sun {
+  display: inline-block;
+}
+.dark .theme-icon-moon {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) .theme-icon-sun {
+    display: inline-block;
+  }
+  :root:not(.light) .theme-icon-moon {
+    display: none;
+  }
 }
 
 /* Eyebrow utility - uppercase mono label used across the design system. */
@@ -106,30 +171,93 @@ body {
   text-transform: uppercase;
 }
 
-/* ─── Keyframes ───────────────────────────────────────────────────── */
-@keyframes sync-dot {
+/* ─── Brand loader: two dots orbiting, swapping colours, glitching ── */
+@keyframes sync-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hard colour cut at the half-cycle so the two dots trade colours. */
+@keyframes sync-color-a {
+  0%,
+  49.9% {
+    background-color: var(--color-lime-deep);
+  }
+  50%,
+  100% {
+    background-color: var(--color-lime);
+  }
+}
+
+@keyframes sync-color-b {
+  0%,
+  49.9% {
+    background-color: var(--color-lime);
+  }
+  50%,
+  100% {
+    background-color: var(--color-lime-deep);
+  }
+}
+
+/* Occasional glitch jitter on the whole dot group. */
+@keyframes sync-glitch {
+  0%,
+  86%,
+  100% {
+    transform: translate(0, 0) skewX(0deg);
+  }
+  88% {
+    transform: translate(-3px, 1px) skewX(5deg);
+  }
+  90% {
+    transform: translate(3px, -2px) skewX(-4deg);
+  }
+  93% {
+    transform: translate(-2px, -1px) skewX(2deg);
+  }
+  96% {
+    transform: translate(2px, 1px) skewX(0deg);
+  }
+}
+
+/* Breathing glow behind the orbiting dots (own element, no transform clash). */
+@keyframes sync-glow {
   0%,
   100% {
-    transform: scale(0.85);
-    opacity: 0.55;
+    transform: scale(0.8);
+    opacity: 0.3;
   }
   50% {
-    transform: scale(1);
+    transform: scale(1.15);
+    opacity: 0.65;
+  }
+}
+
+/* Wordmark types out left-to-right by revealing width 0 → 100% of an
+   invisible sizer (exact text width), so the caret hugs the real edge. */
+@keyframes sync-typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Blinking caret beside the wordmark. */
+@keyframes sync-caret {
+  0%,
+  100% {
     opacity: 1;
   }
-}
-
-@keyframes sync-sweep {
-  0% {
-    transform: translateX(-100%);
-  }
-  60%,
-  100% {
-    transform: translateX(300%);
+  50% {
+    opacity: 0;
   }
 }
 
-/* Activity ticker marquee — the list is duplicated, so -50% loops seamlessly. */
+/* Activity ticker marquee - the list is duplicated, so -50% loops seamlessly. */
 @keyframes marquee {
   from {
     transform: translateX(0);

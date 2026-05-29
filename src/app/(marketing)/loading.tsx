@@ -17,14 +17,14 @@ export default function MarketingLoading() {
               <Skeleton className="h-12 w-3/4 md:h-16" />
               <Skeleton className="h-12 w-1/2 md:h-16" />
             </div>
-            <div className="bg-white shadow-card grid gap-px overflow-hidden rounded-2xl sm:grid-cols-[1fr_1fr_1fr_auto]">
+            <div className="bg-panel shadow-card grid gap-px overflow-hidden rounded-2xl sm:grid-cols-[1fr_1fr_1fr_auto]">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-white space-y-1.5 px-4 py-3">
+                <div key={i} className="bg-panel space-y-1.5 px-4 py-3">
                   <Skeleton className="h-2.5 w-16" />
                   <Skeleton className="h-4 w-24" />
                 </div>
               ))}
-              <div className="bg-cream-deep flex items-center p-2 sm:bg-transparent">
+              <div className="bg-surface-deep flex items-center p-2 sm:bg-transparent">
                 <Skeleton className="h-12 w-full rounded-lg sm:w-32" />
               </div>
             </div>
@@ -58,7 +58,7 @@ export default function MarketingLoading() {
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-white shadow-card flex flex-col overflow-hidden rounded-xl"
+                className="bg-panel shadow-card flex flex-col overflow-hidden rounded-xl"
               >
                 <Skeleton className="aspect-[4/3] w-full rounded-none" />
                 <div className="space-y-2 p-4">

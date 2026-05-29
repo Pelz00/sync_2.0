@@ -30,7 +30,7 @@ export function LoginForm({ next }: { next?: string }) {
 
   async function onSubmit() {
     // TODO: call the sign-in server action (Supabase) and redirect to `next`.
-    toast('Login isn’t connected yet — Supabase auth is coming.');
+    toast('Login isn’t connected yet - Supabase auth is coming.');
   }
 
   return (

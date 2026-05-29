@@ -1,0 +1,34 @@
+name: CI
+
+# Runs on every PR into main and on pushes to main.
+# The "build" job's name becomes the status check you mark as Required
+# under Settings → Branches → main branch protection.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Lint & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # NODE_ENV is left unset so devDependencies (eslint, tailwind, etc.)
+      # install — npm skips them when NODE_ENV=production.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build

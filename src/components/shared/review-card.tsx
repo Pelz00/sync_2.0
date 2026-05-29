@@ -29,19 +29,19 @@ export function ReviewCard({
     .join('')
     .toUpperCase();
   return (
-    <article className={cn('bg-white shadow-card rounded-xl p-5', className)}>
+    <article className={cn('bg-panel shadow-card rounded-xl p-5', className)}>
       <header className="flex items-center gap-3">
         <Avatar className="h-9 w-9">
           {author.avatarUrl && <AvatarImage src={author.avatarUrl} alt="" />}
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
         <div className="min-w-0 flex-1">
-          <p className="text-ink text-sm font-medium">{author.name}</p>
-          <p className="text-muted text-xs">{formatDate(createdAt)}</p>
+          <p className="text-foreground text-sm font-medium">{author.name}</p>
+          <p className="text-content-muted text-xs">{formatDate(createdAt)}</p>
         </div>
         <RatingStars value={rating} hideValue />
       </header>
-      <p className="text-body text-ink mt-3">{body}</p>
+      <p className="text-body text-foreground mt-3">{body}</p>
     </article>
   );
 }

@@ -1,5 +1,5 @@
 /**
- * Reveal — scroll-triggered fade-up wrapper for landing sections.
+ * Reveal - scroll-triggered fade-up wrapper for landing sections.
  * Uses framer-motion `whileInView` so each section eases in as it enters the
  * viewport. Honours prefers-reduced-motion (renders a plain div, no animation).
  */
@@ -10,7 +10,7 @@ import type { ReactNode } from 'react';
 
 interface RevealProps {
   children: ReactNode;
-  /** Stagger helper — delay in seconds before this block animates. */
+  /** Stagger helper - delay in seconds before this block animates. */
   delay?: number;
   className?: string;
 }

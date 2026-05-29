@@ -1,5 +1,5 @@
 /**
- * Hero highlights pool — a mix across every Sync service so the landing's
+ * Hero highlights pool - a mix across every Sync service so the landing's
  * featured card varies per load (one visitor sees a party as the big card,
  * another sees a hostel). Shuffled client-side by <HeroHighlights>.
  *

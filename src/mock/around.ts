@@ -1,6 +1,6 @@
 /**
  * Mock data for the /around home hub - modelled on the hi-fi design guide
- * §02 / Around you · Home Hub. Realistic Tanke / KWASU / UNILORIN copy.
+ * section 02 / Around you · Home Hub. Realistic Tanke / KWASU / UNILORIN copy.
  *
  * Other devs own the real hostel/event/food modules - when their queries
  * land, swap each block here for their module's live query.

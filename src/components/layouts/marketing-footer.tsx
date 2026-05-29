@@ -41,28 +41,11 @@ export function MarketingFooter() {
       />
 
       <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
-        {/* Top row: logo + operator + copyright */}
-        <div className="border-cream/10 flex flex-col gap-4 border-b pb-10 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <span aria-hidden="true" className="flex items-center gap-1">
-              <span className="bg-cream block h-2 w-2 rounded-full" />
-              <span className="bg-lime block h-1.5 w-1.5 rounded-full" />
-            </span>
-            <span className="font-display text-card">{SITE.name}</span>
-            <span className="text-cream/50 text-sm">
-              Operated by <span className="text-cream/80">{SITE.legalName}</span>
-            </span>
-          </div>
-          <p className="text-cream/50 text-xs">
-            © {new Date().getFullYear()} {SITE.legalName}. Built for {SITE.launchMarket}.
-          </p>
-        </div>
-
         {/* Main grid */}
-        <div className="grid gap-12 pt-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           {/* Brand column */}
           <div className="flex flex-col gap-6">
-            <span className="bg-cream/5 text-lime flex h-10 w-10 items-center justify-center rounded-xl">
+            <span className="bg-surface/5 text-lime flex h-10 w-10 items-center justify-center rounded-xl">
               <Sparkles className="h-5 w-5" />
             </span>
             <p className="text-cream/70 max-w-xs text-sm">{SITE.description}</p>
@@ -128,6 +111,23 @@ export function MarketingFooter() {
           <a href="https://www.raavon.com" target="_blank" rel="noreferrer" className="hover:text-cream transition-colors">
             www.raavon.com
           </a>
+        </div>
+
+        {/* Brand + operator + copyright (footer end) - centered on mobile */}
+        <div className="border-cream/10 mt-12 flex flex-col items-center gap-4 border-t pt-8 text-center md:flex-row md:items-center md:justify-between md:text-left">
+          <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
+            <span aria-hidden="true" className="flex items-center gap-1">
+              <span className="bg-surface block h-2 w-2 rounded-full" />
+              <span className="bg-lime block h-1.5 w-1.5 rounded-full" />
+            </span>
+            <span className="font-display text-card">{SITE.name}</span>
+            <span className="text-cream/50 text-sm">
+              Operated by <span className="text-cream/80">{SITE.legalName}</span>
+            </span>
+          </div>
+          <p className="text-cream/50 text-xs">
+            © {new Date().getFullYear()} {SITE.legalName}. Built for everyone.
+          </p>
         </div>
       </div>
     </footer>

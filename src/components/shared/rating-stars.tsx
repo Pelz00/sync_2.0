@@ -19,9 +19,9 @@ interface RatingStarsProps {
 export function RatingStars({ value, count, hideValue, className }: RatingStarsProps) {
   const rounded = Math.round(value * 10) / 10;
   return (
-    <span className={cn('text-muted inline-flex items-center gap-1 text-xs', className)}>
+    <span className={cn('text-content-muted inline-flex items-center gap-1 text-xs', className)}>
       <Star className="fill-lime text-lime h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
-      {!hideValue && <span className="text-ink font-medium">{rounded.toFixed(1)}</span>}
+      {!hideValue && <span className="text-foreground font-medium">{rounded.toFixed(1)}</span>}
       {count !== undefined && <span>({count})</span>}
     </span>
   );

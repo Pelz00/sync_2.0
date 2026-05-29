@@ -1,12 +1,10 @@
 /**
- * BrandLoader - full-viewport loader using the Sync visual mark
- * (two dots: lime-deep + lime) plus a subtle wordmark and a hairline
- * progress sweep. No spinner clichés; everything moves slow and quiet.
+ * BrandLoader - full-viewport loader on the dark (ink) brand surface.
+ * Two dots orbit each other and trade the brand colours (lime ↔ lime-deep)
+ * over a breathing lime glow, with an occasional glitch jitter. The "Sync"
+ * wordmark types itself out with a blinking caret.
  *
- * Use cases:
- *   - app/loading.tsx (route-level Suspense boundary)
- *   - Wrapped in a Dialog for blocking actions
- *
+ * Motion uses arbitrary `animate-[…]` utilities + keyframes in globals.css.
  * For inline loading inside buttons or compact UI, prefer `<Spinner />`.
  */
 import { cn } from '@/lib/utils';
@@ -26,29 +24,40 @@ export function BrandLoader({ label, inline, className }: BrandLoaderProps) {
       aria-live="polite"
       aria-busy="true"
       className={cn(
-        'bg-cream text-ink flex flex-col items-center justify-center gap-6',
+        'bg-ink text-cream flex flex-col items-center justify-center gap-9',
         inline ? 'h-full w-full py-16' : 'min-h-screen w-full',
         className,
       )}
     >
-      {/* Two-dot brand mark, pulsing in a slow wave. */}
-      <span aria-hidden="true" className="flex items-center gap-2">
-        <span className="bg-lime-deep h-2.5 w-2.5 animate-[sync-dot_5s_ease-in-out_infinite] rounded-full" />
-        <span className="bg-lime h-2.5 w-2.5 animate-[sync-dot_5s_ease-in-out_infinite_0.6s] rounded-full" />
+      {/* Orbiting, colour-swapping, glitching dots over a breathing glow. */}
+      <span aria-hidden="true" className="block animate-[sync-glitch_2.6s_ease-in-out_infinite]">
+        <span className="relative flex h-12 w-12 items-center justify-center">
+          {/* breathing glow */}
+          <span className="bg-lime absolute h-16 w-16 rounded-full blur-2xl animate-[sync-glow_1.6s_ease-in-out_infinite]" />
+          {/* orbit */}
+          <span className="relative block h-12 w-12 animate-[sync-orbit_1.1s_linear_infinite]">
+            <span className="bg-lime-deep absolute left-0 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full animate-[sync-color-a_0.7s_linear_infinite]" />
+            <span className="bg-lime absolute right-0 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full animate-[sync-color-b_0.7s_linear_infinite]" />
+          </span>
+        </span>
       </span>
 
-      {/* Wordmark - small, low contrast so the dots stay the focus. */}
-      <span className="font-display text-ink/70 text-sm tracking-wide">Sync</span>
-
-      {/* Hairline progress sweep - single lime stroke easing across a thin track. */}
+      {/* Wordmark - types out with a blinking caret + glitch jitter. */}
       <span
         aria-hidden="true"
-        className="bg-ink/5 relative h-px w-32 overflow-hidden"
+        className="inline-flex items-stretch animate-[sync-glitch_2.6s_ease-in-out_infinite]"
       >
-        <span className="bg-lime-deep absolute inset-y-0 left-0 w-1/3 animate-[sync-sweep_5s_ease-in-out_infinite]" />
+        <span className="font-display grid text-[50px] font-bold leading-[1.1] tracking-tight">
+          {/* invisible sizer - fixes the exact text width */}
+          <span className="invisible col-start-1 row-start-1">Sync</span>
+          {/* visible reveal - width animates 0 → 100% of the sizer */}
+          <span className="text-cream col-start-1 row-start-1 w-0 overflow-hidden whitespace-nowrap animate-[sync-typing_0.9s_steps(4)_both]">
+            Sync
+          </span>
+        </span>
       </span>
 
-      {label && <span className="text-muted text-xs">{label}</span>}
+      {label && <span className="text-cream/60 text-sm">{label}</span>}
       <span className="sr-only">Loading{label ? `: ${label}` : ''}</span>
     </div>
   );

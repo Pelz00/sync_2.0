@@ -4,7 +4,7 @@
  * PURPOSE: Personalised feed surfacing what matters around the student's
  *          hostel right now - events, food, laundry, hotspots, hostel
  *          board posts, MTN sponsored slot, and a hostel-resume nudge.
- * BUILT HERE (per §02 Around you · Home Hub of the hi-fi PDF):
+ * BUILT HERE (per section 02 Around you · Home Hub of the hi-fi PDF):
  *   - Eyebrow date + verified-spots pill
  *   - Personalised hero "Hi Aisha - today in your radius."
  *   - QUICK STATS block (3 rooms left / 240 going / 28 min)
@@ -30,6 +30,7 @@ import {
   SPONSORED_SLOT,
   VERIFIED_SPOTS_COUNT,
 } from '@/mock/around';
+import { getCurrentUser, getFirstName } from '@/modules/auth/queries';
 import { formatNaira } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
@@ -45,6 +46,9 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export default async function AroundPage() {
   if (process.env.NODE_ENV !== 'production') await sleep(DEV_LOADER_DELAY_MS);
 
+  // Personalise only when signed in; signed-out visitors see a generic greeting.
+  const firstName = getFirstName(await getCurrentUser());
+
   const today = new Date();
   const dateLine = `${format(today, 'EEE').toUpperCase()} · ${format(today, 'MMM d').toUpperCase()} · ${MOCK_USER.campus.toUpperCase()}`;
 
@@ -52,7 +56,7 @@ export default async function AroundPage() {
     <main className="mx-auto max-w-7xl px-6 pb-12 pt-8">
       {/* ─── Eyebrow row ────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-3">
-        <p className="font-mono text-muted text-[11px] tracking-wider">{dateLine}</p>
+        <p className="font-mono text-content-muted text-[11px] tracking-wider">{dateLine}</p>
         <span className="bg-lime text-ink inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium">
           <span className="bg-lime-deep h-1.5 w-1.5 rounded-full" />
           {VERIFIED_SPOTS_COUNT} verified spots near you
@@ -63,8 +67,14 @@ export default async function AroundPage() {
       <header className="mt-6 grid gap-8 lg:grid-cols-[1.5fr_1fr] lg:items-end">
         <div>
           <h1 className="font-display text-[44px] font-bold leading-[0.98] tracking-[-0.035em] md:text-[64px] md:leading-[0.96] md:tracking-[-0.04em]">
-            Hi <span className="text-lime-deep italic">{MOCK_USER.name}</span>
-            <span className="text-ink"> - today</span>
+            {firstName ? (
+              <>
+                Hi <span className="text-accent-fg italic">{firstName}</span>
+                <span className="text-foreground"> - today</span>
+              </>
+            ) : (
+              <span className="text-foreground">Today</span>
+            )}
             <br />
             in{' '}
             <span className="bg-lime text-ink box-decoration-clone px-1.5 leading-[1.1]">
@@ -72,7 +82,7 @@ export default async function AroundPage() {
             </span>
             .
           </h1>
-          <p className="text-muted text-lead mt-4 max-w-2xl">
+          <p className="text-content-muted text-lead mt-4 max-w-2xl">
             Tonight&rsquo;s events, food near your hostel, who&rsquo;s free for braids, the plumber 4
             minutes away. Everything Sync, in one place.
           </p>
@@ -106,22 +116,22 @@ export default async function AroundPage() {
 function QuickStats() {
   return (
     <aside aria-label="Quick stats" className="flex flex-col gap-3">
-      <p className="eyebrow text-muted">Quick stats</p>
+      <p className="eyebrow text-content-muted">Quick stats</p>
       <div className="grid grid-cols-3 gap-3">
         {QUICK_STATS.map((s) => (
           <div
             key={s.label}
-            className="border-ink/5 flex flex-col gap-1.5 rounded-xl border bg-white/70 p-4"
+            className="border-line/5 flex flex-col gap-1.5 rounded-xl border bg-panel/70 p-4"
           >
             <p
               className={cn(
                 'font-display text-[28px] leading-none tracking-tight whitespace-nowrap',
-                s.accent ? 'text-lime-deep' : 'text-ink',
+                s.accent ? 'text-accent-fg' : 'text-foreground',
               )}
             >
               {s.value}
             </p>
-            <p className="text-muted text-[11px] leading-tight">{s.label}</p>
+            <p className="text-content-muted text-[11px] leading-tight">{s.label}</p>
           </div>
         ))}
       </div>
@@ -134,17 +144,17 @@ function SmartSearch() {
     <form
       action="/search"
       method="get"
-      className="border-ink/10 bg-white mt-8 grid overflow-hidden rounded-2xl border md:grid-cols-[2fr_1fr_1fr_1fr_auto]"
+      className="border-line/10 bg-panel mt-8 grid overflow-hidden rounded-2xl border md:grid-cols-[2fr_1fr_1fr_1fr_auto]"
     >
       <SearchCell
         label="Search hostels, food, events…"
         name="q"
-        placeholder="Try 'jollof near hostel'"
+        placeholder="Try 'jollof, fast wifi, no wahala'"
       />
       <SearchCell label="Module" name="module" defaultValue="All" />
       <SearchCell label="Budget" name="budget" defaultValue="₦ Any" />
       <SearchCell label="When" name="when" defaultValue="Now" />
-      <div className="bg-cream-deep/50 flex items-center p-2 md:bg-transparent">
+      <div className="bg-surface-deep/50 flex items-center p-2 md:bg-transparent">
         <Button type="submit" size="md" className="w-full md:w-auto">
           <Search className="h-4 w-4" />
           Search
@@ -169,15 +179,15 @@ function SearchCell({
   return (
     <label
       htmlFor={id}
-      className="border-ink/5 focus-within:bg-cream/40 flex cursor-text flex-col gap-1 border-r px-4 py-3 transition-colors last:border-r-0"
+      className="border-line/5 focus-within:bg-surface/40 flex cursor-text flex-col gap-1 border-r px-4 py-3 transition-colors last:border-r-0"
     >
-      <span className="font-mono text-muted text-[10px] uppercase tracking-wider">{label}</span>
+      <span className="font-mono text-content-muted text-[10px] uppercase tracking-wider">{label}</span>
       <input
         id={id}
         name={name}
         defaultValue={defaultValue}
         placeholder={placeholder}
-        className="text-ink placeholder:text-muted bg-transparent text-sm font-medium outline-none"
+        className="text-foreground placeholder:text-content-muted bg-transparent text-sm font-medium outline-none"
       />
     </label>
   );
@@ -214,10 +224,10 @@ function FeaturedEventCard({ className }: { className?: string }) {
       </div>
 
       {/* Footer band - cream surface */}
-      <div className="bg-cream text-ink mt-4 flex items-center justify-between px-5 py-4">
+      <div className="bg-surface text-foreground mt-4 flex items-center justify-between px-5 py-4">
         <div className="min-w-0">
-          <p className="text-ink text-xs">{FEATURED_EVENT.venue}</p>
-          <div className="text-muted mt-1.5 flex items-center gap-2 text-[11px]">
+          <p className="text-foreground text-xs">{FEATURED_EVENT.venue}</p>
+          <div className="text-content-muted mt-1.5 flex items-center gap-2 text-[11px]">
             <FriendStack />
             <span>
               {FEATURED_EVENT.goingCount} going · {FEATURED_EVENT.friendsGoing} friends
@@ -226,8 +236,8 @@ function FeaturedEventCard({ className }: { className?: string }) {
         </div>
         <div className="flex shrink-0 items-end gap-3">
           <div className="text-right">
-            <p className="text-muted text-[10px] uppercase tracking-wider">From</p>
-            <p className="font-display text-card text-ink leading-none">
+            <p className="text-content-muted text-[10px] uppercase tracking-wider">From</p>
+            <p className="font-display text-card text-foreground leading-none">
               {formatNaira(FEATURED_EVENT.priceFrom)}
             </p>
           </div>
@@ -248,7 +258,7 @@ function FriendStack() {
       {initials.map((c) => (
         <span
           key={c}
-          className="bg-cream-deep border-cream text-ink flex h-4 w-4 items-center justify-center rounded-full border-2 text-[8px] font-medium"
+          className="bg-surface-deep border-cream text-foreground flex h-4 w-4 items-center justify-center rounded-full border-2 text-[8px] font-medium"
         >
           {c}
         </span>
@@ -259,34 +269,34 @@ function FriendStack() {
 
 function FoodCard({ className }: { className?: string }) {
   return (
-    <article className={cn('bg-white shadow-card flex flex-col overflow-hidden rounded-2xl', className)}>
+    <article className={cn('bg-panel shadow-card flex flex-col overflow-hidden rounded-2xl', className)}>
       <div className="flex flex-col gap-2 p-5">
-        <p className="font-mono text-muted text-[10px] uppercase tracking-wider">
+        <p className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
           Food · {FEATURED_FOOD.etaMinutes} min
         </p>
         {/* Stylised food swatch (cream → coral gradient) - no external image needed. */}
         <div className="from-cream-deep mt-1 h-28 w-full rounded-xl bg-gradient-to-br via-[#f5b486] to-[#e0824a]" />
         <div className="mt-3 flex items-start justify-between gap-2">
-          <h3 className="font-display text-card text-ink">{FEATURED_FOOD.name}</h3>
-          <span className="text-ink inline-flex items-center gap-0.5 text-xs">
+          <h3 className="font-display text-card text-foreground">{FEATURED_FOOD.name}</h3>
+          <span className="text-foreground inline-flex items-center gap-0.5 text-xs">
             ★ <span className="font-medium">{FEATURED_FOOD.rating}</span>
           </span>
         </div>
-        <p className="text-muted text-xs">
+        <p className="text-content-muted text-xs">
           {FEATURED_FOOD.cuisine} · {FEATURED_FOOD.priceTier}
         </p>
         <div className="flex flex-wrap gap-1.5">
           {FEATURED_FOOD.promos.map((p) => (
             <span
               key={p}
-              className="border-ink/15 text-ink rounded-full border px-2.5 py-0.5 text-[11px]"
+              className="border-line/15 text-foreground rounded-full border px-2.5 py-0.5 text-[11px]"
             >
               {p}
             </span>
           ))}
         </div>
-        <div className="border-ink/5 mt-3 flex items-center justify-between border-t pt-3">
-          <p className="text-ink text-sm">
+        <div className="border-line/5 mt-3 flex items-center justify-between border-t pt-3">
+          <p className="text-foreground text-sm">
             From <span className="font-display text-card">{formatNaira(FEATURED_FOOD.priceFrom)}</span>
           </p>
           <Button asChild variant="outline" size="sm">
@@ -303,29 +313,29 @@ function FoodCard({ className }: { className?: string }) {
 function LaundryCard({ className }: { className?: string }) {
   return (
     <article
-      className={cn('bg-cream-deep flex flex-col justify-between gap-5 rounded-2xl p-5', className)}
+      className={cn('bg-surface-deep flex flex-col justify-between gap-5 rounded-2xl p-5', className)}
     >
       <div>
-        <p className="font-mono text-muted text-[10px] uppercase tracking-wider">
+        <p className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
           Laundry · Pickup today
         </p>
-        <h3 className="font-display text-ink mt-3 text-[22px] font-semibold leading-tight tracking-[-0.02em]">
+        <h3 className="font-display text-foreground mt-3 text-[22px] font-semibold leading-tight tracking-[-0.02em]">
           {LAUNDRY_PROMO.headlineParts.lead}
           <br />
           {LAUNDRY_PROMO.headlineParts.tail}{' '}
-          <span className="text-lime-deep italic">{LAUNDRY_PROMO.headlineParts.accent}</span>
+          <span className="text-accent-fg italic">{LAUNDRY_PROMO.headlineParts.accent}</span>
         </h3>
         <div className="mt-4 flex flex-wrap gap-1.5">
-          <span className="bg-white text-ink rounded-full px-3 py-1 text-xs">
+          <span className="bg-panel text-foreground rounded-full px-3 py-1 text-xs">
             {formatNaira(LAUNDRY_PROMO.perPiecePrice)} / piece
           </span>
-          <span className="bg-white text-ink rounded-full px-3 py-1 text-xs">
+          <span className="bg-panel text-foreground rounded-full px-3 py-1 text-xs">
             {LAUNDRY_PROMO.pickupLine}
           </span>
         </div>
       </div>
       <div className="flex items-end justify-between">
-        <p className="text-muted text-xs">Next slot · {LAUNDRY_PROMO.nextSlot}</p>
+        <p className="text-content-muted text-xs">Next slot · {LAUNDRY_PROMO.nextSlot}</p>
         <Button asChild size="sm">
           <Link href="/laundry">
             Schedule <ArrowRight />
@@ -343,7 +353,7 @@ function SponsoredCard({ className }: { className?: string }) {
         <span className="font-mono text-cream/50 text-[10px] uppercase tracking-wider">
           Sponsored
         </span>
-        <span className="bg-cream text-ink rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wider">
+        <span className="bg-surface text-foreground rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wider">
           {SPONSORED_SLOT.brand}
         </span>
       </header>
@@ -372,14 +382,14 @@ function SponsoredCard({ className }: { className?: string }) {
 
 function HotspotsCard({ className }: { className?: string }) {
   return (
-    <article className={cn('bg-white shadow-card flex flex-col gap-3 rounded-2xl p-5', className)}>
+    <article className={cn('bg-panel shadow-card flex flex-col gap-3 rounded-2xl p-5', className)}>
       <header className="flex items-center justify-between">
-        <p className="font-mono text-muted text-[10px] uppercase tracking-wider">
+        <p className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
           Hot spots · {HOTSPOTS_TRENDING.length} trending
         </p>
         <span aria-hidden="true" className="text-[14px]">🔥</span>
       </header>
-      <ul className="divide-ink/5 -mx-1 divide-y">
+      <ul className="divide-line/5 -mx-1 divide-y">
         {HOTSPOTS_TRENDING.map((h) => (
           <li key={h.slug}>
             <Link
@@ -387,8 +397,8 @@ function HotspotsCard({ className }: { className?: string }) {
               className="hover:bg-ink/[0.02] flex items-center justify-between gap-3 rounded-md px-1 py-3"
             >
               <div className="min-w-0">
-                <p className="text-ink truncate text-sm font-medium">{h.name}</p>
-                <p className="text-muted truncate text-xs">{h.meta}</p>
+                <p className="text-foreground truncate text-sm font-medium">{h.name}</p>
+                <p className="text-content-muted truncate text-xs">{h.meta}</p>
               </div>
               <span className="bg-lime text-ink inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium">
                 <span className="bg-lime-deep h-1 w-1 rounded-full" />
@@ -404,28 +414,28 @@ function HotspotsCard({ className }: { className?: string }) {
 
 function HostelBoardCard({ className }: { className?: string }) {
   return (
-    <article className={cn('bg-white shadow-card flex flex-col gap-3 rounded-2xl p-5', className)}>
+    <article className={cn('bg-panel shadow-card flex flex-col gap-3 rounded-2xl p-5', className)}>
       <header className="flex items-center justify-between">
-        <p className="font-mono text-muted text-[10px] uppercase tracking-wider">
+        <p className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
           Hostel board · {HOSTEL_BOARD.hostel}
         </p>
         <button
           type="button"
           aria-label="New post"
-          className="text-muted hover:text-ink hover:bg-ink/5 inline-flex h-6 w-6 items-center justify-center rounded-full transition-colors"
+          className="text-content-muted hover:text-foreground hover:bg-ink/5 inline-flex h-6 w-6 items-center justify-center rounded-full transition-colors"
         >
           <Plus className="h-3.5 w-3.5" />
         </button>
       </header>
-      <ul className="divide-ink/5 -mx-1 divide-y">
+      <ul className="divide-line/5 -mx-1 divide-y">
         {HOSTEL_BOARD.posts.map((p) => (
           <li key={p.id}>
             <Link
               href="/me/messages"
               className="hover:bg-ink/[0.02] flex items-center justify-between gap-3 rounded-md px-1 py-3"
             >
-              <p className="text-ink truncate text-sm">{p.title}</p>
-              <p className="text-muted shrink-0 text-xs">
+              <p className="text-foreground truncate text-sm">{p.title}</p>
+              <p className="text-content-muted shrink-0 text-xs">
                 {p.author} · {p.age}
               </p>
             </Link>
@@ -440,7 +450,7 @@ function ResumeBookingCard({ className }: { className?: string }) {
   return (
     <article
       className={cn(
-        'border-ink/10 flex flex-col gap-4 rounded-2xl border border-dashed bg-white p-5',
+        'border-line/10 flex flex-col gap-4 rounded-2xl border border-dashed bg-panel p-5',
         className,
       )}
     >
@@ -449,19 +459,19 @@ function ResumeBookingCard({ className }: { className?: string }) {
           <ChevronDown className="h-3 w-3 -rotate-90" />
           Resume
         </span>
-        <span className="font-mono text-muted text-[10px] uppercase tracking-wider">
+        <span className="font-mono text-content-muted text-[10px] uppercase tracking-wider">
           Hostels
         </span>
       </div>
-      <h3 className="font-display text-card text-ink">
+      <h3 className="font-display text-card text-foreground">
         Still searching for a{' '}
-        <span className="text-lime-deep italic">hostel?</span>
+        <span className="text-accent-fg italic">hostel?</span>
       </h3>
-      <div className="border-ink/5 flex items-center gap-3 rounded-xl border p-3">
+      <div className="border-line/5 flex items-center gap-3 rounded-xl border p-3">
         <div className="bg-gradient-to-br from-[#caa17a] via-[#a07a52] to-[#5e4530] h-12 w-12 shrink-0 rounded-lg" />
         <div className="min-w-0 flex-1">
-          <p className="text-ink truncate text-sm font-medium">{RESUME_BOOKING.hostelName}</p>
-          <p className="text-muted text-xs">
+          <p className="text-foreground truncate text-sm font-medium">{RESUME_BOOKING.hostelName}</p>
+          <p className="text-content-muted text-xs">
             {RESUME_BOOKING.roomsLeft} rooms left · {formatNaira(RESUME_BOOKING.pricePerYear)}/yr
           </p>
         </div>

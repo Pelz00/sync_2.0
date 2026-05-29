@@ -1,5 +1,5 @@
 /**
- * ActivityTicker — thin auto-scrolling marquee of recent platform activity.
+ * ActivityTicker - thin auto-scrolling marquee of recent platform activity.
  * Embodies the "around you, right now" promise and adds FOMO under the hero.
  *
  * Pure CSS marquee (keyframe `marquee` in globals.css). The list is rendered
@@ -21,7 +21,7 @@ const ACTIVITY = [
 
 export function ActivityTicker() {
   return (
-    <div className="border-ink/5 bg-ink text-cream group/ticker overflow-hidden border-y">
+    <div className="border-line/5 bg-ink text-cream group/ticker overflow-hidden border-y">
       <div className="flex w-max animate-[marquee_38s_linear_infinite] group-hover/ticker:[animation-play-state:paused]">
         {/* Rendered twice for a seamless loop. */}
         {[0, 1].map((dup) => (

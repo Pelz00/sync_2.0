@@ -54,12 +54,12 @@ export function ListingCard({
   return (
     <article
       className={cn(
-        'group bg-white shadow-card relative flex flex-col overflow-hidden rounded-xl transition-shadow hover:shadow-pop',
+        'group bg-panel shadow-card relative flex flex-col overflow-hidden rounded-xl transition-shadow hover:shadow-pop',
         className,
       )}
     >
       <Link href={href} className="flex flex-1 flex-col">
-        <div className="bg-cream-deep relative aspect-[4/3] w-full overflow-hidden">
+        <div className="bg-surface-deep relative aspect-[4/3] w-full overflow-hidden">
           {image ? (
             <Image
               src={image}
@@ -79,20 +79,20 @@ export function ListingCard({
         </div>
         <div className="flex flex-1 flex-col gap-2 p-4">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-display text-card text-ink line-clamp-2 leading-tight">{title}</h3>
+            <h3 className="font-display text-card text-foreground line-clamp-2 leading-tight">{title}</h3>
             {verified && <VerifiedBadge />}
           </div>
           {location && (
-            <p className="text-muted flex items-center gap-1 text-xs">
+            <p className="text-content-muted flex items-center gap-1 text-xs">
               <MapPin className="h-3 w-3" aria-hidden="true" />
               {location}
             </p>
           )}
           {amenities && amenities.length > 0 && (
-            <ul className="text-muted flex flex-wrap items-center gap-1 text-[11px]">
+            <ul className="text-content-muted flex flex-wrap items-center gap-1 text-[11px]">
               {amenities.map((a, i) => (
                 <li key={a} className="flex items-center gap-1">
-                  <span className="border-ink/15 rounded-full border px-2 py-0.5">{a}</span>
+                  <span className="border-line/15 rounded-full border px-2 py-0.5">{a}</span>
                   {i < amenities.length - 1 && <span aria-hidden="true" className="sr-only">·</span>}
                 </li>
               ))}
@@ -113,12 +113,12 @@ export function ListingCard({
             aria-label={saved ? 'Remove from saved' : 'Save listing'}
             aria-pressed={saved}
             className={cn(
-              'bg-white/90 flex h-9 w-9 items-center justify-center rounded-full backdrop-blur transition-colors',
-              'hover:bg-white',
+              'bg-panel/90 flex h-9 w-9 items-center justify-center rounded-full backdrop-blur transition-colors',
+              'hover:bg-panel',
             )}
           >
             <Heart
-              className={cn('h-4 w-4', saved ? 'fill-coral text-coral' : 'text-ink')}
+              className={cn('h-4 w-4', saved ? 'fill-coral text-coral' : 'text-foreground')}
               strokeWidth={2}
             />
           </button>

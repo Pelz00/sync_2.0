@@ -1,5 +1,5 @@
 /**
- * Next config — applies security headers to every route. The CSP and full
+ * Next config - applies security headers to every route. The CSP and full
  * header set live in `src/lib/security/headers.ts` so they can be reviewed
  * and tested independently.
  */
