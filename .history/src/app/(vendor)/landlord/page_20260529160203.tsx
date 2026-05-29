@@ -57,7 +57,7 @@ export default function Page() {
             <Dot size={20} />
             Verified landlord
           </Badge>
-          <Avatar className="size-10">
+          <Avatar>
             <AvatarImage
               src="https://images.unsplash.com/photo-1535745318714-da922ca9cc81?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTB8fGJsYWNrJTIwcGVvcGxlfGVufDB8fDB8fHww"
               alt="Aisha O."

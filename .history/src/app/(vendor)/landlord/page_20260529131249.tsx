@@ -6,10 +6,6 @@
  * TODO: implement the full screen once dependent modules + data are wired.
  */
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  Badge,
   Button,
   Card,
   CardContent,
@@ -18,12 +14,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui';
-import { properties, stats } from '@/mock/StatsCard';
-import { ArrowRight, ArrowUp, ChevronDown, ChevronUp, Dot, Plus } from 'lucide-react';
+import { stats } from '@/mock/StatsCard';
+import { ArrowRight, ArrowUp, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
-import { BookingRequestCard } from './(components)/BookingRequestsCard';
-import { LandlordChartComponent } from './(components)/LandlordChartComponent';
-import { PropertyCard } from './(components)/HostelCards';
 
 export const metadata: Metadata = { title: 'Landlord dashboard' };
 
@@ -40,32 +33,12 @@ interface BookingRequestCardProps {
 export default function Page() {
   const requestsNumber = 8;
 
-  const onAccept = () => {};
-  const onDecline = () => {};
   return (
     <section className="flex flex-col gap-3">
       <h1 className="text-muted max-w-xl font-mono text-sm tracking-wide">LANDLORD DASHBOARD</h1>
-      <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-section text-ink font-display mt-2 font-medium">
-          {requestsNumber} new requests <span className="text-lime-deep">this week.</span>
-        </h2>
-        <div className="flex items-center gap-3">
-          <Badge
-            variant="accent"
-            className="border-ink flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
-          >
-            <Dot size={20} />
-            Verified landlord
-          </Badge>
-          <Avatar className="size-10">
-            <AvatarImage
-              src="https://images.unsplash.com/photo-1535745318714-da922ca9cc81?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTB8fGJsYWNrJTIwcGVvcGxlfGVufDB8fDB8fHww"
-              alt="Aisha O."
-            />
-            <AvatarFallback>AO</AvatarFallback>
-          </Avatar>
-        </div>
-      </div>
+      <h2 className="text-section text-ink font-display mt-2 font-medium">
+        {requestsNumber} new requests <span className="text-lime-deep">this week.</span>
+      </h2>
       {/* New section for stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         {stats.map(({ label, value, sub, icon: Icon }) => (
@@ -99,29 +72,14 @@ export default function Page() {
               </Button>
             </div>
             {/* booking requests content */}
-            <div className="flex flex-col gap-4">
-              <BookingRequestCard
-                name="Aisha 0."
-                avatarUrl="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cGVvcGxlfGVufDB8fDB8fHww"
-                location="Tanke Crescent"
-                timeAgo="2h"
-                room="3B"
-              />
-              <BookingRequestCard
-                name="Maryam A."
-                avatarUrl="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmxhY2slMjBwZW9wbGV8ZW58MHx8MHx8fDA%3D"
-                location="Tanke Crescent"
-                timeAgo="2h"
-                room="1A"
-              />
-              <BookingRequestCard
-                name="Muiz O."
-                avatarUrl="https://images.unsplash.com/photo-1507152832244-10d45c7eda57?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGJsYWNrJTIwcGVvcGxlfGVufDB8fDB8fHww"
-                location="Tanke Crescent"
-                timeAgo="2h"
-                room="3B"
-              />
-            </div>
+            {/* <BookingRequestCard
+              name="Aisha 0."
+              location="Tanke Crescent"
+              timeAgo="2h"
+              onAccept={() => {}}
+              onDecline={() => {}}
+              room="3B"
+            /> */}
           </div>
 
           {/* STATISTICS CHART */}
@@ -139,18 +97,51 @@ export default function Page() {
                   </Button>
                 </CardTitle>
               </CardHeader>
-              {/* chart content */}
-              <CardContent>
-                <LandlordChartComponent />
-              </CardContent>
             </Card>
+            {/* chart content */}
           </div>
         </div>
       </section>
-      <section>
-        <h1 className="text-muted mb-2 max-w-xl font-mono text-sm tracking-wide">MY HOSTELS</h1>
-        <PropertyCard properties={properties} />
-      </section>
     </section>
+  );
+}
+
+function BookingRequestCard({
+  name,
+  location,
+  room,
+  timeAgo,
+  avatarUrl,
+  onAccept,
+  onDecline,
+}: BookingRequestCardProps) {
+  return (
+    <Card className="flex items-center justify-between px-5 py-4">
+      {/* Avatar + Info */}
+      <div className="flex items-center gap-4">
+        <div className="bg-ink/10 size-10 shrink-0 overflow-hidden rounded-full">
+          {avatarUrl ? <img src={avatarUrl} alt={name} className="size-full object-cover" /> : null}
+        </div>
+        <div>
+          <h1 className="font-display text-card leading-tight font-semibold">{name}</h1>
+          <p className="text-muted text-sm">
+            {location} · {room} · {timeAgo}
+          </p>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="flex shrink-0 items-center gap-2">
+        <Button variant="outline" onClick={onDecline}>
+          Decline
+        </Button>
+        <Button
+          onClick={onAccept}
+          className="text-ink border-ink rounded-full border bg-[#CAFF4D] font-semibold hover:bg-[#b8f030]"
+        >
+          Accept <ArrowRight className="ml-1 size-4" />
+        </Button>
+      </div>
+    </Card>
   );
 }

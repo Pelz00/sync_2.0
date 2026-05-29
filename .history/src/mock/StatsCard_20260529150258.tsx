@@ -31,8 +31,6 @@ export const properties: Property[] = [
     roomsTotal: 12,
     roomsBooked: 4,
     status: 'Active' as const,
-    imageUrl:
-      'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG9zdGVsc3xlbnwwfHwwfHx8MA%3D%3D',
   },
   {
     id: '2',
@@ -40,8 +38,7 @@ export const properties: Property[] = [
     roomsTotal: 8,
     roomsBooked: 6,
     status: 'Active' as const,
-    imageUrl:
-      'https://images.unsplash.com/photo-1709805619372-40de3f158e83?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG9zdGVsc3xlbnwwfHwwfHx8MA%3D%3D',
+    imageUrl: 'https://example.com/image.jpg',
   },
   {
     id: '3',
@@ -49,7 +46,5 @@ export const properties: Property[] = [
     roomsTotal: 20,
     roomsBooked: 11,
     status: 'Inactive' as const,
-    imageUrl:
-      'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
   },
 ];

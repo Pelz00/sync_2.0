@@ -49,7 +49,7 @@ export default function Page() {
         <h2 className="text-section text-ink font-display mt-2 font-medium">
           {requestsNumber} new requests <span className="text-lime-deep">this week.</span>
         </h2>
-        <div className="flex items-center gap-3">
+        <div>
           <Badge
             variant="accent"
             className="border-ink flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
@@ -57,7 +57,7 @@ export default function Page() {
             <Dot size={20} />
             Verified landlord
           </Badge>
-          <Avatar className="size-10">
+          <Avatar>
             <AvatarImage
               src="https://images.unsplash.com/photo-1535745318714-da922ca9cc81?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTB8fGJsYWNrJTIwcGVvcGxlfGVufDB8fDB8fHww"
               alt="Aisha O."
