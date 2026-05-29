@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Editor local-history snapshots (VS Code Local History) - not real source.
+    ".history/**",
   ]),
 ]);
 

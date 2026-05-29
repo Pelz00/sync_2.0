@@ -17,8 +17,17 @@ const data = [
   { week: 'May W1', revenue: 7800 },
 ];
 
-const RoundedBar = (props: any) => {
-  const { x, y, width, height, fill } = props;
+type RevenueDatum = { week: string; revenue: number };
+
+type BarShapeProps = {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  fill?: string;
+};
+
+const RoundedBar = ({ x = 0, y = 0, width = 0, height = 0, fill }: BarShapeProps) => {
   const r = 6;
   return (
     <path
@@ -28,7 +37,9 @@ const RoundedBar = (props: any) => {
   );
 };
 
-const CustomTooltip = ({ active, payload }: any) => {
+type TooltipPayload = { active?: boolean; payload?: { payload: RevenueDatum }[] };
+
+const CustomTooltip = ({ active, payload }: TooltipPayload) => {
   if (!active || !payload?.length) return null;
 
   const { week, revenue } = payload[0].payload;

@@ -39,8 +39,8 @@ export default function SignupPage() {
     try {
      
       router.push(role === 'student' ? '/verify' : '/onboarding')
-    } catch (e: any) {
-      setError(e.message)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Something went wrong')
     } finally {
       setLoading(false)
     }
@@ -131,7 +131,7 @@ export default function SignupPage() {
         >
           {agreed && <span className="text-black text-xs font-bold">✓</span>}
         </button>        <p className="text-xs text-gray-500">
-          I agree to Sync's{' '}
+          I agree to Sync&apos;s{' '}
           <Link href="/terms" className="text-black underline">Terms &amp; Privacy Policy</Link>
         </p>
       </div>
