@@ -1,7 +1,7 @@
 /**
  * ROUTE: /events
  * ACCESS: authenticated student
- * PURPOSE: Events listing - concerts, parties, campus events. Date filter, category chips, grid of cards.
+ * PURPOSE: Events listing — concerts, parties, campus events. Date filter, category chips, grid of cards.
  * BUILT HERE: Date filter, <Chip> categories, event card grid, <Pagination>.
  * TODO: implement the full screen once dependent modules + data are wired.
  */

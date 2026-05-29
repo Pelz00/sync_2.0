@@ -1,25 +1,21 @@
 /**
- * AppShell - authenticated student shell.
- *
- * General navigation (shared with /around): a top bar (logo + search +
- * notifications + profile) above the horizontal ServicesDock of module
- * pills. No vertical sidebar - the dock is the single, consistent nav across
- * every module. Mobile keeps the bottom nav.
+ * AppShell — authenticated student shell. Persistent sidebar (ModuleNav) on
+ * md+, mobile bottom nav on small screens. Top bar has search + profile.
  *
  * Used by the (app) route group layout. Pages render inside <main>.
  */
 import Link from 'next/link';
 import { Bell } from 'lucide-react';
+import { ModuleNav } from '@/components/shared/module-nav';
 import { SearchBar } from '@/components/shared/search-bar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ServicesDock } from './services-dock';
 import { MobileBottomNav } from './mobile-bottom-nav';
 import { SITE } from '@/config/site';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-cream text-ink min-h-screen">
-      {/* Top bar - logo + search + profile */}
+      {/* Top bar */}
       <header className="bg-cream/90 border-ink/5 sticky top-0 z-30 border-b backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 md:px-6">
           <Link href="/around" className="font-display text-card text-ink shrink-0">
@@ -47,13 +43,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Body */}
       <div className="mx-auto max-w-7xl flex-col gap-8 px-4 pt-6 pb-24 md:px-6 md:pb-12">
-        <aside className="sticky top-20 mb-[20px] hidden h-fit w-full shrink-0 md:block">
+        <aside className="sticky top-20 hidden h-fit w-full shrink-0 md:block">
           <ModuleNav variant="rail" />
         </aside>
         <main className="min-w-0 flex-1">{children}</main>
       </div>
-
-      <main className="mx-auto min-w-0 max-w-7xl px-4 pb-24 pt-6 md:px-6 md:pb-12">{children}</main>
 
       <MobileBottomNav />
     </div>
