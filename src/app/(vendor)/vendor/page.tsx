@@ -94,10 +94,10 @@ export default function VendorDashboardPage() {
   {/* Orders */}
   <div className="bg-white border border-[#e0ddd5] rounded-2xl p-4">
     <div className="flex items-center justify-between mb-3">
-      <p className="text-[10px] tracking-widest uppercase text-[#aaa]">
+      <p className="text-15 tracking-widest uppercase text-[#b8e020] font-display">
         Live orders · 3 pending
       </p>
-      <Link href="/vendor/orders" className="text-[11px] text-[#1a1a1a] hover:underline">
+      <Link href="/vendor/orders" className="text-15 font-display text-[#1a1a1a] hover:underline">
         View all →
       </Link>
     </div>
@@ -132,10 +132,10 @@ export default function VendorDashboardPage() {
   {/* Listings */}
   <div className="bg-white border border-[#e0ddd5] rounded-2xl p-4">
     <div className="flex items-center justify-between mb-3">
-      <p className="text-[10px] tracking-widest uppercase text-[#aaa]">
+      <p className="text-15 tracking-widest uppercase text-[#b8e020] font-display">
         My listings · 3
       </p>
-      <button className="text-[11px] text-[#1a1a1a] hover:underline">
+      <button className="text-15 font-display text-[#1a1a1a] hover:underline">
         + Add
       </button>
     </div>
@@ -180,16 +180,16 @@ export default function VendorDashboardPage() {
 </div>
 
       {/* Subscription bar */}
-      <div className="bg-white border border-[#e0ddd5] rounded-xl px-4 py-3 flex items-center justify-between gap-4">
+      <div className="bg-white border border-[#e0ddd5] rounded-xl px-4 py-3 flex items-center justify-between gap-4 font-display">
         <div>
-          <p className="text-[9px] tracking-widest uppercase text-[#aaa] mb-1">Subscription · Pro yearly</p>
-          <p className="text-[13px] font-medium">Renews Apr 12, 2027 · ₦39,600 · Paystack card ending 2241</p>
+          <p className="text-10 tracking-widest uppercase text-[#aaa] mb-1">Subscription · Pro yearly</p>
+          <p className="text-6 font-medium">Renews Apr 12, 2027 · ₦39,600 · Paystack card ending 2241</p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button className="bg-white border border-[#d6d2c8] text-[#1a1a1a] text-[11px] px-3 py-1.5 rounded-full hover:border-[#b8e020] transition-colors">
+          <button className="bg-white border border-[#d6d2c8] text-[#1a1a1a] text-5 px-3 py-1.5 rounded-full hover:border-[#b8e020] transition-colors">
             Update payment
           </button>
-          <button className="bg-[#c8f135] border border-[#b8e020] text-[#4a5800] text-[11px] font-medium px-3 py-1.5 rounded-full hover:bg-[#b8e020] transition-colors">
+          <button className="bg-[#c8f135] border border-[#b8e020] text-[#4a5800] text-5 font-medium px-3 py-1.5 rounded-full hover:bg-[#b8e020] transition-colors">
             Upgrade to Business
           </button>
         </div>
