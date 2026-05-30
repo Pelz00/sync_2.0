@@ -44,7 +44,7 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="h-screen bg-[#f5f2eb] px-5 py-8">
+    <main className="min-h-screen bg-[#f5f2eb] px-5 py-8">
       
       <h1 className="text-3xl font-bold leading-tight mb-5">
         <span className="font-display text-[#c8f135]">Log in</span> to your account

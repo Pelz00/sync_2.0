@@ -5,12 +5,11 @@
  * BUILT HERE: KPI <Card>s, recent orders table, <VerifiedBadge> banner if pending.
  * TODO: implement the full screen once dependent modules + data are wired.
  */
-// app/vendor/dashboard/page.tsx
-import type { Metadata } from 'next'
+// src/app/(vendor)/vendor/page.tsximport type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 
-export const metadata: Metadata = { title: 'Vendor dashboard — Mama Put Tanke' }
+export const  Metadata = { title: 'Vendor dashboard — Mama Put Tanke' }
 
 const orders = [
   { initials: 'AO', name: 'Aisha O.',  meta: 'UIUI · chicken · chapman · 2 min ago', status: 'new',     statusLabel: 'new' },
@@ -43,7 +42,7 @@ export default function VendorDashboardPage() {
           Vendor dashboard &rsaquo; <span className="text-[#888]">Mama Put Tanke</span>
         </p>
         <div className="flex items-center gap-2">
-          <span className="flex items-center bg-[#c8f135] border border-[#b8e020] text-[#4a5800] text-7 font-sm px-3 py-1 rounded-full">
+          <span className="flex items-center bg-[#c8f135] border border-[#b8e020] text-[#4a5800] text-7 font-semibold px-3 py-1 rounded-full">
              Verified pro
           </span>
                  </div>
@@ -55,7 +54,7 @@ export default function VendorDashboardPage() {
       </h1>
 
       {/* Stats */}
-     <div className="grid grid-cols-4 gap-2 mb-3 w-full h-40">
+     <div className="grid grid-cols-4 gap-2 mb-8 w-full h-40">
   {[
     { label: 'This week',   value: '₦68,500', sub: '+24%',               highlight: true  },
     { label: 'Next payout', value: '₦52,300', sub: 'Sat 11pm',           highlight: false },
@@ -70,17 +69,17 @@ export default function VendorDashboardPage() {
           : 'bg-white border-[#e0ddd5]'
       }`}
     >
-      <p className={`text-[9px] tracking-widest uppercase font-medium mb-2 ${
+      <p className={`text-15 tracking-widest uppercase font-medium mb-2 font-display ${
         s.highlight ? 'text-[#6a7a00]' : 'text-[#aaa]'
       }`}>
         {s.label}
       </p>
-      <p className={`text-[26px] font-semibold leading-none mb-2 ${
+      <p className={`text-[26px] font-semibold leading-none mb-2 font-display ${
         s.highlight ? 'text-[#1a1a1a]' : 'text-[#1a1a1a]'
       }`}>
         {s.value}
       </p>
-      <p className={`text-[12px] font-medium ${
+      <p className={`text-10 font-medium font-display ${
         s.highlight ? 'text-[#4a5800]' : 'text-[#888]'
       }`}>
         {s.sub}
@@ -90,68 +89,95 @@ export default function VendorDashboardPage() {
 </div>
 
       {/* Two columns */}
-      <div className="grid grid-cols-2 gap-3 mb-3">
+<div className="grid grid-cols-2 gap-3 mb-3">
 
-        {/* Orders */}
-        <div className="bg-white border border-[#e0ddd5] rounded-xl p-3">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] tracking-widest uppercase text-[#aaa]">
-              Live orders <span className="bg-[#1a1a1a] text-[#f5f2eb] text-[10px] px-1.5 py-0.5 rounded-full ml-1">5</span>
-              &nbsp;|&nbsp; 0 pending
-            </p>
-            <Link href="/vendor/orders" className="text-[11px] text-[#1a1a1a] hover:underline">View all →</Link>
-          </div>
-          {orders.map(o => (
-            <div key={o.name} className="flex items-center gap-2 py-2 border-t border-[#f0ede5] first:border-t-0 first:pt-0">
-              <div className="w-7 h-7 rounded-full bg-[#f5f2eb] border border-[#e0ddd5] flex items-center justify-center text-[11px] font-medium text-[#666] flex-shrink-0">
-                {o.initials}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium">{o.name}</p>
-                <p className="text-[11px] text-[#aaa] truncate">{o.meta}</p>
-              </div>
-              <div className="flex items-center gap-1.5 flex-shrink-0">
-                <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${statusBadge[o.status]}`}>
-                  {o.statusLabel}
-                </span>
-                <button className="bg-[#1a1a1a] text-white text-[11px] px-2.5 py-1 rounded-full flex items-center gap-1">
-                  Next →
-                </button>
-              </div>
-            </div>
-          ))}
+  {/* Orders */}
+  <div className="bg-white border border-[#e0ddd5] rounded-2xl p-4">
+    <div className="flex items-center justify-between mb-3">
+      <p className="text-[10px] tracking-widest uppercase text-[#aaa]">
+        Live orders · 3 pending
+      </p>
+      <Link href="/vendor/orders" className="text-[11px] text-[#1a1a1a] hover:underline">
+        View all →
+      </Link>
+    </div>
+
+    {orders.map(o => (
+      <div
+        key={o.name}
+        className="flex items-center gap-3 py-2.5 border-t border-[#f0ede5] first:border-t-0 first:pt-0"
+      >
+        {/* Avatar — bigger, matches screenshot */}
+        <div className="w-9 h-9 rounded-full bg-[#f0ede5] border border-[#e0ddd5] flex items-center justify-center text-[12px] font-medium text-[#888] flex-shrink-0">
+          {o.initials}
         </div>
 
-        {/* Listings */}
-        <div className="bg-white border border-[#e0ddd5] rounded-xl p-3">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] tracking-widest uppercase text-[#aaa]">My listings · 3</p>
-            <button className="text-[11px] text-[#1a1a1a] hover:underline">+ Add</button>
-          </div>
-          {listings.map(l => (
-            <div key={l.name} className="flex items-center gap-2 py-2 border-t border-[#f0ede5] first:border-t-0 first:pt-0">
-              {/* Listing image */}
-              <div className="w-9 h-9 rounded-lg bg-[#f0ede5] border border-[#e0ddd5] flex-shrink-0 overflow-hidden">
-                <Image
-                  src={l.img}
-                  alt={l.name}
-                  width={36}
-                  height={36}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium">{l.name}</p>
-                <p className="text-[11px] text-[#aaa]">{l.meta}</p>
-              </div>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium whitespace-nowrap ${statusBadge[l.status]}`}>
-                {l.statusLabel}
-              </span>
-            </div>
-          ))}
+        <div className="flex-1 min-w-0">
+          <p className="text-[13px] font-semibold leading-tight">{o.name}</p>
+          <p className="text-[11px] text-[#aaa] truncate mt-0.5">{o.meta}</p>
         </div>
 
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span className={`text-[10px] px-2.5 py-1 rounded-full border font-medium ${statusBadge[o.status]}`}>
+            {o.statusLabel}
+          </span>
+          <button className="bg-[#c8f135] border border-[#b8e020] text-[#1a1a1a] text-[11px] font-medium px-3 py-1 rounded-full flex items-center gap-1 hover:bg-[#b8e020] transition-colors">
+            Next →
+          </button>
+        </div>
       </div>
+    ))}
+  </div>
+
+  {/* Listings */}
+  <div className="bg-white border border-[#e0ddd5] rounded-2xl p-4">
+    <div className="flex items-center justify-between mb-3">
+      <p className="text-[10px] tracking-widest uppercase text-[#aaa]">
+        My listings · 3
+      </p>
+      <button className="text-[11px] text-[#1a1a1a] hover:underline">
+        + Add
+      </button>
+    </div>
+
+    {listings.map(l => (
+      <div
+        key={l.name}
+        className="flex items-center gap-3 py-2.5 border-t border-[#f0ede5] first:border-t-0 first:pt-0"
+      >
+        {/* Image — dashed placeholder matching screenshot */}
+        <div className="w-10 h-10 rounded-lg border-[1.5px] border-dashed border-[#d6d2c8] bg-[#fafaf8] flex-shrink-0 overflow-hidden flex items-center justify-center">
+          {l.img ? (
+            <Image
+              src={l.img}
+              alt={l.name}
+              width={40}
+              height={40}
+              className="w-full h-full object-cover rounded-lg"
+            />
+          ) : (
+            // placeholder X lines when no image
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="1" y="1" width="18" height="18" rx="2" stroke="#d6d2c8" strokeWidth="1.5"/>
+              <line x1="1" y1="1" x2="19" y2="19" stroke="#d6d2c8" strokeWidth="1.5"/>
+              <line x1="19" y1="1" x2="1" y2="19" stroke="#d6d2c8" strokeWidth="1.5"/>
+            </svg>
+          )}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <p className="text-[13px] font-semibold leading-tight">{l.name}</p>
+          <p className="text-[11px] text-[#aaa] mt-0.5">{l.meta}</p>
+        </div>
+
+        <span className={`text-[10px] px-2.5 py-1 rounded-full border font-medium whitespace-nowrap ${statusBadge[l.status]}`}>
+          {l.statusLabel}
+        </span>
+      </div>
+    ))}
+  </div>
+
+</div>
 
       {/* Subscription bar */}
       <div className="bg-white border border-[#e0ddd5] rounded-xl px-4 py-3 flex items-center justify-between gap-4">
