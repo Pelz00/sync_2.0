@@ -18,9 +18,9 @@ const orders = [
 ]
 
 const listings = [
-  { name: 'Mama Put Tanke menu',  meta: '112 views · 8 orders today', status: 'active',  statusLabel: 'Active',         img: '/images/menu.jpg' },
-  { name: 'Suya combo plate',     meta: '46 views · 3 orders',        status: 'paused',  statusLabel: 'Paused',         img: '/images/suya.jpg' },
-  { name: 'Sunday brunch buffet', meta: '— Submitted 2h ago',         status: 'review',  statusLabel: 'Pending review', img: '/images/brunch.jpg' },
+  { name: 'Mama Put Tanke menu',  meta: '112 views · 8 orders today', status: 'active',  statusLabel: 'Active',         img: '' },
+  { name: 'Suya combo plate',     meta: '46 views · 3 orders',        status: 'paused',  statusLabel: 'Paused',         img: '' },
+  { name: 'Sunday brunch buffet', meta: '— Submitted 2h ago',         status: 'review',  statusLabel: 'Pending review', img: '' },
 ]
 
 const statusBadge: Record<string, string> = {
@@ -107,21 +107,21 @@ export default function VendorDashboardPage() {
         key={o.name}
         className="flex items-center gap-3 py-2.5 border-t border-[#f0ede5] first:border-t-0 first:pt-0"
       >
-        {/* Avatar — bigger, matches screenshot */}
-        <div className="w-9 h-9 rounded-full bg-[#f0ede5] border border-[#e0ddd5] flex items-center justify-center text-[12px] font-medium text-[#888] flex-shrink-0">
+        
+        <div className="w-9 h-9 rounded-full bg-[#f0ede5] border border-[#e0ddd5] flex items-center justify-center text-[12px] font-mono text-[#888] flex-shrink-0">
           {o.initials}
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-semibold leading-tight">{o.name}</p>
-          <p className="text-[11px] text-[#aaa] truncate mt-0.5">{o.meta}</p>
+          <p className="text-15 font-semibold font-display leading-tight">{o.name}</p>
+          <p className="text-10 text-[#aaa] font-display truncate mt-0.5">{o.meta}</p>
         </div>
 
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          <span className={`text-[10px] px-2.5 py-1 rounded-full border font-medium ${statusBadge[o.status]}`}>
+          <span className={`text-8 px-2.5 py-1 rounded-full border font-medium ${statusBadge[o.status]}`}>
             {o.statusLabel}
           </span>
-          <button className="bg-[#c8f135] border border-[#b8e020] text-[#1a1a1a] text-[11px] font-medium px-3 py-1 rounded-full flex items-center gap-1 hover:bg-[#b8e020] transition-colors">
+          <button className="bg-[#c8f135] border border-[#b8e020] text-[#1a1a1a] text-8 font-display px-3 py-1 rounded-full flex items-center gap-1 hover:bg-[#b8e020] transition-colors">
             Next →
           </button>
         </div>
@@ -166,11 +166,11 @@ export default function VendorDashboardPage() {
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-semibold leading-tight">{l.name}</p>
-          <p className="text-[11px] text-[#aaa] mt-0.5">{l.meta}</p>
+          <p className="text-15 font-semibold font-display leading-tight">{l.name}</p>
+          <p className="text-8 font-display text-[#aaa] mt-0.5">{l.meta}</p>
         </div>
 
-        <span className={`text-[10px] px-2.5 py-1 rounded-full border font-medium whitespace-nowrap ${statusBadge[l.status]}`}>
+        <span className={`text-10 px-2.5 py-1 rounded-full border font-medium font-display whitespace-nowrap ${statusBadge[l.status]}`}>
           {l.statusLabel}
         </span>
       </div>
