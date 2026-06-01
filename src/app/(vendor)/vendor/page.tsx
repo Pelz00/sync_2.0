@@ -30,15 +30,7 @@ import EarningsSummaryCard from './(components)/EarningsSummaryCard';
 
 export const metadata: Metadata = { title: 'Vendor dashboard' };
 
-interface BookingRequestCardProps {
-  name: string;
-  location: string;
-  room: string;
-  timeAgo: string;
-  avatarUrl?: string;
-  onAccept?: () => void;
-  onDecline?: () => void;
-}
+
 
 export default function Page() {
   const requestsNumber = 8;
