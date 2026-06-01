@@ -1,4 +1,12 @@
-import { ArrowUp, Plus, LucideIcon } from 'lucide-react';
+import {
+  ArrowUp,
+  Plus,
+  LucideIcon,
+  Star,
+  TrendingUp,
+  AlertTriangle,
+  ShoppingBag,
+} from 'lucide-react';
 
 interface StatCard {
   label: string;
@@ -42,6 +50,33 @@ export const properties: Property[] = [
     status: 'Active' as const,
     imageUrl:
       'https://images.unsplash.com/photo-1709805619372-40de3f158e83?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG9zdGVsc3xlbnwwfHwwfHx8MA%3D%3D',
+  },
+  {
+    id: '3',
+    name: 'Gra Layout',
+    roomsTotal: 20,
+    roomsBooked: 11,
+    status: 'Inactive' as const,
+    imageUrl:
+      'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
+  },
+  {
+    id: '3',
+    name: 'Gra Layout',
+    roomsTotal: 20,
+    roomsBooked: 11,
+    status: 'Inactive' as const,
+    imageUrl:
+      'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
+  },
+  {
+    id: '3',
+    name: 'Gra Layout',
+    roomsTotal: 20,
+    roomsBooked: 11,
+    status: 'Inactive' as const,
+    imageUrl:
+      'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
   },
   {
     id: '3',
