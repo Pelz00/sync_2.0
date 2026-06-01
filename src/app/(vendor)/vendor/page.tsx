@@ -1,8 +1,8 @@
 /**
- * ROUTE: /landlord
- * ACCESS: authenticated vendor (category=landlord)
- * PURPOSE: Landlord dashboard - properties, occupancy, booking requests, monthly earnings, tenant contacts.
- * BUILT HERE: Property cards, occupancy KPI, recent booking-request feed.
+ * ROUTE: /vendor
+ * ACCESS: authenticated vendor
+ * PURPOSE: Vendor dashboard overview — KPIs, latest orders, unread inbox count, plan status, verification status.
+ * BUILT HERE: KPI <Card>s, recent orders table, <VerifiedBadge> banner if pending.
  * TODO: implement the full screen once dependent modules + data are wired.
  */
 import {
@@ -30,13 +30,21 @@ import EarningsSummaryCard from './(components)/EarningsSummaryCard';
 
 export const metadata: Metadata = { title: 'Vendor dashboard' };
 
-
-
 export default function Page() {
   const requestsNumber = 8;
   const storeName = 'HiFoods';
 
+  /**
+   * Function to handle the accept action
+   * This is an empty function implementation that can be customized
+   * to handle specific acceptance logic when needed
+   */
   const onAccept = () => {};
+  /**
+   * Function to handle the decline action
+   * This is a placeholder function that currently does nothing
+   * It can be expanded to include logic for handling decline actions
+   */
   const onDecline = () => {};
   return (
     <section className="flex flex-col gap-3">
@@ -120,11 +128,11 @@ export default function Page() {
                   <p>REVENUE . LAST 12 WEEKS</p>
                   <Button
                     variant={'outline'}
-                    className="gap-1text-muted mt-2 flex items-center border-transparent font-light"
+                    className="text-muted mt-2 flex items-center gap-1 border-transparent font-light"
                   >
                     Weekly
                     <ChevronDown className="size-3.75" />
-                  </Button>
+                  </Button>{' '}
                 </CardTitle>
               </CardHeader>
               {/* chart content */}

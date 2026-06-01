@@ -15,8 +15,6 @@ export function ProductsCard({ products, onEdit, onBoost }: ProductsCardProps) {
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
       {products.map((product, index) => {
-        const isFeatured = index === 0;
-
         const quantityAvailable = product.quantityAvailable ?? 0;
         const quantitySold = product.quantitySold ?? 0;
 

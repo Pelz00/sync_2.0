@@ -31,7 +31,7 @@ const EarningsSummaryCard = ({ data }: EarningsSummaryCardProps) => {
       <CardContent className="flex-col gap-4 p-4 shadow-none">
         {summaries
           .sort((a, b) => {
-            const order = ['This Week', 'Last Week', 'This Month', 'Last Month'];
+            const order = ['Last Month', 'This Month', 'Last Week', 'This Week'];
             return order.indexOf(a.label) - order.indexOf(b.label);
           })
           .map((item) => (

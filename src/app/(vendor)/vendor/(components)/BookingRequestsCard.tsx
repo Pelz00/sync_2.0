@@ -7,11 +7,9 @@ import Image from 'next/image';
 
 interface BookingRequestCardProps {
   data: BookingRequest[];
-  key?: string;
 }
 
-export function BookingRequestCard({ data, key }: BookingRequestCardProps) {
-  console.log('key', key);
+export function BookingRequestCard({ data }: BookingRequestCardProps) {
   return (
     <div className="flex flex-col gap-4">
       {data.map(

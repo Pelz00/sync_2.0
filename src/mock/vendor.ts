@@ -1,13 +1,12 @@
 import { AlertTriangle, LucideIcon, ShoppingBag, Star, TrendingUp } from 'lucide-react';
 
-interface VendorCard {
+export interface VendorCard {
   label: string;
   value: string;
   sub: string;
   icon: LucideIcon;
   trend?: 'up' | 'down' | 'neutral';
 }
-
 export const vendorStats: VendorCard[] = [
   { label: 'TOTAL REVENUE', value: '₦420,000', sub: '+18% this week', icon: TrendingUp },
   { label: 'ORDERS', value: '24', sub: '6 pending fulfillment', icon: ShoppingBag },
