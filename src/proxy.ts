@@ -50,6 +50,12 @@ const supabaseConfigured = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
 );
 
+// TEMPORARY: route gate disabled so protected pages (/hostels, /events, /me,
+// /vendor, ...) are browsable without logging in while the app is built out.
+// Scoped to non-production so a committed/pushed value can never ship an open
+// app to prod. To restore the /login redirect, delete this and its use below.
+const AUTH_GATE_DISABLED = process.env.NODE_ENV !== 'production';
+
 function redirectToLogin(request: NextRequest, pathname: string) {
   const url = request.nextUrl.clone();
   url.pathname = '/login';
@@ -59,7 +65,11 @@ function redirectToLogin(request: NextRequest, pathname: string) {
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const guarded = PROTECTED_PREFIXES.find(({ prefix }) => pathname.startsWith(prefix));
+  // When the gate is disabled, treat every route as public: no redirect to
+  // /login. Session refresh below still runs when Supabase is configured.
+  const guarded = AUTH_GATE_DISABLED
+    ? undefined
+    : PROTECTED_PREFIXES.find(({ prefix }) => pathname.startsWith(prefix));
 
   // Supabase not configured yet → no session can exist → everyone is
   // logged-out. Gate protected routes, let public ones through.
