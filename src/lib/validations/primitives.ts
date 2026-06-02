@@ -50,11 +50,11 @@ export const bvn = z
   .trim()
   .regex(/^\d{11}$/, 'BVN must be 11 digits');
 
-/** OTP - 6 to 8 digits (Supabase's email OTP length is configurable). */
+/** OTP - 6 digits (set Supabase's Email OTP Length to 6 to match). */
 export const otp = z
   .string()
   .trim()
-  .regex(/^\d{6,8}$/, 'Enter the code from your email');
+  .regex(/^\d{6}$/, 'Enter the 6-digit code');
 
 /** Naira amount in whole Naira (no kobo at API boundaries). */
 export const nairaAmount = z
