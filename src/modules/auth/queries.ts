@@ -3,6 +3,7 @@
  * RSC pages call these to personalise based on the signed-in user.
  */
 import 'server-only';
+import { cache } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 
@@ -14,8 +15,11 @@ const configured = Boolean(
  * The current signed-in user, or null. Always uses `getUser()` (verified),
  * never `getSession()`. Safe before Supabase is configured - returns null so
  * public pages render their signed-out state.
+ *
+ * Wrapped in React `cache()` so the per-request result is memoised: the header,
+ * layout, and page all share a single Supabase call instead of one each.
  */
-export async function getCurrentUser(): Promise<User | null> {
+export const getCurrentUser = cache(async (): Promise<User | null> => {
   if (!configured) return null;
   try {
     const supabase = await createClient();
@@ -26,7 +30,7 @@ export async function getCurrentUser(): Promise<User | null> {
   } catch {
     return null;
   }
-}
+});
 
 /** Best-effort first name: metadata full_name/name, else the email local part. */
 export function getFirstName(user: User | null): string | null {
