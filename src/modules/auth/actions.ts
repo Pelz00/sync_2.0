@@ -5,8 +5,86 @@
  *   2. Re-validate input with a zod schema from @/lib/validations.
  *   3. Use the server Supabase client (@/lib/supabase/server).
  *   4. Return a typed result, never throw raw errors to the client.
+ *
+ * Flow: signUp (creates the user + emails a 6-digit OTP) → /verify enters the
+ * code → verifySignupOtp confirms it and establishes the session. signIn is the
+ * email+password login. The session cookies are written by the server client,
+ * which is allowed to set them from within a Server Action.
  */
 'use server';
 
-// TODO: implement actions as features land.
-export {};
+import { createClient } from '@/lib/supabase/server';
+import {
+  email as emailRule,
+  loginSchema,
+  signupSchema,
+  verifyOtpSchema,
+  type LoginInput,
+  type SignupInput,
+  type VerifyOtpInput,
+} from '@/lib/validations';
+import type { AuthResult, Role, VerifyResult } from './types';
+
+/** First zod issue message, or a sensible fallback. */
+function firstIssue(error: { issues: { message: string }[] }, fallback: string): string {
+  return error.issues[0]?.message ?? fallback;
+}
+
+/**
+ * Create an account. Stores name/phone/role in user_metadata and triggers the
+ * confirmation OTP email. Does NOT sign the user in - they must verify first.
+ */
+export async function signUp(input: SignupInput): Promise<AuthResult> {
+  const parsed = signupSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: firstIssue(parsed.error, 'Invalid details') };
+
+  const { email, password, fullName, phone, role } = parsed.data;
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName, phone, role } },
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+/**
+ * Confirm a signup with the 6-digit OTP. On success the session is established
+ * (cookies set) and we return the role so the caller can route appropriately.
+ */
+export async function verifySignupOtp(input: VerifyOtpInput): Promise<VerifyResult> {
+  const parsed = verifyOtpSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: firstIssue(parsed.error, 'Invalid code') };
+
+  const { email, code } = parsed.data;
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.verifyOtp({ email, token: code, type: 'signup' });
+  if (error) return { ok: false, error: error.message };
+
+  const role = (data.user?.user_metadata?.role as Role | undefined) ?? 'student';
+  return { ok: true, role };
+}
+
+/** Resend the signup confirmation OTP. */
+export async function resendSignupOtp(rawEmail: string): Promise<AuthResult> {
+  const parsed = emailRule.safeParse(rawEmail);
+  if (!parsed.success) return { ok: false, error: firstIssue(parsed.error, 'Enter a valid email') };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resend({ type: 'signup', email: parsed.data });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+/** Email + password sign-in. Establishes the session on success. */
+export async function signIn(input: LoginInput): Promise<AuthResult> {
+  const parsed = loginSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: firstIssue(parsed.error, 'Invalid credentials') };
+
+  const { email, password } = parsed.data;
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}

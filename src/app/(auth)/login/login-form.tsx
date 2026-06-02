@@ -11,6 +11,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -18,8 +19,10 @@ import { Input } from '@/components/ui/input';
 import { FormField } from '@/components/forms';
 import { toast } from '@/components/ui/toast';
 import { loginSchema, type LoginInput } from '@/lib/validations';
+import { signIn } from '@/modules/auth/actions';
 
 export function LoginForm({ next }: { next?: string }) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -28,9 +31,16 @@ export function LoginForm({ next }: { next?: string }) {
 
   const signupHref = next ? `/signup?next=${encodeURIComponent(next)}` : '/signup';
 
-  async function onSubmit() {
-    // TODO: call the sign-in server action (Supabase) and redirect to `next`.
-    toast('Login isn’t connected yet - Supabase auth is coming.');
+  async function onSubmit(values: LoginInput) {
+    const res = await signIn(values);
+    if (!res.ok) {
+      toast(res.error);
+      return;
+    }
+    // Session cookie is set by the server action; refresh so the proxy + RSC
+    // pick it up, then head to the originally-requested page (or the app home).
+    router.push(next ?? '/around');
+    router.refresh();
   }
 
   return (

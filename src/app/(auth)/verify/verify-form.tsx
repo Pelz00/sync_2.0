@@ -1,0 +1,104 @@
+/**
+ * VerifyForm - confirms a signup with the 6-digit OTP emailed by Supabase.
+ * Validates with the shared `verifyOtpSchema`, calls `verifySignupOtp`, and on
+ * success routes by role (vendors → /onboarding, students → the app).
+ *
+ * The email is passed from the /verify page via the `?email=` query set during
+ * signup. If it's missing (someone hit /verify directly) we nudge them back to
+ * signup rather than submitting an incomplete form.
+ */
+'use client';
+
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { FormField } from '@/components/forms';
+import { toast } from '@/components/ui/toast';
+import { verifyOtpSchema, type VerifyOtpInput } from '@/lib/validations';
+import { resendSignupOtp, verifySignupOtp } from '@/modules/auth/actions';
+
+export function VerifyForm({ email, next }: { email: string; next?: string }) {
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<VerifyOtpInput>({
+    resolver: zodResolver(verifyOtpSchema),
+    defaultValues: { email },
+  });
+
+  if (!email) {
+    return (
+      <div className="flex flex-col gap-4">
+        <h1 className="font-display text-ink text-[32px] leading-tight tracking-tight">Verify</h1>
+        <p className="text-muted text-sm">
+          We couldn&rsquo;t find which email to verify. Please{' '}
+          <Link href="/signup" className="text-lime-deep font-medium hover:underline">
+            start signup
+          </Link>{' '}
+          again.
+        </p>
+      </div>
+    );
+  }
+
+  async function onSubmit(values: VerifyOtpInput) {
+    const res = await verifySignupOtp(values);
+    if (!res.ok) {
+      toast(res.error);
+      return;
+    }
+    router.push(res.role === 'vendor' ? '/onboarding' : (next ?? '/me'));
+    router.refresh();
+  }
+
+  async function onResend() {
+    const res = await resendSignupOtp(email);
+    toast(res.ok ? 'A new code is on its way.' : res.error);
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <div>
+        <p className="eyebrow text-lime-deep">Almost there</p>
+        <h1 className="font-display text-ink mt-2 text-[32px] leading-tight tracking-tight">
+          Verify your email
+        </h1>
+        <p className="text-muted mt-2 text-sm">
+          Enter the 6-digit code we sent to <span className="text-ink font-medium">{email}</span>.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+        <input type="hidden" {...register('email')} />
+
+        <FormField label="Verification code" htmlFor="code" error={errors.code?.message}>
+          <Input
+            id="code"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            placeholder="123456"
+            {...register('code')}
+          />
+        </FormField>
+
+        <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
+          {isSubmitting ? 'Verifying…' : 'Verify'}
+        </Button>
+      </form>
+
+      <p className="text-muted text-center text-sm">
+        Didn&rsquo;t get it?{' '}
+        <button type="button" onClick={onResend} className="text-lime-deep font-medium hover:underline">
+          Resend code
+        </button>
+      </p>
+    </div>
+  );
+}
