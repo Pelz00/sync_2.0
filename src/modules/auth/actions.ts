@@ -38,12 +38,22 @@ export async function signUp(input: SignupInput): Promise<AuthResult> {
   const parsed = signupSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error, 'Invalid details') };
 
-  const { email, password, fullName, phone, role } = parsed.data;
+  const { email, password, fullName, phone, role, vendorCategory, trade } = parsed.data;
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: fullName, phone, role } },
+    options: {
+      data: {
+        full_name: fullName,
+        phone,
+        role,
+        // Vendor specialisation - null for students. `landlord` is read by the
+        // proxy gate; the rest scope the vendor's listings.
+        vendor_category: role === 'vendor' ? (vendorCategory ?? null) : null,
+        trade: role === 'vendor' && vendorCategory === 'tradesman' ? (trade ?? null) : null,
+      },
+    },
   });
   if (error) return { ok: false, error: error.message };
   return { ok: true };

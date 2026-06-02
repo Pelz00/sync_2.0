@@ -33,16 +33,13 @@ export function VerifyForm({ email, next }: { email: string; next?: string }) {
 
   if (!email) {
     return (
-      <div className="flex flex-col gap-4">
-        <h1 className="font-display text-ink text-[32px] leading-tight tracking-tight">Verify</h1>
-        <p className="text-muted text-sm">
-          We couldn&rsquo;t find which email to verify. Please{' '}
-          <Link href="/signup" className="text-lime-deep font-medium hover:underline">
-            start signup
-          </Link>{' '}
-          again.
-        </p>
-      </div>
+      <p className="text-muted text-sm">
+        We couldn&rsquo;t find which email to verify. Please{' '}
+        <Link href="/signup" className="text-lime-deep font-medium hover:underline">
+          start signup
+        </Link>{' '}
+        again.
+      </p>
     );
   }
 
@@ -63,15 +60,9 @@ export function VerifyForm({ email, next }: { email: string; next?: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <p className="eyebrow text-lime-deep">Almost there</p>
-        <h1 className="font-display text-ink mt-2 text-[32px] leading-tight tracking-tight">
-          Verify your email
-        </h1>
-        <p className="text-muted mt-2 text-sm">
-          Enter the 6-digit code we sent to <span className="text-ink font-medium">{email}</span>.
-        </p>
-      </div>
+      <p className="text-muted text-sm">
+        Enter the 6-digit code we sent to <span className="text-ink font-medium">{email}</span>.
+      </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
         <input type="hidden" {...register('email')} />

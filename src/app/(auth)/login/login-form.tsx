@@ -45,13 +45,6 @@ export function LoginForm({ next }: { next?: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <p className="eyebrow text-lime-deep">Welcome back</p>
-        <h1 className="font-display text-ink mt-2 text-[32px] leading-tight tracking-tight">
-          Log in to Sync
-        </h1>
-      </div>
-
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
         <FormField label="Email" htmlFor="email" error={errors.email?.message}>
           <Input

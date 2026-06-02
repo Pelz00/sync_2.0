@@ -8,6 +8,7 @@
  *             preserves `next`.
  */
 import type { Metadata } from 'next';
+import { AuthLayout } from '@/components/layouts/auth-layout';
 import { LoginForm } from './login-form';
 
 export const metadata: Metadata = { title: 'Log in' };
@@ -18,5 +19,9 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const { next } = await searchParams;
-  return <LoginForm next={next} />;
+  return (
+    <AuthLayout eyebrow="Welcome back" title="Log in to Sync">
+      <LoginForm next={next} />
+    </AuthLayout>
+  );
 }

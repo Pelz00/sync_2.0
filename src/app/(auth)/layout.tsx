@@ -1,9 +1,9 @@
 /**
  * Layout for the (auth) route group: login, signup, verify.
- * Wraps in the split-pane AuthLayout shell.
+ *
+ * Passthrough: each page wraps its form in <AuthLayout eyebrow title> itself so
+ * the brand panel's heading is dynamic per route.
  */
-import { AuthLayout } from '@/components/layouts/auth-layout';
-
 export default function AuthRouteLayout({ children }: { children: React.ReactNode }) {
-  return <AuthLayout>{children}</AuthLayout>;
+  return children;
 }

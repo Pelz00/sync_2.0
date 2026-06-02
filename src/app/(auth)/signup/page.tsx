@@ -5,6 +5,7 @@
  * BUILT HERE: Role radio, name/email/password, terms checkbox, submit calls modules/auth/actions.ts.
  */
 import type { Metadata } from 'next';
+import { AuthLayout } from '@/components/layouts/auth-layout';
 import { SignupForm } from './signup-form';
 
 export const metadata: Metadata = { title: 'Sign up' };
@@ -15,5 +16,9 @@ export default async function SignupPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const { next } = await searchParams;
-  return <SignupForm next={next} />;
+  return (
+    <AuthLayout eyebrow="Create your account" title="Sign up to Sync">
+      <SignupForm next={next} />
+    </AuthLayout>
+  );
 }
