@@ -89,8 +89,8 @@ export function VerifyForm({ email, next }: { email: string; next?: string }) {
             type="text"
             inputMode="numeric"
             autoComplete="one-time-code"
-            maxLength={6}
-            placeholder="123456"
+            maxLength={8}
+            placeholder="12345678"
             {...register('code')}
           />
         </FormField>
