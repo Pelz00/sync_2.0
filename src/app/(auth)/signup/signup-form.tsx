@@ -11,6 +11,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Check } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -97,23 +98,37 @@ export function SignupForm({ next }: { next?: string }) {
       <fieldset className="flex flex-col gap-1.5">
         <legend className="text-ink mb-1.5 text-sm font-medium">I am a…</legend>
         <div className="grid grid-cols-2 gap-3">
-          {ROLES.map((r) => (
-            <button
-              key={r.id}
-              type="button"
-              onClick={() => selectRole(r.id)}
-              aria-pressed={role === r.id}
-              className={cn(
-                'rounded-xl border p-3 text-left transition-colors',
-                role === r.id
-                  ? 'border-ink bg-lime/15'
-                  : 'border-ink/15 hover:border-ink/30 bg-transparent',
-              )}
-            >
-              <span className="text-ink block text-sm font-medium">{r.label}</span>
-              <span className="text-muted mt-0.5 block text-xs">{r.desc}</span>
-            </button>
-          ))}
+          {ROLES.map((r) => {
+            const selected = role === r.id;
+            return (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => selectRole(r.id)}
+                aria-pressed={selected}
+                className={cn(
+                  'flex flex-col rounded-2xl border p-5 text-left transition-all',
+                  selected
+                    ? 'border-ink bg-lime shadow-[3px_3px_0_0_var(--color-ink)]'
+                    : 'border-ink/15 hover:border-ink/40 bg-white',
+                )}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="eyebrow text-ink/60">{selected ? 'Role · Selected' : 'Role'}</span>
+                  <span
+                    className={cn(
+                      'flex h-5 w-5 items-center justify-center border',
+                      selected ? 'border-ink bg-ink rounded-md text-white' : 'border-ink/30 rounded-full',
+                    )}
+                  >
+                    {selected && <Check className="h-3 w-3" strokeWidth={3} />}
+                  </span>
+                </div>
+                <span className="font-display text-ink mt-4 text-xl font-bold">{r.label}</span>
+                <span className="text-muted mt-1 text-sm">{r.desc}</span>
+              </button>
+            );
+          })}
         </div>
         {errors.role && <p className="text-xs text-red-500">{errors.role.message}</p>}
       </fieldset>
