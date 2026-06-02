@@ -50,38 +50,11 @@ export default function SignupPage() {
     <main className="min-h-screen bg-[#f5f2eb] px-5 py-8">
       
       <h1 className="text-3xl font-bold leading-tight mb-5">
-        <span className="font-display">Create your</span> account
+        <span className="font-display text-[#c8f135]">Log in</span> to your account
       </h1>
       
 
-      {/* Role selector */}
-      <div className="grid grid-cols-2 gap-3 mb-5">
-        {([
-          { id: 'student',  label: "I'm a student",   desc: 'Find a hostel near my campus' },
-          { id: 'landlord', label: "I'm a landlord",  desc: 'List my property to students' },
-        ] as { id: Role; label: string; desc: string }[]).map(r => (
-          <button
-            key={r.id}
-            onClick={() => setRole(r.id)}
-            className={`relative text-left rounded-[15px] font-bold border-[1.5px] p-4 transition-all ${
-              role === r.id
-                ? 'bg-[#C5FF4A] border-[#0E0E12]'
-                : 'bg-white border-gray-200'
-            }`}
-          >
-            {/* check circle */}
-            <span className={`absolute top-3 right-3 w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center ${
-              role === r.id ? 'bg-black border-black' : 'bg-white border-gray-300'
-            }`}>
-              {role === r.id && <span className="w-2 h-2 rounded-full bg-white" />}
-            </span>
-            <p className="font-medium text-sm pr-6">{r.label}</p>
-            <p className={`text-xs mt-1 ${role === r.id ? 'text-lime-700' : 'text-gray-400'}`}>
-              {r.desc}
-            </p>
-          </button>
-        ))}
-      </div>
+     
 
       {/* Fields */}
       {[
@@ -153,8 +126,8 @@ export default function SignupPage() {
         <div className="flex-1 h-px bg-gray-200" />
       </div>
 
-      <div className="grid grid-cols-3 gap-2">
-        {['Google', 'Apple', 'Phone OTP'].map(s => (
+      <div className="grid grid-cols-2 gap-2">
+        {['Google', 'Apple',].map(s => (
           <button key={s} className="border-[1.5px] border-gray-200 rounded-xl py-3 text-xs text-gray-500 bg-white hover:border-[#b8e020] transition-colors">
             {s}
           </button>
