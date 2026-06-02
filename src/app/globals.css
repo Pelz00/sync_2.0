@@ -27,14 +27,22 @@
      (bg-surface, text-content, bg-card, …) to get automatic dark mode.
      The raw brand colours above stay constant: `lime` is always lime, and
      `bg-ink`/`text-cream` panels stay dark in BOTH modes by design. */
-  --color-surface: var(--sf); /* page background */
-  --color-surface-deep: var(--sf-2); /* hover / sunken panel */
-  --color-panel: var(--sf-card); /* card surface (was bg-white) — NOT "card": text-card is a font-size */
-  --color-content: var(--ct); /* primary text (was text-ink) */
-  --color-content-muted: var(--ct-muted); /* meta text (was text-muted) */
-  --color-line: var(--ln); /* borders (use with /opacity) */
-  --color-accent: var(--color-lime); /* constant */
-  --color-accent-fg: var(--ac-fg); /* accent text: lime-deep ↔ lime */
+  --color-surface: var(--sf);
+  /* page background */
+  --color-surface-deep: var(--sf-2);
+  /* hover / sunken panel */
+  --color-panel: var(--sf-card);
+  /* card surface (was bg-white) — NOT "card": text-card is a font-size */
+  --color-content: var(--ct);
+  /* primary text (was text-ink) */
+  --color-content-muted: var(--ct-muted);
+  /* meta text (was text-muted) */
+  --color-line: var(--ln);
+  /* borders (use with /opacity) */
+  --color-accent: var(--color-lime);
+  /* constant */
+  --color-accent-fg: var(--ac-fg);
+  /* accent text: lime-deep ↔ lime */
   --color-warning: var(--color-coral);
   /* Back-compat alias - `text-foreground` still works, maps to content. */
   --color-foreground: var(--ct);
@@ -45,26 +53,32 @@
   --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
 
   /* Type scale - match the Sync hi-fi spec exactly. */
-  --text-hero: 4.5rem; /* 72px / 700 / -0.04em / 0.96lh */
+  --text-hero: 4.5rem;
+  /* 72px / 700 / -0.04em / 0.96lh */
   --text-hero--line-height: 0.96;
   --text-hero--font-weight: 700;
   --text-hero--letter-spacing: -0.04em;
-  --text-section: 3rem; /* 48px / 600 / -0.035em / 1lh */
+  --text-section: 3rem;
+  /* 48px / 600 / -0.035em / 1lh */
   --text-section--line-height: 1;
   --text-section--font-weight: 600;
   --text-section--letter-spacing: -0.035em;
-  --text-card: 1.375rem; /* 22px / 600 / -0.02em / 1.1lh */
+  --text-card: 1.375rem;
+  /* 22px / 600 / -0.02em / 1.1lh */
   --text-card--line-height: 1.1;
   --text-card--font-weight: 600;
   --text-card--letter-spacing: -0.02em;
-  --text-lead: 1.125rem; /* 18px / 500 / -0.005em / 1.5lh */
+  --text-lead: 1.125rem;
+  /* 18px / 500 / -0.005em / 1.5lh */
   --text-lead--line-height: 1.5;
   --text-lead--font-weight: 500;
   --text-lead--letter-spacing: -0.005em;
-  --text-body: 0.9375rem; /* 15px / 400 / 1.55lh */
+  --text-body: 0.9375rem;
+  /* 15px / 400 / 1.55lh */
   --text-body--line-height: 1.55;
   --text-body--font-weight: 400;
-  --text-eyebrow: 0.6875rem; /* 11px / 500 - uppercase mono, 0.14em tracking */
+  --text-eyebrow: 0.6875rem;
+  /* 11px / 500 - uppercase mono, 0.14em tracking */
   --text-eyebrow--line-height: 1.2;
   --text-eyebrow--font-weight: 500;
   --text-eyebrow--letter-spacing: 0.14em;
@@ -91,13 +105,20 @@
    Default = light. Dark applies when the OS prefers dark (unless .light is
    set to force light), or when .dark is set explicitly (future manual toggle). */
 :root {
-  --sf: #f4f1e8; /* cream */
-  --sf-2: #ece7d8; /* cream-deep */
-  --sf-card: #ffffff; /* white */
-  --ct: #0e0e12; /* ink */
-  --ct-muted: #6a6a72; /* muted */
-  --ac-fg: #4a8500; /* lime-deep */
-  --ln: #0e0e12; /* ink (borders use /opacity) */
+  --sf: #f4f1e8;
+  /* cream */
+  --sf-2: #ece7d8;
+  /* cream-deep */
+  --sf-card: #ffffff;
+  /* white */
+  --ct: #0e0e12;
+  /* ink */
+  --ct-muted: #6a6a72;
+  /* muted */
+  --ac-fg: #4a8500;
+  /* lime-deep */
+  --ln: #0e0e12;
+  /* ink (borders use /opacity) */
   color-scheme: light;
 }
 
@@ -108,7 +129,8 @@
     --sf-card: #17171c;
     --ct: #f4f1e8;
     --ct-muted: #9b9ba3;
-    --ac-fg: #c5ff4a; /* bright lime for contrast on dark */
+    --ac-fg: #c5ff4a;
+    /* bright lime for contrast on dark */
     --ln: #f4f1e8;
     color-scheme: dark;
   }
@@ -138,24 +160,40 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Browser autofill otherwise paints inputs grey/yellow and hides our text.
+   Force them back to the field's own colours. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-ink);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-white) inset;
+  caret-color: var(--color-ink);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 /* Theme-toggle icons: show the moon in light, the sun in dark. Driven by CSS
    (not React state) so the toggle button has no SSR/client hydration mismatch. */
 .theme-icon-sun {
   display: none;
 }
+
 .theme-icon-moon {
   display: inline-block;
 }
+
 .dark .theme-icon-sun {
   display: inline-block;
 }
+
 .dark .theme-icon-moon {
   display: none;
 }
+
 @media (prefers-color-scheme: dark) {
   :root:not(.light) .theme-icon-sun {
     display: inline-block;
   }
+
   :root:not(.light) .theme-icon-moon {
     display: none;
   }
@@ -184,6 +222,7 @@ body {
   49.9% {
     background-color: var(--color-lime-deep);
   }
+
   50%,
   100% {
     background-color: var(--color-lime);
@@ -195,6 +234,7 @@ body {
   49.9% {
     background-color: var(--color-lime);
   }
+
   50%,
   100% {
     background-color: var(--color-lime-deep);
@@ -208,15 +248,19 @@ body {
   100% {
     transform: translate(0, 0) skewX(0deg);
   }
+
   88% {
     transform: translate(-3px, 1px) skewX(5deg);
   }
+
   90% {
     transform: translate(3px, -2px) skewX(-4deg);
   }
+
   93% {
     transform: translate(-2px, -1px) skewX(2deg);
   }
+
   96% {
     transform: translate(2px, 1px) skewX(0deg);
   }
@@ -229,6 +273,7 @@ body {
     transform: scale(0.8);
     opacity: 0.3;
   }
+
   50% {
     transform: scale(1.15);
     opacity: 0.65;
@@ -241,6 +286,7 @@ body {
   from {
     width: 0;
   }
+
   to {
     width: 100%;
   }
@@ -252,6 +298,7 @@ body {
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0;
   }
@@ -262,6 +309,7 @@ body {
   from {
     transform: translateX(0);
   }
+
   to {
     transform: translateX(-50%);
   }
@@ -280,6 +328,7 @@ body {
     transform: translate(-50%, 12%) scale(1) rotate(0deg);
     border-radius: 48% 52% 60% 40% / 55% 45% 55% 45%;
   }
+
   50% {
     transform: translate(-46%, 4%) scale(1.25) rotate(8deg);
     border-radius: 60% 40% 42% 58% / 45% 58% 42% 55%;
@@ -300,7 +349,7 @@ body {
 :where(a, button, [role='button'], input, select, textarea, [tabindex]):focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
 }
 
 /* ─── AroundMap (Leaflet) custom markers ──────────────────────────── */
@@ -308,11 +357,13 @@ body {
   font: inherit;
   background: var(--color-cream-deep);
 }
+
 /* Strip Leaflet's default white box around divIcons. */
 .leaflet-div-icon.amap-pin-wrap {
   background: transparent;
   border: 0;
 }
+
 .amap-pin {
   display: inline-flex;
   align-items: center;
@@ -325,11 +376,13 @@ body {
   white-space: nowrap;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
 }
+
 .amap-pin__text {
   display: flex;
   flex-direction: column;
   line-height: 1.15;
 }
+
 .amap-pin__name {
   font-size: 12px;
   font-weight: 600;
@@ -338,22 +391,26 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .amap-pin__dist {
   font-size: 10px;
   font-weight: 500;
   opacity: 0.6;
 }
+
 .amap-pin--featured {
   background: var(--color-lime);
   box-shadow:
     0 0 0 2px rgba(14, 14, 18, 0.8),
     0 2px 10px rgba(0, 0, 0, 0.18);
 }
+
 .amap-pin__dot {
   width: 7px;
   height: 7px;
   border-radius: 9999px;
 }
+
 .amap-you {
   display: flex;
   flex-direction: column;
@@ -361,6 +418,7 @@ body {
   gap: 3px;
   transform: translate(-50%, -50%);
 }
+
 .amap-you__dot {
   width: 14px;
   height: 14px;
@@ -369,6 +427,7 @@ body {
   border: 2px solid #fff;
   animation: amap-pulse 2s infinite;
 }
+
 .amap-you__label {
   background: #0e0e12;
   color: #f4efe2;
@@ -377,6 +436,7 @@ body {
   font-size: 10px;
   font-weight: 500;
 }
+
 .amap-campus {
   transform: translate(-50%, -50%);
   background: rgba(197, 255, 74, 0.18);
@@ -388,17 +448,21 @@ body {
   font-weight: 700;
   white-space: nowrap;
 }
+
 @keyframes amap-pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(197, 255, 74, 0.5);
   }
+
   70% {
     box-shadow: 0 0 0 10px rgba(197, 255, 74, 0);
   }
+
   100% {
     box-shadow: 0 0 0 0 rgba(197, 255, 74, 0);
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
   .amap-you__dot {
     animation: none;

@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { Bell } from 'lucide-react';
 import { SearchBar } from '@/components/shared/search-bar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { ServicesDock } from './services-dock';
 import { MobileBottomNav } from './mobile-bottom-nav';
 import { SITE } from '@/config/site';
@@ -29,6 +30,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <SearchBar />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle />
             <Link
               href="/me/notifications"
               aria-label="Notifications"
