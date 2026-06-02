@@ -20,7 +20,7 @@ export function Highlight({ children, color, className }: HighlightProps) {
   return (
     <span
       className={cn(
-        'text-ink box-decoration-clone rounded-[3px] px-1.5',
+        'text-content box-decoration-clone rounded-[3px] px-1.5',
         color ?? 'bg-lime',
         className,
       )}

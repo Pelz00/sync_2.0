@@ -106,11 +106,11 @@ export function VendorVerificationSheet({
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent side="right" className="flex w-full flex-col gap-0 overflow-y-auto sm:max-w-md">
         <SheetHeader>
-          <SheetTitle className="font-display text-ink flex items-center gap-2 text-xl">
+          <SheetTitle className="font-display text-content flex items-center gap-2 text-xl">
             <ShieldCheck className="text-lime-deep h-5 w-5" />
             Verify your business
           </SheetTitle>
-          <SheetDescription className="text-muted text-sm">
+          <SheetDescription className="text-content-muted text-sm">
             Verified vendors get a trust badge and can take orders. It only takes a minute.
           </SheetDescription>
         </SheetHeader>
@@ -118,8 +118,8 @@ export function VendorVerificationSheet({
         {pending ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
             <ShieldCheck className="text-lime-deep h-10 w-10" />
-            <p className="font-display text-ink text-lg">Verification under review</p>
-            <p className="text-muted text-sm">
+            <p className="font-display text-content text-lg">Verification under review</p>
+            <p className="text-content-muted text-sm">
               Thanks! Our team is reviewing your details. You’ll be notified once you’re verified.
             </p>
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="mt-2">
@@ -139,12 +139,12 @@ export function VendorVerificationSheet({
                         ? 'bg-ink text-white'
                         : i === step
                           ? 'bg-lime text-ink'
-                          : 'bg-ink/10 text-muted',
+                          : 'bg-ink/10 text-content-muted',
                     )}
                   >
                     {i < step ? <Check className="h-3 w-3" strokeWidth={3} /> : i + 1}
                   </span>
-                  <span className={cn('text-xs', i === step ? 'text-ink font-medium' : 'text-muted')}>
+                  <span className={cn('text-xs', i === step ? 'text-content font-medium' : 'text-content-muted')}>
                     {label}
                   </span>
                 </li>
@@ -154,10 +154,10 @@ export function VendorVerificationSheet({
             {/* Step 1 - Identity / liveness (stub) */}
             {step === 0 && (
               <div className="flex flex-col gap-4">
-                <div className="border-ink/10 flex flex-col items-center gap-3 rounded-xl border p-6 text-center">
-                  <ScanFace className="text-ink h-10 w-10" />
-                  <p className="text-ink text-sm font-medium">Quick liveness check</p>
-                  <p className="text-muted text-xs">
+                <div className="border-line/10 flex flex-col items-center gap-3 rounded-xl border p-6 text-center">
+                  <ScanFace className="text-content h-10 w-10" />
+                  <p className="text-content text-sm font-medium">Quick liveness check</p>
+                  <p className="text-content-muted text-xs">
                     We confirm it’s really you with a short face scan before you can take orders.
                   </p>
                   {liveness ? (
@@ -173,7 +173,7 @@ export function VendorVerificationSheet({
                     </Button>
                   )}
                 </div>
-                <p className="text-muted text-xs">
+                <p className="text-content-muted text-xs">
                   Placeholder — the real check (Smile ID / Dojah) is wired in later.
                 </p>
                 {errors.livenessConfirmed && (
@@ -186,9 +186,9 @@ export function VendorVerificationSheet({
             {step === 1 && (
               <div className="flex flex-col gap-4">
                 {category && (
-                  <p className="text-muted flex items-center gap-2 text-sm">
+                  <p className="text-content-muted flex items-center gap-2 text-sm">
                     <Store className="h-4 w-4" /> Registering as{' '}
-                    <span className="text-ink font-medium capitalize">{category}</span>
+                    <span className="text-content font-medium capitalize">{category}</span>
                   </p>
                 )}
                 <FormField label="Business name" htmlFor="businessName" error={errors.businessName?.message}>
@@ -220,18 +220,18 @@ export function VendorVerificationSheet({
                   />
                 </FormField>
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-ink text-sm font-medium">Photo of your business location</span>
+                  <span className="text-content text-sm font-medium">Photo of your business location</span>
                   <label
                     htmlFor="locationPhoto"
-                    className="border-ink/20 hover:border-ink/40 flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed p-6 text-center"
+                    className="border-line/20 hover:border-line/40 flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed p-6 text-center"
                   >
                     {photoPreview ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={photoPreview} alt="Business location preview" className="max-h-40 rounded-lg" />
                     ) : (
                       <>
-                        <MapPin className="text-muted h-7 w-7" />
-                        <span className="text-muted text-xs">Tap to upload a photo of your shop/property</span>
+                        <MapPin className="text-content-muted h-7 w-7" />
+                        <span className="text-content-muted text-xs">Tap to upload a photo of your shop/property</span>
                       </>
                     )}
                   </label>

@@ -25,7 +25,7 @@ export function HeroHeadline() {
       Start{' '}
       {/* Lime highlight with ink text on "Syncing." only - constant in light &
           dark (no clash), matching the /around "your radius" treatment. */}
-      <span className="text-ink relative isolate inline-block px-1.5">
+      <span className="text-content relative isolate inline-block px-1.5">
         <motion.span
           aria-hidden="true"
           initial={reduce ? false : { scaleX: 0 }}

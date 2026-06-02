@@ -11,11 +11,11 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        neutral: 'bg-ink/8 text-ink',
+        neutral: 'bg-ink/8 text-content',
         accent: 'bg-lime text-ink',
-        outline: 'border border-ink/15 text-ink',
-        warning: 'bg-coral/20 text-ink',
-        muted: 'bg-cream-deep text-muted',
+        outline: 'border border-line/15 text-content',
+        warning: 'bg-coral/20 text-content',
+        muted: 'bg-surface-deep text-content-muted',
       },
       size: {
         sm: 'h-5 px-2',

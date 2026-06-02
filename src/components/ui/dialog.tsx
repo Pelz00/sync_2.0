@@ -42,7 +42,7 @@ export const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          'bg-white text-ink shadow-pop fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl p-6',
+          'bg-panel text-content shadow-pop fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl p-6',
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
           className,
         )}
@@ -51,7 +51,7 @@ export const DialogContent = React.forwardRef<
         {children}
         <DialogPrimitive.Close
           aria-label="Close"
-          className="text-muted hover:text-ink absolute right-4 top-4 rounded-full p-1 transition-colors"
+          className="text-content-muted hover:text-content absolute right-4 top-4 rounded-full p-1 transition-colors"
         >
           <X className="h-4 w-4" />
         </DialogPrimitive.Close>
@@ -93,7 +93,7 @@ export const DialogDescription = React.forwardRef<
   return (
     <DialogPrimitive.Description
       ref={ref}
-      className={cn('text-muted text-sm', className)}
+      className={cn('text-content-muted text-sm', className)}
       {...props}
     />
   );

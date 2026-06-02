@@ -24,8 +24,8 @@ export const Chip = React.forwardRef<HTMLButtonElement, ChipProps>(function Chip
       className={cn(
         'inline-flex h-9 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors',
         selected
-          ? 'bg-ink text-cream border-ink'
-          : 'border-ink/15 bg-white text-ink hover:bg-ink/5',
+          ? 'bg-ink text-cream border-line'
+          : 'border-line/15 bg-panel text-content hover:bg-ink/5',
         className,
       )}
       {...props}

@@ -26,18 +26,18 @@ export function SearchBar({
       method="get"
       role="search"
       className={cn(
-        'border-ink/10 bg-white flex h-12 w-full items-center gap-2 rounded-full border px-4',
-        'focus-within:border-ink',
+        'border-line/10 bg-panel flex h-12 w-full items-center gap-2 rounded-full border px-4',
+        'focus-within:border-line',
         className,
       )}
     >
-      <Search className="text-muted h-4 w-4 shrink-0" aria-hidden="true" />
+      <Search className="text-content-muted h-4 w-4 shrink-0" aria-hidden="true" />
       <input
         type="search"
         name="q"
         defaultValue={defaultValue}
         placeholder={placeholder}
-        className="placeholder:text-muted h-full w-full border-0 bg-transparent text-sm outline-none"
+        className="placeholder:text-content-muted h-full w-full border-0 bg-transparent text-sm outline-none"
         aria-label="Search Sync"
       />
     </form>

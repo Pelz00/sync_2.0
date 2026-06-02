@@ -46,12 +46,12 @@ export const metadata: Metadata = {
 };
 
 const COLOR_TOKENS = [
-  { name: 'cream', cls: 'bg-cream', hex: '#F4F1E8', note: '60% - primary surface' },
-  { name: 'cream-deep', cls: 'bg-cream-deep', hex: '#ECE7D8', note: 'surfaces, hovers' },
+  { name: 'cream', cls: 'bg-surface', hex: '#F4F1E8', note: '60% - primary surface' },
+  { name: 'cream-deep', cls: 'bg-surface-deep', hex: '#ECE7D8', note: 'surfaces, hovers' },
   { name: 'ink', cls: 'bg-ink', hex: '#0E0E12', note: '30% - primary text' },
   { name: 'lime', cls: 'bg-lime', hex: '#C5FF4A', note: '10% - accent fills only' },
   { name: 'lime-deep', cls: 'bg-lime-deep', hex: '#4A8500', note: 'lime as text on cream' },
-  { name: 'white', cls: 'bg-white', hex: '#FFFFFF', note: 'cards on cream' },
+  { name: 'white', cls: 'bg-panel', hex: '#FFFFFF', note: 'cards on cream' },
   { name: 'muted', cls: 'bg-muted', hex: '#6A6A72', note: 'meta text' },
   { name: 'coral', cls: 'bg-coral', hex: '#FF8B5C', note: 'warnings, sparingly' },
 ];
@@ -82,11 +82,11 @@ const SHADOWS = [
 
 export default function DesignSystemPage() {
   return (
-    <main className="bg-cream text-ink min-h-screen px-6 py-12 md:px-12">
+    <main className="bg-surface text-content min-h-screen px-6 py-12 md:px-12">
       <header className="mx-auto mb-16 max-w-5xl">
         <p className="eyebrow text-accent-fg">Internal · /dev/design-system</p>
         <h1 className="text-section font-display mt-3">Sync Design System</h1>
-        <p className="text-lead text-muted mt-4 max-w-2xl">
+        <p className="text-lead text-content-muted mt-4 max-w-2xl">
           Visual QA surface for every design token and reusable component. Not linked from
           production nav. Components will populate this page as Phases 3 and 4 land.
         </p>
@@ -96,12 +96,12 @@ export default function DesignSystemPage() {
         <Section eyebrow="01 - Colour" title="Tokens">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {COLOR_TOKENS.map((t) => (
-              <div key={t.name} className="shadow-card overflow-hidden rounded-lg bg-white">
+              <div key={t.name} className="shadow-card overflow-hidden rounded-lg bg-panel">
                 <div className={`${t.cls} h-24 w-full border-b border-black/5`} />
                 <div className="p-3">
-                  <p className="font-display text-card text-ink leading-tight">{t.name}</p>
-                  <p className="font-mono text-muted mt-1 text-xs">{t.hex}</p>
-                  <p className="text-muted mt-1 text-xs">{t.note}</p>
+                  <p className="font-display text-card text-content leading-tight">{t.name}</p>
+                  <p className="font-mono text-content-muted mt-1 text-xs">{t.hex}</p>
+                  <p className="text-content-muted mt-1 text-xs">{t.note}</p>
                 </div>
               </div>
             ))}
@@ -109,13 +109,13 @@ export default function DesignSystemPage() {
         </Section>
 
         <Section eyebrow="02 - Typography" title="Type scale">
-          <div className="divide-y divide-black/5 rounded-lg bg-white">
+          <div className="divide-y divide-black/5 rounded-lg bg-panel">
             {TYPE_SAMPLES.map((t) => (
               <div key={t.name} className="flex flex-col gap-2 p-6 md:flex-row md:items-baseline md:gap-8">
-                <p className="font-mono text-muted w-24 shrink-0 text-xs uppercase tracking-wider">
+                <p className="font-mono text-content-muted w-24 shrink-0 text-xs uppercase tracking-wider">
                   {t.name}
                 </p>
-                <p className={`${t.cls} text-ink min-w-0 break-words`}>{t.sample}</p>
+                <p className={`${t.cls} text-content min-w-0 break-words`}>{t.sample}</p>
               </div>
             ))}
           </div>
@@ -126,7 +126,7 @@ export default function DesignSystemPage() {
             {RADII.map((r) => (
               <div key={r.name} className="flex flex-col items-center gap-2">
                 <div className={`${r.cls} bg-ink h-16 w-16`} />
-                <p className="font-mono text-muted text-xs">{r.name}</p>
+                <p className="font-mono text-content-muted text-xs">{r.name}</p>
               </div>
             ))}
           </div>
@@ -136,8 +136,8 @@ export default function DesignSystemPage() {
           <div className="flex flex-wrap gap-6">
             {SHADOWS.map((s) => (
               <div key={s.name} className="flex flex-col items-center gap-2">
-                <div className={`${s.cls} h-24 w-32 rounded-lg bg-white`} />
-                <p className="font-mono text-muted text-xs">{s.name}</p>
+                <div className={`${s.cls} h-24 w-32 rounded-lg bg-panel`} />
+                <p className="font-mono text-content-muted text-xs">{s.name}</p>
               </div>
             ))}
           </div>
@@ -221,7 +221,7 @@ export default function DesignSystemPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted text-sm">Self-contain, 24/7 power, verified landlord.</p>
+                <p className="text-content-muted text-sm">Self-contain, 24/7 power, verified landlord.</p>
               </CardContent>
             </Card>
             <Card>
@@ -245,13 +245,13 @@ export default function DesignSystemPage() {
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="inbox">Inbox</TabsTrigger>
             </TabsList>
-            <TabsContent value="listings" className="text-muted text-sm">
+            <TabsContent value="listings" className="text-content-muted text-sm">
               4 active listings, 2 drafts.
             </TabsContent>
-            <TabsContent value="orders" className="text-muted text-sm">
+            <TabsContent value="orders" className="text-content-muted text-sm">
               3 orders pending payout.
             </TabsContent>
-            <TabsContent value="inbox" className="text-muted text-sm">
+            <TabsContent value="inbox" className="text-content-muted text-sm">
               12 unread messages.
             </TabsContent>
           </Tabs>
@@ -269,14 +269,14 @@ export default function DesignSystemPage() {
         </Section>
 
         <Section eyebrow="10 - Feedback" title="Spinner & inline">
-          <div className="text-muted flex items-center gap-3 text-sm">
+          <div className="text-content-muted flex items-center gap-3 text-sm">
             <Spinner /> <span>Loading vendor matches…</span>
             <Search className="h-4 w-4" />
           </div>
         </Section>
 
         <Section eyebrow="11 - Composites" title="Coming in Phase 4">
-          <p className="text-body text-muted">
+          <p className="text-body text-content-muted">
             ListingCard, VerifiedBadge, FilterPanel, EmptyState, ServicesDock, OrderStageTracker -
             all land in Phase 4.
           </p>

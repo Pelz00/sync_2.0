@@ -17,14 +17,14 @@ export const Checkbox = React.forwardRef<
     <CheckboxPrimitive.Root
       ref={ref}
       className={cn(
-        'border-ink/25 bg-white peer h-5 w-5 shrink-0 rounded border transition-colors',
-        'data-[state=checked]:bg-lime data-[state=checked]:border-ink',
+        'border-line/25 bg-panel peer h-5 w-5 shrink-0 rounded border transition-colors',
+        'data-[state=checked]:bg-lime data-[state=checked]:border-line',
         'disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
       {...props}
     >
-      <CheckboxPrimitive.Indicator className="text-ink flex items-center justify-center">
+      <CheckboxPrimitive.Indicator className="text-content flex items-center justify-center">
         <Check className="h-3.5 w-3.5" strokeWidth={3} />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>

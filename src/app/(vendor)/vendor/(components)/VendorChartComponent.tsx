@@ -37,8 +37,8 @@ const CustomTooltip = ({ active, payload }: TooltipPayload) => {
   const { week, revenue } = payload[0].payload;
   const isLatest = week === 'May W1';
   return (
-    <div className="border-ink/10 rounded-lg border bg-white px-3 py-2 shadow-lg">
-      <p className="text-muted mb-1 font-mono text-[11px] tracking-wide uppercase">{week}</p>
+    <div className="border-line/10 rounded-lg border bg-panel px-3 py-2 shadow-lg">
+      <p className="text-content-muted mb-1 font-mono text-[11px] tracking-wide uppercase">{week}</p>
       <p
         className="font-display text-base font-semibold"
         style={{ color: isLatest ? '#7ab800' : '#1a1a1a' }}
@@ -53,10 +53,10 @@ export function VendorChartComponent() {
   const total = data.reduce((sum, d) => sum + d.revenue, 0);
 
   return (
-    <div className="border-ink/10 shadow-card w-full rounded-xl border bg-white p-5">
+    <div className="border-line/10 shadow-card w-full rounded-xl border bg-panel p-5">
       {/* Legend + Summary */}
       <div className="mb-4 flex items-center justify-between">
-        <p className="text-muted font-mono text-[11px] tracking-wide">
+        <p className="text-content-muted font-mono text-[11px] tracking-wide">
           TOTAL · ₦{total.toLocaleString()}
         </p>
         <div className="flex items-center gap-4">

@@ -24,10 +24,10 @@ export function PropertyCard({ properties, onEdit, onBoost }: PropertyCardProps)
       {properties.map((property) => (
         <Card
           key={property.id}
-          className="border-ink group w-full border bg-transparent transition-shadow duration-300 hover:shadow-lg"
+          className="border-line group w-full border bg-transparent transition-shadow duration-300 hover:shadow-lg"
         >
           {/* Image / Placeholder */}
-          <div className="border-ink/30 mx-4 mt-4 overflow-hidden rounded-lg border border-dashed">
+          <div className="border-line/30 mx-4 mt-4 overflow-hidden rounded-lg border border-dashed">
             {property.imageUrl ? (
               <Image
                 src={property.imageUrl}
@@ -54,7 +54,7 @@ export function PropertyCard({ properties, onEdit, onBoost }: PropertyCardProps)
           <CardContent className="pt-4">
             <div className="flex items-start justify-between gap-2">
               <CardTitle className="text-base">{property.name}</CardTitle>
-              <span className="border-ink/20 text-ink shrink-0 rounded-full border px-3 py-0.5 text-xs font-medium">
+              <span className="border-line/20 text-content shrink-0 rounded-full border px-3 py-0.5 text-xs font-medium">
                 {property.status ?? 'Active'}
               </span>
             </div>

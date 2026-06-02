@@ -30,7 +30,7 @@ export function QuantityStepper({
     <div
       role="group"
       aria-label={label}
-      className={cn('border-ink/15 inline-flex h-10 items-center rounded-full border bg-white', className)}
+      className={cn('border-line/15 inline-flex h-10 items-center rounded-full border bg-panel', className)}
     >
       <button
         type="button"
@@ -41,7 +41,7 @@ export function QuantityStepper({
       >
         <Minus className="h-3.5 w-3.5" />
       </button>
-      <span aria-live="polite" className="text-ink w-8 text-center text-sm font-medium">
+      <span aria-live="polite" className="text-content w-8 text-center text-sm font-medium">
         {value}
       </span>
       <button

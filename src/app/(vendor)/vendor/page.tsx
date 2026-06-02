@@ -34,7 +34,7 @@ export default function Page() {
 
   return (
     <section className="flex flex-col gap-3">
-      <h1 className="text-muted max-w-xl font-mono text-sm tracking-wide">
+      <h1 className="text-content-muted max-w-xl font-mono text-sm tracking-wide">
         VENDOR DASHBOARD . {storeName.toUpperCase()}
       </h1>
       <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -45,7 +45,7 @@ export default function Page() {
           <div className="flex items-center gap-3">
             <Badge
               variant="accent"
-              className="border-ink flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
+              className="border-line flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
             >
               <Dot size={20} />
               Verified Vendor
@@ -69,9 +69,9 @@ export default function Page() {
       {/* New section for stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         {vendorStats.map(({ label, value, sub, icon: Icon }) => (
-          <Card key={label} className="border-ink border bg-transparent">
+          <Card key={label} className="border-line border bg-transparent">
             <CardHeader>
-              <CardTitle className="text-muted font-mono tracking-wide">{label}</CardTitle>
+              <CardTitle className="text-content-muted font-mono tracking-wide">{label}</CardTitle>
             </CardHeader>
             <CardContent className="text-section font-body text-3xl font-bold">
               <p>{value}</p>
@@ -91,11 +91,11 @@ export default function Page() {
           {/* PENDING BOOKING REQUESTS */}
           <div className="flex-1">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-muted text-body font-mono capitalize">
+              <h2 className="text-content-muted text-body font-mono capitalize">
                 PENDING ORDERS . {requestsNumber}
               </h2>
               <Link href={'/vendor/orders'}>
-                <Button variant={'outline'} className="text-muted border-transparent font-light">
+                <Button variant={'outline'} className="text-content-muted border-transparent font-light">
                   View all <ArrowRight />
                 </Button>
               </Link>
@@ -108,13 +108,13 @@ export default function Page() {
 
           {/* STATISTICS CHART */}
           <div className="flex-1">
-            <Card className="border-ink mb-4 h-full border bg-transparent">
+            <Card className="border-line mb-4 h-full border bg-transparent">
               <CardHeader>
-                <CardTitle className="text-muted flex items-center justify-between font-mono tracking-wide">
+                <CardTitle className="text-content-muted flex items-center justify-between font-mono tracking-wide">
                   <p>REVENUE . LAST 12 WEEKS</p>
                   <Button
                     variant={'outline'}
-                    className="text-muted mt-2 flex items-center gap-1 border-transparent font-light"
+                    className="text-content-muted mt-2 flex items-center gap-1 border-transparent font-light"
                   >
                     Weekly
                     <ChevronDown className="size-3.75" />
@@ -131,14 +131,14 @@ export default function Page() {
       </section>
       <section className="flex items-start gap-4 lg:gap-8">
         <div>
-          <h1 className="text-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
+          <h1 className="text-content-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
             MY PRODUCTS
           </h1>
           <ProductsCard products={foodProducts} />
         </div>
         <div>
           {/* EARNINGS SUMMARY */}
-          <h1 className="text-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
+          <h1 className="text-content-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
             MY EARNINGS
           </h1>
           <EarningsSummaryCard data={earningsSummary[0]} />

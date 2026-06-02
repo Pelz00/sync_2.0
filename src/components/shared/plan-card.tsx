@@ -35,7 +35,7 @@ export function PlanCard({
     <div
       className={cn(
         'relative flex flex-col gap-5 rounded-xl p-6',
-        recommended ? 'bg-ink text-cream shadow-pop' : 'bg-white text-ink shadow-card',
+        recommended ? 'bg-ink text-cream shadow-pop' : 'bg-panel text-content shadow-card',
         className,
       )}
     >
@@ -46,14 +46,14 @@ export function PlanCard({
       )}
       <div>
         <p className="font-display text-card">{name}</p>
-        <p className={cn('mt-1 text-sm', recommended ? 'text-cream/70' : 'text-muted')}>{tagline}</p>
+        <p className={cn('mt-1 text-sm', recommended ? 'text-cream/70' : 'text-content-muted')}>{tagline}</p>
       </div>
       <div className="flex items-baseline gap-1">
         <span className="font-display text-section">
           {priceMonthly === 0 ? 'Free' : formatNaira(priceMonthly)}
         </span>
         {priceMonthly > 0 && (
-          <span className={cn('text-xs', recommended ? 'text-cream/70' : 'text-muted')}>/month</span>
+          <span className={cn('text-xs', recommended ? 'text-cream/70' : 'text-content-muted')}>/month</span>
         )}
       </div>
       <ul className="flex flex-col gap-2 text-sm">
@@ -72,7 +72,7 @@ export function PlanCard({
       ) : (
         <Button
           variant={recommended ? 'primary' : 'outline'}
-          className={cn('mt-auto', !recommended && 'border-ink/15')}
+          className={cn('mt-auto', !recommended && 'border-line/15')}
         >
           Choose {name}
         </Button>

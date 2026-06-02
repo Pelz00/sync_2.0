@@ -24,7 +24,7 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="bg-cream min-h-screen px-6 py-16">
+    <div className="bg-surface min-h-screen px-6 py-16">
       <div className="mx-auto max-w-xl">
         <ErrorState onRetry={reset} />
       </div>

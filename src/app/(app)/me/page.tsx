@@ -22,7 +22,7 @@ export default function Page() {
 
   return (
     <section className="flex flex-col gap-3">
-      <p className="text-muted font-mono text-lg">WELCOME BACK</p>
+      <p className="text-content-muted font-mono text-lg">WELCOME BACK</p>
 
       {/* Header */}
       <section className="flex items-center justify-between">
@@ -32,12 +32,12 @@ export default function Page() {
         <div className="flex items-center gap-4">
           <Button
             variant={'outline'}
-            className="border-ink flex items-center gap-2 rounded-2xl border px-3 py-2"
+            className="border-line flex items-center gap-2 rounded-2xl border px-3 py-2"
           >
             <Bell size={20} />
             <p>{notificationCount}</p>
           </Button>
-          <Avatar className="border-ink border">
+          <Avatar className="border-line border">
             <AvatarImage src="/avatar-placeholder.png" alt={studentName} />
             <AvatarFallback>{studentName.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
@@ -61,12 +61,12 @@ export default function Page() {
         <div className="min-w-0 flex-1">
           {/* Header */}
           <div className="mb-4 flex items-center justify-between gap-3">
-            <h2 className="text-muted font-mono text-sm tracking-wide">
+            <h2 className="text-content-muted font-mono text-sm tracking-wide">
               SAVED HOSTELS · {savedCount}
             </h2>
             <Button
               variant="outline"
-              className="text-body text-muted flex shrink-0 items-center gap-1 border-none"
+              className="text-body text-content-muted flex shrink-0 items-center gap-1 border-none"
             >
               Manage <ArrowRight className="ml-1 size-4" />
             </Button>
@@ -78,14 +78,14 @@ export default function Page() {
           {/* More link */}
           <Button
             variant={'outline'}
-            className="text-muted mt-4 flex items-center gap-2 border-none"
+            className="text-content-muted mt-4 flex items-center gap-2 border-none"
           >
             <Plus className="size-4" />
             {savedCount} more
             <ArrowRight className="ml-1 size-4" />
           </Button>
           {/* {hostels.length > 3 && (
-            <Button className="text-muted mt-4 flex items-center gap-1 text-sm hover:underline">
+            <Button className="text-content-muted mt-4 flex items-center gap-1 text-sm hover:underline">
               + {hostels.length - 3} more <ArrowRight className="size-3.5" />
             </Button>
           )} */}
@@ -95,10 +95,10 @@ export default function Page() {
         <div className="w-full shrink-0 lg:w-72 xl:w-80">
           {/* Header — same height as the left header row */}
           <div className="mb-4 flex h-9 items-center">
-            <h2 className="text-muted font-mono text-sm tracking-wide">RECENT ACTIVITY</h2>
+            <h2 className="text-content-muted font-mono text-sm tracking-wide">RECENT ACTIVITY</h2>
           </div>
 
-          <div className="border-ink/20 rounded-2xl border border-dashed">
+          <div className="border-line/20 rounded-2xl border border-dashed">
             {recentActivity.map((item, index) => {
               const Icon = item.icon;
               return (
@@ -106,14 +106,14 @@ export default function Page() {
                   key={item.id}
                   className={`flex items-start gap-3 px-4 py-4 ${
                     index !== recentActivity.length - 1
-                      ? 'border-ink/10 border-b border-dashed'
+                      ? 'border-line/10 border-b border-dashed'
                       : ''
                   }`}
                 >
-                  <Icon className="text-ink mt-0.5 size-4 shrink-0" />
+                  <Icon className="text-content mt-0.5 size-4 shrink-0" />
                   <div>
-                    <p className="text-ink text-sm font-medium">{item.label}</p>
-                    <p className="text-muted text-xs">{item.time}</p>
+                    <p className="text-content text-sm font-medium">{item.label}</p>
+                    <p className="text-content-muted text-xs">{item.time}</p>
                   </div>
                 </div>
               );
@@ -122,7 +122,7 @@ export default function Page() {
         </div>
       </section>
       <section className="mt-6">
-        <h2 className="text-muted mb-4 font-mono text-sm tracking-wide">
+        <h2 className="text-content-muted mb-4 font-mono text-sm tracking-wide">
           PICKED FOR YOU . BASED ON TANKE + 250K
         </h2>
         <HostelCardList hostels={hostels.slice(0, 3)} />

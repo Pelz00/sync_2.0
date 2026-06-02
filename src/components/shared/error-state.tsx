@@ -26,13 +26,13 @@ export function ErrorState({
   return (
     <div
       className={cn(
-        'border-coral/30 bg-cream flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-12 text-center',
+        'border-coral/30 bg-surface flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-12 text-center',
         className,
       )}
     >
       <AlertTriangle className="text-coral h-8 w-8" aria-hidden="true" />
-      <h3 className="font-display text-card text-ink mt-2">{title}</h3>
-      <p className="text-muted max-w-md text-sm">{description}</p>
+      <h3 className="font-display text-card text-content mt-2">{title}</h3>
+      <p className="text-content-muted max-w-md text-sm">{description}</p>
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry} className="mt-2">
           Try again

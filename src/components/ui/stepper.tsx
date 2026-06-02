@@ -32,7 +32,7 @@ export function Stepper({ steps, current, className }: StepperProps) {
                 'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-medium transition-colors',
                 isComplete && 'bg-ink text-cream',
                 isActive && 'bg-lime text-ink ring-ink/15 ring-4',
-                !isComplete && !isActive && 'bg-cream-deep text-muted',
+                !isComplete && !isActive && 'bg-surface-deep text-content-muted',
               )}
               aria-current={isActive ? 'step' : undefined}
             >
@@ -41,7 +41,7 @@ export function Stepper({ steps, current, className }: StepperProps) {
             <span
               className={cn(
                 'truncate text-sm',
-                isActive ? 'text-ink font-medium' : 'text-muted',
+                isActive ? 'text-content font-medium' : 'text-content-muted',
               )}
             >
               {step.label}

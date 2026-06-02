@@ -82,8 +82,8 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
           autoCorrect="off"
           spellCheck={false}
           className={cn(
-            'border-ink/15 bg-white text-ink placeholder:text-muted h-11 w-full rounded-lg border pr-10 pl-3 text-sm transition-colors',
-            'focus:border-ink focus:outline-none disabled:opacity-50',
+            'border-line/15 bg-panel text-content placeholder:text-content-muted h-11 w-full rounded-lg border pr-10 pl-3 text-sm transition-colors',
+            'focus:border-line focus:outline-none disabled:opacity-50',
             className,
           )}
           {...props}
@@ -93,7 +93,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
           tabIndex={-1}
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? 'Hide password' : 'Show password'}
-          className="text-muted hover:text-ink absolute top-1/2 right-3 -translate-y-1/2"
+          className="text-content-muted hover:text-content absolute top-1/2 right-3 -translate-y-1/2"
         >
           {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>

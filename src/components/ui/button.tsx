@@ -17,9 +17,9 @@ const buttonVariants = cva(
       variant: {
         primary: 'bg-lime text-ink hover:bg-lime/85 shadow-card',
         dark: 'bg-ink text-cream hover:bg-ink/85',
-        outline: 'border border-ink/15 bg-transparent text-ink hover:bg-ink/5',
-        ghost: 'bg-transparent text-ink hover:bg-ink/5',
-        warning: 'bg-coral text-ink hover:bg-coral/85',
+        outline: 'border border-line/15 bg-transparent text-content hover:bg-ink/5',
+        ghost: 'bg-transparent text-content hover:bg-ink/5',
+        warning: 'bg-coral text-content hover:bg-coral/85',
       },
       size: {
         sm: 'h-9 px-3 text-sm rounded-md',

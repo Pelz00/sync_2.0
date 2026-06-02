@@ -81,7 +81,7 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
         </FormField>
 
         <div className="-mt-1 text-right">
-          <Link href="/login" className="text-muted hover:text-ink text-xs">
+          <Link href="/login" className="text-content-muted hover:text-content text-xs">
             Forgot password?
           </Link>
         </div>
@@ -91,7 +91,7 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
         </Button>
       </form>
 
-      <p className="text-muted text-center text-sm">
+      <p className="text-content-muted text-center text-sm">
         Don&rsquo;t have an account?{' '}
         <Link href={signupHref} className="text-lime-deep font-medium hover:underline">
           Sign up

@@ -23,7 +23,7 @@ export function AuthLayout({
     // Locked to the viewport height - the page never scrolls. If a form is
     // taller than the viewport, only the form pane scrolls (the brand panel
     // stays put).
-    <div className="bg-cream text-ink flex h-dvh flex-col overflow-hidden md:grid md:grid-cols-2">
+    <div className="bg-surface text-content flex h-dvh flex-col overflow-hidden md:grid md:grid-cols-2">
       {/* Brand + dynamic heading: top band on mobile, left column on desktop. */}
       <aside className="bg-ink text-cream flex shrink-0 flex-col gap-6 p-6 md:h-dvh md:justify-between md:gap-8 md:p-10">
         <Link href="/" className="font-display text-card w-fit">

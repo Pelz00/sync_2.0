@@ -27,7 +27,7 @@ export function MapPlaceholder({
       role="img"
       aria-label={label}
       className={cn(
-        'bg-cream-deep text-muted flex w-full flex-col items-center justify-center gap-2 rounded-xl',
+        'bg-surface-deep text-content-muted flex w-full flex-col items-center justify-center gap-2 rounded-xl',
         aspect,
         className,
       )}

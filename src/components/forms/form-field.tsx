@@ -43,12 +43,12 @@ export function FormField({
     <div className={cn('flex flex-col gap-1.5', className)}>
       <Label
         htmlFor={htmlFor}
-        className={cn('text-ink text-sm font-medium', srOnlyLabel && 'sr-only')}
+        className={cn('text-content text-sm font-medium', srOnlyLabel && 'sr-only')}
       >
         {label}
       </Label>
       {hint && (
-        <p id={hintId} className="text-muted text-xs">
+        <p id={hintId} className="text-content-muted text-xs">
           {hint}
         </p>
       )}

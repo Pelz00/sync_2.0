@@ -23,7 +23,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="bg-white border-ink/10 fixed inset-x-0 bottom-0 z-40 grid h-16 grid-cols-5 border-t md:hidden"
+      className="bg-panel border-line/10 fixed inset-x-0 bottom-0 z-40 grid h-16 grid-cols-5 border-t md:hidden"
     >
       {ITEMS.map(({ href, label, icon: Icon }) => {
         const active = pathname === href || pathname?.startsWith(`${href}/`);
@@ -34,7 +34,7 @@ export function MobileBottomNav() {
             aria-current={active ? 'page' : undefined}
             className={cn(
               'flex flex-col items-center justify-center gap-1 text-[11px] transition-colors',
-              active ? 'text-ink' : 'text-muted hover:text-ink',
+              active ? 'text-content' : 'text-content-muted hover:text-content',
             )}
           >
             <Icon className={cn('h-5 w-5', active && 'text-lime-deep')} />

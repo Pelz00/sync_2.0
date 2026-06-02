@@ -23,8 +23,8 @@ export const RadioGroupItem = React.forwardRef<
     <RadioPrimitive.Item
       ref={ref}
       className={cn(
-        'border-ink/25 bg-white aspect-square h-5 w-5 rounded-full border transition-colors',
-        'data-[state=checked]:border-ink',
+        'border-line/25 bg-panel aspect-square h-5 w-5 rounded-full border transition-colors',
+        'data-[state=checked]:border-line',
         'disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}

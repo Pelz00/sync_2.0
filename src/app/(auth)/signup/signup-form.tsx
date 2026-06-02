@@ -102,7 +102,7 @@ export function SignupForm({ next }: { next?: string }) {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3" noValidate>
       {/* Role selector */}
       <fieldset className="flex flex-col gap-1.5">
-        <legend className="text-ink mb-1.5 text-sm font-medium">I am a…</legend>
+        <legend className="text-content mb-1.5 text-sm font-medium">I am a…</legend>
         <div className="grid grid-cols-2 gap-3">
           {ROLES.map((r) => {
             const selected = role === r.id;
@@ -115,23 +115,31 @@ export function SignupForm({ next }: { next?: string }) {
                 className={cn(
                   'flex flex-col rounded-2xl border p-5 text-left transition-all',
                   selected
-                    ? 'border-ink bg-lime shadow-[3px_3px_0_0_var(--color-ink)]'
-                    : 'border-ink/15 hover:border-ink/40 bg-white',
+                    ? 'border-line bg-lime shadow-[3px_3px_0_0_var(--color-ink)]'
+                    : 'border-line/15 hover:border-line/40 bg-panel',
                 )}
               >
                 <div className="flex items-center justify-between">
-                  <span className="eyebrow text-ink/60">{selected ? 'Role · Selected' : 'Role'}</span>
+                  <span className={cn('eyebrow', selected ? 'text-ink/60' : 'text-content/60')}>
+                    {selected ? 'Role · Selected' : 'Role'}
+                  </span>
                   <span
                     className={cn(
                       'flex h-5 w-5 items-center justify-center border',
-                      selected ? 'border-ink bg-ink rounded-md text-white' : 'border-ink/30 rounded-full',
+                      selected ? 'border-line bg-ink rounded-md text-white' : 'border-line/30 rounded-full',
                     )}
                   >
                     {selected && <Check className="h-3 w-3" strokeWidth={3} />}
                   </span>
                 </div>
-                <span className="font-display text-ink mt-4 text-xl font-bold">{r.label}</span>
-                <span className="text-muted mt-1 text-sm">{r.desc}</span>
+                <span
+                  className={cn('font-display mt-4 text-xl font-bold', selected ? 'text-ink' : 'text-content')}
+                >
+                  {r.label}
+                </span>
+                <span className={cn('mt-1 text-sm', selected ? 'text-ink/70' : 'text-content-muted')}>
+                  {r.desc}
+                </span>
               </button>
             );
           })}
@@ -243,14 +251,14 @@ export function SignupForm({ next }: { next?: string }) {
           onClick={() => setValue('acceptedTerms', !acceptedTerms, { shouldValidate: true })}
           className={cn(
             'mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-md border-[1.5px] transition-colors',
-            acceptedTerms ? 'bg-lime border-lime' : 'border-ink/25 bg-transparent',
+            acceptedTerms ? 'bg-lime border-lime' : 'border-line/25 bg-transparent',
           )}
         >
-          {acceptedTerms && <span className="text-ink text-xs font-bold">✓</span>}
+          {acceptedTerms && <span className="text-content text-xs font-bold">✓</span>}
         </button>
-        <p className="text-muted text-xs">
+        <p className="text-content-muted text-xs">
           I agree to Sync&rsquo;s{' '}
-          <Link href="/terms" className="text-ink underline">
+          <Link href="/terms" className="text-content underline">
             Terms &amp; Privacy Policy
           </Link>
         </p>
@@ -261,7 +269,7 @@ export function SignupForm({ next }: { next?: string }) {
         {isSubmitting ? 'Creating account…' : 'Create account'}
       </Button>
 
-      <p className="text-muted text-center text-sm">
+      <p className="text-content-muted text-center text-sm">
         Already have an account?{' '}
         <Link href={loginHref} className="text-lime-deep font-medium hover:underline">
           Log in

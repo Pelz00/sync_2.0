@@ -23,7 +23,7 @@ export function BookingRequestCard({
   onDecline,
 }: BookingRequestCardProps) {
   return (
-    <Card className="border-ink group flex items-center justify-between border bg-transparent px-5 py-4 transition-shadow duration-300 hover:shadow-lg">
+    <Card className="border-line group flex items-center justify-between border bg-transparent px-5 py-4 transition-shadow duration-300 hover:shadow-lg">
       {/* Avatar + Info */}
       <div className="flex items-center gap-4">
         <div className="bg-ink/10 size-10 shrink-0 overflow-hidden rounded-full transition-transform duration-300 group-hover:scale-110">
@@ -39,7 +39,7 @@ export function BookingRequestCard({
         </div>
         <div>
           <h1 className="font-display text-card leading-tight font-semibold">{name}</h1>
-          <p className="text-muted text-sm">
+          <p className="text-content-muted text-sm">
             {location} · {room} · {timeAgo}
           </p>
         </div>
@@ -52,7 +52,7 @@ export function BookingRequestCard({
         </Button>
         <Button
           onClick={onAccept}
-          className="text-ink border-ink rounded-full border bg-[#CAFF4D] font-semibold hover:bg-[#b8f030]"
+          className="text-content border-line rounded-full border bg-[#CAFF4D] font-semibold hover:bg-[#b8f030]"
         >
           Accept <ArrowRight className="ml-1 size-4" />
         </Button>

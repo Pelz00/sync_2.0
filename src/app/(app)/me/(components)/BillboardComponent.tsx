@@ -60,7 +60,7 @@ export function BookingBillboard({
       <div className="flex flex-wrap items-center gap-3">
         <Button
           onClick={onMessage}
-          className="text-ink flex items-center gap-2 rounded-full bg-white font-medium hover:bg-white/90"
+          className="text-content flex items-center gap-2 rounded-full bg-panel font-medium hover:bg-panel/90"
         >
           <MessageCircle className="size-4" />
           Message landlord
@@ -68,14 +68,14 @@ export function BookingBillboard({
         <Button
           onClick={onViewBooking}
           variant="outline"
-          className="rounded-full border-white/30 text-white hover:bg-white/10"
+          className="rounded-full border-white/30 text-white hover:bg-panel/10"
         >
           View booking
         </Button>
         <Button
           onClick={onCancelRequest}
           variant="outline"
-          className="rounded-full border-white/30 text-white hover:bg-white/10"
+          className="rounded-full border-white/30 text-white hover:bg-panel/10"
         >
           Cancel request
         </Button>

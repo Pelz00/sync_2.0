@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('bg-white text-ink shadow-card overflow-hidden rounded-xl', className)}
+      className={cn('bg-panel text-content shadow-card overflow-hidden rounded-xl', className)}
       {...props}
     />
   );
@@ -24,7 +24,7 @@ export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHead
 }
 
 export function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn('text-muted text-sm', className)} {...props} />;
+  return <p className={cn('text-content-muted text-sm', className)} {...props} />;
 }
 
 export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
@@ -34,7 +34,7 @@ export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDi
 export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('border-ink/5 flex items-center gap-3 border-t px-5 py-4', className)}
+      className={cn('border-line/5 flex items-center gap-3 border-t px-5 py-4', className)}
       {...props}
     />
   );

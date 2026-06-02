@@ -15,7 +15,7 @@ export const SheetTrigger = DialogPrimitive.Trigger;
 export const SheetClose = DialogPrimitive.Close;
 
 const sheetVariants = cva(
-  'bg-white text-ink shadow-pop fixed z-50 gap-4 p-6 transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out',
+  'bg-panel text-content shadow-pop fixed z-50 gap-4 p-6 transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out',
   {
     variants: {
       side: {
@@ -61,7 +61,7 @@ export const SheetContent = React.forwardRef<
         {children}
         <DialogPrimitive.Close
           aria-label="Close"
-          className="text-muted hover:text-ink absolute right-4 top-4 rounded-full p-1 transition-colors"
+          className="text-content-muted hover:text-content absolute right-4 top-4 rounded-full p-1 transition-colors"
         >
           <X className="h-4 w-4" />
         </DialogPrimitive.Close>
@@ -94,7 +94,7 @@ export const SheetDescription = React.forwardRef<
   return (
     <DialogPrimitive.Description
       ref={ref}
-      className={cn('text-muted text-sm', className)}
+      className={cn('text-content-muted text-sm', className)}
       {...props}
     />
   );

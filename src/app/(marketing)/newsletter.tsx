@@ -35,14 +35,14 @@ export function Newsletter() {
           <h2 className="font-display mt-3 text-[32px] font-semibold leading-tight tracking-[-0.02em] md:text-[40px]">
             New spots, every week.
           </h2>
-          <p className="text-ink/70 mt-3 text-sm">
+          <p className="text-content/70 mt-3 text-sm">
             One short email: fresh verified hostels, what&rsquo;s on this weekend, and student-only
             deals around your campus.
           </p>
         </div>
 
         {done ? (
-          <p className="text-ink inline-flex items-center gap-2 text-sm font-medium">
+          <p className="text-content inline-flex items-center gap-2 text-sm font-medium">
             <span className="bg-ink text-lime flex h-6 w-6 items-center justify-center rounded-full">
               <Check className="h-3.5 w-3.5" strokeWidth={3} />
             </span>
@@ -58,14 +58,14 @@ export function Newsletter() {
                 placeholder="you@school.edu.ng"
                 aria-label="Email address"
                 aria-invalid={!!error}
-                className="bg-white text-ink placeholder:text-ink/40 h-12 w-full rounded-full px-5 text-sm outline-none"
+                className="bg-panel text-content placeholder:text-content/40 h-12 w-full rounded-full px-5 text-sm outline-none"
               />
               <Button type="submit" variant="dark" size="lg" className="shrink-0 sm:rounded-full">
                 Subscribe <ArrowRight />
               </Button>
             </div>
-            {error && <p className="text-ink/80 mt-2 text-xs">{error}</p>}
-            <p className="text-ink/60 mt-2 text-xs">No spam. Unsubscribe anytime.</p>
+            {error && <p className="text-content/80 mt-2 text-xs">{error}</p>}
+            <p className="text-content/60 mt-2 text-xs">No spam. Unsubscribe anytime.</p>
           </form>
         )}
       </div>

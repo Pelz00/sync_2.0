@@ -44,7 +44,7 @@ export default function Page() {
   const onDecline = () => {};
   return (
     <section className="flex flex-col gap-3">
-      <h1 className="text-muted max-w-xl font-mono text-sm tracking-wide">LANDLORD DASHBOARD</h1>
+      <h1 className="text-content-muted max-w-xl font-mono text-sm tracking-wide">LANDLORD DASHBOARD</h1>
       <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-section text-content font-display mt-2 font-medium">
           {requestsNumber} new requests <span className="text-lime-deep">this week.</span>
@@ -52,7 +52,7 @@ export default function Page() {
         <div className="flex items-center gap-3">
           <Badge
             variant="accent"
-            className="border-ink flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
+            className="border-line flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
           >
             <Dot size={20} />
             Verified landlord
@@ -69,9 +69,9 @@ export default function Page() {
       {/* New section for stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         {stats.map(({ label, value, sub, icon: Icon }) => (
-          <Card key={label} className="border-ink border bg-transparent">
+          <Card key={label} className="border-line border bg-transparent">
             <CardHeader>
-              <CardTitle className="text-muted font-mono tracking-wide">{label}</CardTitle>
+              <CardTitle className="text-content-muted font-mono tracking-wide">{label}</CardTitle>
             </CardHeader>
             <CardContent className="text-section font-body text-3xl font-bold">
               <p>{value}</p>
@@ -91,10 +91,10 @@ export default function Page() {
           {/* PENDING BOOKING REQUESTS */}
           <div className="flex-1">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-muted text-body font-mono">
+              <h2 className="text-content-muted text-body font-mono">
                 PENDING BOOKING REQUESTS . {requestsNumber}
               </h2>
-              <Button variant={'outline'} className="text-muted border-transparent font-light">
+              <Button variant={'outline'} className="text-content-muted border-transparent font-light">
                 View all <ArrowRight />
               </Button>
             </div>
@@ -126,9 +126,9 @@ export default function Page() {
 
           {/* STATISTICS CHART */}
           <div className="flex-1">
-            <Card className="border-ink mb-4 h-full border bg-transparent">
+            <Card className="border-line mb-4 h-full border bg-transparent">
               <CardHeader>
-                <CardTitle className="text-muted flex items-center justify-between font-mono tracking-wide">
+                <CardTitle className="text-content-muted flex items-center justify-between font-mono tracking-wide">
                   <p>REVENUE . LAST 12 WEEKS</p>
                   <Button
                     variant={'outline'}
@@ -148,7 +148,7 @@ export default function Page() {
         </div>
       </section>
       <section>
-        <h1 className="text-muted mb-2 max-w-xl font-mono text-sm tracking-wide">MY HOSTELS</h1>
+        <h1 className="text-content-muted mb-2 max-w-xl font-mono text-sm tracking-wide">MY HOSTELS</h1>
         <PropertyCard properties={properties} />
       </section>
     </section>

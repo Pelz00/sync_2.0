@@ -27,7 +27,7 @@ const EarningsSummaryCard = ({ data }: EarningsSummaryCardProps) => {
   ];
 
   return (
-    <Card className="border-ink/30 w-96 max-w-7xl border bg-transparent">
+    <Card className="border-line/30 w-96 max-w-7xl border bg-transparent">
       <CardContent className="flex-col gap-4 p-4 shadow-none">
         {summaries
           .sort((a, b) => {
@@ -37,9 +37,9 @@ const EarningsSummaryCard = ({ data }: EarningsSummaryCardProps) => {
           .map((item) => (
             <div
               key={item.label}
-              className="border-ink/10 shadow-b-none flex items-center justify-between gap-y-8 rounded-lg border-b p-3"
+              className="border-line/10 shadow-b-none flex items-center justify-between gap-y-8 rounded-lg border-b p-3"
             >
-              <p className="text-muted-foreground text-xs">{item.label}</p>
+              <p className="text-content-muted-foreground text-xs">{item.label}</p>
               <p className="text-lime-deep font-display mt-1 text-lg font-semibold">
                 ₦{item.value.toLocaleString()}
               </p>

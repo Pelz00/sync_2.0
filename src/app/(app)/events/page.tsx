@@ -13,7 +13,7 @@ export default function Page() {
   return (
     <section className="flex flex-col gap-3">
       {/* Come back later to use the dot icon */}
-      <h1 className="text-muted font-mono text-[12px] tracking-[3px]">
+      <h1 className="text-content-muted font-mono text-[12px] tracking-[3px]">
         EVENTS . ILORIN . THIS WEEK
       </h1>
       <h2 className="text-section text-content font-display">

@@ -31,7 +31,7 @@ export function OrderStageTracker({ stages, currentIndex, className }: OrderStag
                 'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-medium transition-colors',
                 done && 'bg-ink text-cream',
                 active && 'bg-lime text-ink',
-                !done && !active && 'bg-cream-deep text-muted',
+                !done && !active && 'bg-surface-deep text-content-muted',
               )}
               aria-current={active ? 'step' : undefined}
             >
@@ -40,7 +40,7 @@ export function OrderStageTracker({ stages, currentIndex, className }: OrderStag
             <span
               className={cn(
                 'text-xs',
-                active ? 'text-ink font-medium' : done ? 'text-ink' : 'text-muted',
+                active ? 'text-content font-medium' : done ? 'text-content' : 'text-content-muted',
               )}
             >
               {stage.label}

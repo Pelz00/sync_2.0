@@ -24,7 +24,7 @@ export function ImageGallery({ images, className }: ImageGalleryProps) {
 
   return (
     <div className={cn('flex flex-col gap-3', className)}>
-      <div className="bg-cream-deep relative aspect-[4/3] w-full overflow-hidden rounded-xl">
+      <div className="bg-surface-deep relative aspect-[4/3] w-full overflow-hidden rounded-xl">
         <Image
           src={active.src}
           alt={active.alt}

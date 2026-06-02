@@ -54,7 +54,7 @@ function PageLink({
 >) {
   const cls = cn(
     'inline-flex h-9 min-w-9 items-center justify-center rounded-md px-2 text-sm transition-colors',
-    active ? 'bg-ink text-cream' : 'text-ink hover:bg-ink/5',
+    active ? 'bg-ink text-cream' : 'text-content hover:bg-ink/5',
     disabled && 'pointer-events-none opacity-40',
   );
   if (disabled) {

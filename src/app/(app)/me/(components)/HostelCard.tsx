@@ -12,10 +12,10 @@ function HostelCard({ hostel, onSelect }: { hostel: Hostel; onSelect?: (id: stri
   return (
     <Card
       onClick={() => onSelect?.(hostel.id)}
-      className="group border-ink w-full cursor-pointer border bg-transparent transition-shadow duration-300 hover:shadow-lg"
+      className="group border-line w-full cursor-pointer border bg-transparent transition-shadow duration-300 hover:shadow-lg"
     >
       {/* Image / Placeholder */}
-      <div className="border-ink/25 m-3 overflow-hidden rounded-xl border border-dashed">
+      <div className="border-line/25 m-3 overflow-hidden rounded-xl border border-dashed">
         {hostel.imageUrl ? (
           <Image
             src={hostel.imageUrl}
@@ -42,7 +42,7 @@ function HostelCard({ hostel, onSelect }: { hostel: Hostel; onSelect?: (id: stri
       <CardContent className="pt-0">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-sm">{hostel.name}</CardTitle>
-          <p className="text-ink shrink-0 font-mono text-sm">
+          <p className="text-content shrink-0 font-mono text-sm">
             ₦{(hostel.price / 1000).toFixed(0)}k
           </p>
         </div>

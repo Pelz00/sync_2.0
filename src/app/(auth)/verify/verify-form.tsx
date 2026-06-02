@@ -43,7 +43,7 @@ export function VerifyForm({ email, next }: { email: string; next?: string }) {
 
   if (!email) {
     return (
-      <p className="text-muted text-sm">
+      <p className="text-content-muted text-sm">
         We couldn&rsquo;t find which email to verify. Please{' '}
         <Link href="/signup" className="text-lime-deep font-medium hover:underline">
           start signup
@@ -76,8 +76,8 @@ export function VerifyForm({ email, next }: { email: string; next?: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="text-muted text-sm">
-        Enter the 6-digit code we sent to <span className="text-ink font-medium">{email}</span>.
+      <p className="text-content-muted text-sm">
+        Enter the 6-digit code we sent to <span className="text-content font-medium">{email}</span>.
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
@@ -100,7 +100,7 @@ export function VerifyForm({ email, next }: { email: string; next?: string }) {
         </Button>
       </form>
 
-      <p className="text-muted text-center text-sm">
+      <p className="text-content-muted text-center text-sm">
         Didn&rsquo;t get it?{' '}
         <button
           type="button"

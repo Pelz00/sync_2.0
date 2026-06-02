@@ -42,10 +42,10 @@ export function ProductsCard({ products, onEdit, onBoost }: ProductsCardProps) {
         return (
           <Card
             key={product.id}
-            className={`border-ink group flex flex-col overflow-hidden border bg-transparent transition-shadow duration-300 hover:shadow-lg`}
+            className={`border-line group flex flex-col overflow-hidden border bg-transparent transition-shadow duration-300 hover:shadow-lg`}
           >
             {/* Image */}
-            <div className="border-ink/20 h-24 overflow-hidden border-b border-dashed">
+            <div className="border-line/20 h-24 overflow-hidden border-b border-dashed">
               {product.imageUrl ? (
                 <Image
                   src={product.imageUrl}
