@@ -41,7 +41,7 @@ export function AuthLayout({
         </p>
       </aside>
 
-      <main className="flex flex-1 items-center justify-center overflow-y-auto p-6 md:h-dvh md:p-10">
+      <main className="bg-surface-deep flex flex-1 items-center justify-center overflow-y-auto p-6 md:h-dvh md:p-10">
         <div className="w-full max-w-lg py-6">{children}</div>
       </main>
     </div>
