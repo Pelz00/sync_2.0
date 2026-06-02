@@ -11,13 +11,20 @@
 import Link from 'next/link';
 import { Bell } from 'lucide-react';
 import { SearchBar } from '@/components/shared/search-bar';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { UserMenu } from './user-menu';
 import { ServicesDock } from './services-dock';
 import { MobileBottomNav } from './mobile-bottom-nav';
+import { getCurrentUser, getFirstName } from '@/modules/auth/queries';
 import { SITE } from '@/config/site';
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export async function AppShell({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+  const meta = user?.user_metadata ?? {};
+  const name = (meta.full_name as string | undefined) || user?.email?.split('@')[0] || 'You';
+  const initial = (getFirstName(user) ?? name).charAt(0).toUpperCase();
+  const role = meta.role as string | undefined;
+
   return (
     <div className="bg-cream text-ink min-h-screen">
       {/* Top bar - logo + search + profile */}
@@ -38,11 +45,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <Bell className="h-4 w-4" />
             </Link>
-            <Link href="/me" aria-label="Profile">
-              <Avatar className="h-9 w-9">
-                <AvatarFallback>S</AvatarFallback>
-              </Avatar>
-            </Link>
+            {user ? (
+              <UserMenu name={name} email={user.email ?? ''} initial={initial} role={role} />
+            ) : (
+              <Link
+                href="/login"
+                className="hover:bg-ink/5 flex h-10 items-center rounded-full px-3 text-sm"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
         </div>
       </header>

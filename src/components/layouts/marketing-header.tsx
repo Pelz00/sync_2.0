@@ -13,6 +13,8 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { MobileMenu } from './mobile-menu';
 import { ActiveModuleIndicator } from './active-module-indicator';
+import { UserMenu } from './user-menu';
+import { getCurrentUser, getFirstName } from '@/modules/auth/queries';
 import { SITE } from '@/config/site';
 
 // Module nav from the hi-fi guide, split around the centered logo. These are
@@ -50,7 +52,13 @@ interface MarketingHeaderProps {
   dockMode?: boolean;
 }
 
-export function MarketingHeader({ dockMode = false }: MarketingHeaderProps) {
+export async function MarketingHeader({ dockMode = false }: MarketingHeaderProps) {
+  const user = await getCurrentUser();
+  const meta = user?.user_metadata ?? {};
+  const name = (meta.full_name as string | undefined) || user?.email?.split('@')[0] || 'You';
+  const initial = (getFirstName(user) ?? name).charAt(0).toUpperCase();
+  const role = meta.role as string | undefined;
+
   return (
     <header className="bg-surface/90 border-line/5 sticky top-0 z-40 border-b backdrop-blur">
       <div className="mx-auto flex h-16 items-center justify-between gap-4 px-6 md:grid md:grid-cols-[1fr_auto_1fr]">
@@ -88,21 +96,25 @@ export function MarketingHeader({ dockMode = false }: MarketingHeaderProps) {
             ))}
           </nav>
           <ThemeToggle className="hidden md:inline-flex" />
-          <div className="hidden items-center gap-2 md:flex">
-            <Button
-              asChild
-              variant="ghost"
-              size="sm"
-              className="text-foreground hover:bg-foreground/10"
-            >
-              <Link href="/login">Sign in / Sign up</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href="/signup?role=vendor&category=landlord">
-                List a property <ArrowRight />
-              </Link>
-            </Button>
-          </div>
+          {user ? (
+            <UserMenu name={name} email={user.email ?? ''} initial={initial} role={role} />
+          ) : (
+            <div className="hidden items-center gap-2 md:flex">
+              <Button
+                asChild
+                variant="ghost"
+                size="sm"
+                className="text-foreground hover:bg-foreground/10"
+              >
+                <Link href="/login">Sign in / Sign up</Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link href="/signup?role=vendor&category=landlord">
+                  List a property <ArrowRight />
+                </Link>
+              </Button>
+            </div>
+          )}
           {/* Hamburger - mobile only, far right */}
           <MobileMenu />
         </div>

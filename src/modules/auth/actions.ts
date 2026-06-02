@@ -111,3 +111,11 @@ export async function signIn(input: LoginInput): Promise<AuthResult> {
   if (error) return { ok: false, error: error.message };
   return { ok: true };
 }
+
+/** Sign out the current user. Clears the session cookies. */
+export async function signOut(): Promise<AuthResult> {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signOut();
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
