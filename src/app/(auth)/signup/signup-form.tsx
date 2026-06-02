@@ -36,7 +36,7 @@ import { signUp } from '@/modules/auth/actions';
 
 const ROLES: { id: SignupInput['role']; label: string; desc: string }[] = [
   { id: 'student', label: "I'm a student", desc: 'Find hostels, food & services' },
-  { id: 'vendor', label: "I'm a vendor", desc: 'List your business to students' },
+  { id: 'vendor', label: 'I sell or rent', desc: 'Rooms, food, services & more' },
 ];
 
 const VENDOR_CATEGORIES: { value: VendorCategory; label: string }[] = [
