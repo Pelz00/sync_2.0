@@ -12,10 +12,11 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Check } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import {
   Select,
   SelectContent,
@@ -61,6 +62,7 @@ export function SignupForm({ next }: { next?: string }) {
   const router = useRouter();
   const {
     register,
+    control,
     handleSubmit,
     setValue,
     watch,
@@ -190,22 +192,40 @@ export function SignupForm({ next }: { next?: string }) {
       </FormField>
 
       <FormField label="Password" htmlFor="password" error={errors.password?.message}>
-        <Input
-          id="password"
-          type="password"
-          autoComplete="new-password"
-          placeholder="At least 8 characters"
-          {...register('password')}
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <PasswordInput
+              id="password"
+              autoComplete="new-password"
+              placeholder="At least 8 characters"
+              value={field.value ?? ''}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              name={field.name}
+              ref={field.ref}
+            />
+          )}
         />
       </FormField>
 
       <FormField label="Confirm password" htmlFor="confirmPassword" error={errors.confirmPassword?.message}>
-        <Input
-          id="confirmPassword"
-          type="password"
-          autoComplete="new-password"
-          placeholder="Repeat your password"
-          {...register('confirmPassword')}
+        <Controller
+          name="confirmPassword"
+          control={control}
+          render={({ field }) => (
+            <PasswordInput
+              id="confirmPassword"
+              autoComplete="new-password"
+              placeholder="Repeat your password"
+              value={field.value ?? ''}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              name={field.name}
+              ref={field.ref}
+            />
+          )}
         />
       </FormField>
 

@@ -12,10 +12,11 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { PasswordInput } from '@/components/ui/password-input';
 import { FormField } from '@/components/forms';
 import { toast } from '@/components/ui/toast';
 import { loginSchema, type LoginInput } from '@/lib/validations';
@@ -25,6 +26,7 @@ export function LoginForm({ next }: { next?: string }) {
   const router = useRouter();
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
@@ -57,12 +59,21 @@ export function LoginForm({ next }: { next?: string }) {
         </FormField>
 
         <FormField label="Password" htmlFor="password" error={errors.password?.message}>
-          <Input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            placeholder="••••••••"
-            {...register('password')}
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <PasswordInput
+                id="password"
+                autoComplete="current-password"
+                placeholder="••••••••"
+                value={field.value ?? ''}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                name={field.name}
+                ref={field.ref}
+              />
+            )}
           />
         </FormField>
 
