@@ -27,7 +27,7 @@ export default function Page() {
       {/* Header */}
       <section className="flex items-center justify-between">
         <h1 className="font-display mt-2 text-3xl">
-          Hi <span className="text-lime-deep">{studentName}</span> - let's find your spot.
+          Hi <span className="text-lime-deep">{studentName}</span> - let&apos;s find your spot.
         </h1>
         <div className="flex items-center gap-4">
           <Button
