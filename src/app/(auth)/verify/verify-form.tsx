@@ -9,6 +9,7 @@
  */
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -30,6 +31,15 @@ export function VerifyForm({ email, next }: { email: string; next?: string }) {
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: { email },
   });
+
+  // Resend cooldown - a code is sent when they arrive from signup, so the
+  // button starts on a 60s countdown and resets after each successful resend.
+  const [cooldown, setCooldown] = useState(60);
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(id);
+  }, [cooldown]);
 
   if (!email) {
     return (
@@ -54,8 +64,14 @@ export function VerifyForm({ email, next }: { email: string; next?: string }) {
   }
 
   async function onResend() {
+    if (cooldown > 0) return;
     const res = await resendSignupOtp(email);
-    toast(res.ok ? 'A new code is on its way.' : res.error);
+    if (res.ok) {
+      setCooldown(60);
+      toast('A new code is on its way.');
+    } else {
+      toast(res.error);
+    }
   }
 
   return (
@@ -86,8 +102,13 @@ export function VerifyForm({ email, next }: { email: string; next?: string }) {
 
       <p className="text-muted text-center text-sm">
         Didn&rsquo;t get it?{' '}
-        <button type="button" onClick={onResend} className="text-lime-deep font-medium hover:underline">
-          Resend code
+        <button
+          type="button"
+          onClick={onResend}
+          disabled={cooldown > 0}
+          className="text-lime-deep font-medium hover:underline disabled:cursor-not-allowed disabled:no-underline disabled:opacity-50"
+        >
+          {cooldown > 0 ? `Resend code in ${cooldown}s` : 'Resend code'}
         </button>
       </p>
     </div>
