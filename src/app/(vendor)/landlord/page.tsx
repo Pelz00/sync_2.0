@@ -46,7 +46,7 @@ export default function Page() {
     <section className="flex flex-col gap-3">
       <h1 className="text-muted max-w-xl font-mono text-sm tracking-wide">LANDLORD DASHBOARD</h1>
       <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-section text-ink font-display mt-2 font-medium">
+        <h2 className="text-section text-content font-display mt-2 font-medium">
           {requestsNumber} new requests <span className="text-lime-deep">this week.</span>
         </h2>
         <div className="flex items-center gap-3">

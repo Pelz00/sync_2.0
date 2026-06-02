@@ -12,8 +12,8 @@ export const metadata: Metadata = { title: 'Messages' };
 export default function Page() {
   return (
     <section className="flex flex-col gap-3">
-      <p className="eyebrow text-lime-deep">/me/messages</p>
-      <h1 className="font-display text-section text-ink">Messages</h1>
+      <p className="eyebrow text-accent-fg">/me/messages</p>
+      <h1 className="font-display text-section text-content">Messages</h1>
       <p className="text-muted max-w-xl text-sm">
         Placeholder - see the route header above for what gets built here.
       </p>

@@ -39,7 +39,7 @@ const PROTECTED_PREFIXES: { prefix: string; roles: Role[] }[] = [
   { prefix: '/search', roles: ['student'] },
   { prefix: '/checkout', roles: ['student'] },
   { prefix: '/wallet', roles: ['student'] },
-  // { prefix: '/me', roles: ['student'] },
+  { prefix: '/me', roles: ['student'] },
   { prefix: '/onboarding', roles: ['vendor'] },
   { prefix: '/vendor', roles: ['vendor'] },
   { prefix: '/landlord', roles: ['vendor'] }, // category-check happens in the page itself

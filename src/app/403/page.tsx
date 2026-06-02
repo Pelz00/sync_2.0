@@ -13,7 +13,7 @@ export const metadata = { title: 'Not allowed' };
 export default function ForbiddenPage() {
   return (
     <div className="bg-cream text-ink flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
-      <p className="eyebrow text-lime-deep">403 · No access</p>
+      <p className="eyebrow text-accent-fg">403 · No access</p>
       <h1 className="font-display text-section max-w-md">
         This page isn&rsquo;t for your account type.
       </h1>

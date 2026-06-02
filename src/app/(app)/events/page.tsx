@@ -16,7 +16,7 @@ export default function Page() {
       <h1 className="text-muted font-mono text-[12px] tracking-[3px]">
         EVENTS . ILORIN . THIS WEEK
       </h1>
-      <h2 className="text-section text-ink font-display">
+      <h2 className="text-section text-content font-display">
         What&apos;s on, <span className="text-lime-deep">this week.</span>
       </h2>
       <p className="text-lime-deep font-display my-12 flex h-full w-full items-center justify-center text-2xl">

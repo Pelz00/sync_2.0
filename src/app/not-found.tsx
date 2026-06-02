@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 export default function NotFound() {
   return (
     <div className="bg-cream text-ink flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
-      <p className="eyebrow text-lime-deep">404</p>
+      <p className="eyebrow text-accent-fg">404</p>
       <h1 className="font-display text-section max-w-md">
         We can&rsquo;t find that page.
       </h1>

@@ -24,7 +24,7 @@ export function FormSection({
   return (
     <section className={cn('flex flex-col gap-5', className)}>
       <header className="flex flex-col gap-1">
-        {eyebrow && <p className="eyebrow text-lime-deep">{eyebrow}</p>}
+        {eyebrow && <p className="eyebrow text-accent-fg">{eyebrow}</p>}
         <h2 className="font-display text-card text-ink">{title}</h2>
         {description && <p className="text-muted text-sm">{description}</p>}
       </header>

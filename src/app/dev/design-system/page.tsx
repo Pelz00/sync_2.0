@@ -84,7 +84,7 @@ export default function DesignSystemPage() {
   return (
     <main className="bg-cream text-ink min-h-screen px-6 py-12 md:px-12">
       <header className="mx-auto mb-16 max-w-5xl">
-        <p className="eyebrow text-lime-deep">Internal · /dev/design-system</p>
+        <p className="eyebrow text-accent-fg">Internal · /dev/design-system</p>
         <h1 className="text-section font-display mt-3">Sync Design System</h1>
         <p className="text-lead text-muted mt-4 max-w-2xl">
           Visual QA surface for every design token and reusable component. Not linked from
@@ -297,7 +297,7 @@ function Section({
 }) {
   return (
     <section>
-      <p className="eyebrow text-lime-deep">{eyebrow}</p>
+      <p className="eyebrow text-accent-fg">{eyebrow}</p>
       <h2 className="text-section font-display mt-2 mb-8">{title}</h2>
       {children}
     </section>

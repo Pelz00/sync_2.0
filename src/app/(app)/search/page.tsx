@@ -12,8 +12,8 @@ export const metadata: Metadata = { title: 'Search' };
 export default function Page() {
   return (
     <section className="flex flex-col gap-3">
-      <p className="eyebrow text-lime-deep">/search</p>
-      <h1 className="font-display text-section text-ink">Search</h1>
+      <p className="eyebrow text-accent-fg">/search</p>
+      <h1 className="font-display text-section text-content">Search</h1>
       <p className="text-muted max-w-xl text-sm">
         Placeholder - see the route header above for what gets built here.
       </p>

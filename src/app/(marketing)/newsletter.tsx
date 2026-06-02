@@ -31,7 +31,7 @@ export function Newsletter() {
     <section className="bg-lime text-ink mt-20 w-full">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-16 md:flex-row md:items-center md:justify-between md:py-20">
         <div className="max-w-md">
-          <p className="eyebrow text-lime-deep">Stay in sync</p>
+          <p className="eyebrow text-accent-fg">Stay in sync</p>
           <h2 className="font-display mt-3 text-[32px] font-semibold leading-tight tracking-[-0.02em] md:text-[40px]">
             New spots, every week.
           </h2>

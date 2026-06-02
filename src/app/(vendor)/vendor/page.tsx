@@ -38,7 +38,7 @@ export default function Page() {
         VENDOR DASHBOARD . {storeName.toUpperCase()}
       </h1>
       <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-section text-ink font-display mt-2 font-medium">
+        <h2 className="text-section text-content font-display mt-2 font-medium">
           {requestsNumber} new <span className="text-lime-deep">orders.</span>
         </h2>
         <div className="">
