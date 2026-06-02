@@ -55,14 +55,14 @@ export function ProductsCard({ products, onEdit, onBoost }: ProductsCardProps) {
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               ) : (
-                <div className="relative h-full w-full bg-[#f0ece4]">
+                <div className="relative h-full w-full bg-surface-deep">
                   <svg
                     className="absolute inset-0 h-full w-full"
                     xmlns="http://www.w3.org/2000/svg"
                     preserveAspectRatio="none"
                   >
-                    <line x1="0" y1="0" x2="100%" y2="100%" stroke="#c5bfb5" strokeWidth="1" />
-                    <line x1="100%" y1="0" x2="0" y2="100%" stroke="#c5bfb5" strokeWidth="1" />
+                    <line x1="0" y1="0" x2="100%" y2="100%" stroke="var(--color-content-muted)" strokeWidth="1" />
+                    <line x1="100%" y1="0" x2="0" y2="100%" stroke="var(--color-content-muted)" strokeWidth="1" />
                   </svg>
                 </div>
               )}

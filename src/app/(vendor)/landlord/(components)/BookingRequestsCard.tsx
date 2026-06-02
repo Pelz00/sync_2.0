@@ -52,7 +52,7 @@ export function BookingRequestCard({
         </Button>
         <Button
           onClick={onAccept}
-          className="text-content border-line rounded-full border bg-[#CAFF4D] font-semibold hover:bg-[#b8f030]"
+          className="text-ink border-line rounded-full border bg-lime font-semibold hover:bg-lime/85"
         >
           Accept <ArrowRight className="ml-1 size-4" />
         </Button>

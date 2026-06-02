@@ -50,7 +50,7 @@ const CustomTooltip = ({ active, payload }: TooltipPayload) => {
       <p className="text-content-muted mb-1 font-mono text-[11px] tracking-wide uppercase">{week}</p>
       <p
         className="font-display text-base font-semibold"
-        style={{ color: isLatest ? '#7ab800' : '#1a1a1a' }}
+        style={{ color: isLatest ? 'var(--color-accent-fg)' : 'var(--color-content)' }}
       >
         ₦{revenue.toLocaleString()}
       </p>
@@ -80,7 +80,7 @@ export function LandlordChartComponent() {
                 <text
                   x={Number(x)}
                   y={Number(y) + 12}
-                  fill="#1a1a1a"
+                  fill="var(--color-content)"
                   fontSize={13}
                   textAnchor="middle"
                 >
@@ -95,7 +95,7 @@ export function LandlordChartComponent() {
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
           <Bar dataKey="revenue" shape={<RoundedBar />} isAnimationActive={false}>
             {data.map((_, i) => (
-              <Cell key={i} fill={i === data.length - 1 ? '#CAFF4D' : '#1a1a1a'} />
+              <Cell key={i} fill={i === data.length - 1 ? 'var(--color-lime)' : 'var(--color-content)'} />
             ))}
           </Bar>
         </BarChart>

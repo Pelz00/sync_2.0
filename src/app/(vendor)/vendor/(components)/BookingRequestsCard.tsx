@@ -47,7 +47,7 @@ export function BookingRequestCard({ data }: BookingRequestCardProps) {
                 </div>
                 <p className="text-content-muted text-sm">{items}</p>
                 <div className="mt-0.5 flex items-center gap-2">
-                  <span className="font-mono text-xs font-semibold text-[#7ab800]">{total}</span>
+                  <span className="font-mono text-xs font-semibold text-accent-fg">{total}</span>
                   <span className="text-content-muted text-xs">·</span>
                   <span className="text-content-muted text-xs capitalize">{deliveryType}</span>
                   <span className="text-content-muted text-xs">· {timeAgo} ago</span>
@@ -61,7 +61,7 @@ export function BookingRequestCard({ data }: BookingRequestCardProps) {
               </Button>
               <Button
                 onClick={onAccept}
-                className="text-content border-line rounded-full border bg-[#CAFF4D] font-semibold hover:bg-[#b8f030]"
+                className="text-ink border-line rounded-full border bg-lime font-semibold hover:bg-lime/85"
               >
                 Accept <ArrowRight className="ml-1 size-4" />
               </Button>
