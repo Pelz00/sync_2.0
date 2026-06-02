@@ -5,248 +5,145 @@
  * BUILT HERE: KPI <Card>s, recent orders table, <VerifiedBadge> banner if pending.
  * TODO: implement the full screen once dependent modules + data are wired.
  */
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui';
+import { ArrowRight, ChevronDown, Dot, Megaphone } from 'lucide-react';
 import type { Metadata } from 'next';
+import { BookingRequestCard } from './(components)/BookingRequestsCard';
+import { VendorChartComponent } from './(components)/VendorChartComponent';
+import { ProductsCard } from './(components)/ProductsCard';
+import { bookingRequests, earningsSummary, foodProducts, vendorStats } from '@/mock/vendor';
 import Link from 'next/link';
-import Image from 'next/image';
+import EarningsSummaryCard from './(components)/EarningsSummaryCard';
 
-export const metadata: Metadata = { title: 'Vendor dashboard — Mama Put Tanke' };
+export const metadata: Metadata = { title: 'Vendor dashboard' };
 
-const orders = [
-  {
-    initials: 'AO',
-    name: 'Aisha O.',
-    meta: 'UIUI · chicken · chapman · 2 min ago',
-    status: 'new',
-    statusLabel: 'new',
-  },
-  {
-    initials: 'DB',
-    name: 'David B.',
-    meta: '2x suya combo · 8 min ago',
-    status: 'cooking',
-    statusLabel: 'cooking',
-  },
-  {
-    initials: 'SK',
-    name: 'Sarah K.',
-    meta: 'Amala · ewedu · 21 min ago',
-    status: 'ready',
-    statusLabel: 'ready',
-  },
-];
+export default function Page() {
+  const requestsNumber = 8;
+  const storeName = 'HiFoods';
 
-const listings = [
-  {
-    name: 'Mama Put Tanke menu',
-    meta: '112 views · 8 orders today',
-    status: 'active',
-    statusLabel: 'Active',
-    img: '',
-  },
-  {
-    name: 'Suya combo plate',
-    meta: '46 views · 3 orders',
-    status: 'paused',
-    statusLabel: 'Paused',
-    img: '',
-  },
-  {
-    name: 'Sunday brunch buffet',
-    meta: '— Submitted 2h ago',
-    status: 'review',
-    statusLabel: 'Pending review',
-    img: '',
-  },
-];
-
-const statusBadge: Record<string, string> = {
-  new: 'bg-[#c8f135] border-[#b8e020] text-[#4a5800]',
-  cooking: 'bg-[#fff3cd] border-[#ffd86b] text-[#7a5500]',
-  ready: 'bg-[#d1f7e0] border-[#6ee09a] text-[#1a6b3a]',
-  active: 'bg-[#c8f135] border-[#b8e020] text-[#4a5800]',
-  paused: 'bg-[#ffeaea] border-[#ffb3b3] text-[#a33333]',
-  review: 'bg-[#fff3cd] border-[#ffd86b] text-[#7a5500]',
-};
-
-export default function VendorDashboardPage() {
   return (
-    <main className="font-display min-h-screen bg-[#f5f2eb] p-4 text-[#1a1a1a]">
-      {/* Top row */}
-      <div className="mb-1 flex items-start justify-between">
-        <p className="text-sm tracking-widest text-[#aaa] uppercase">
-          Vendor dashboard &rsaquo; <span className="text-[#888]">Mama Put Tanke</span>
-        </p>
-        <div className="flex items-center gap-2">
-          <span className="flex items-center rounded-full border border-[#b8e020] bg-[#c8f135] px-3 py-1 text-[11px] font-semibold text-[#4a5800]">
-            Verified pro
-          </span>
+    <section className="flex flex-col gap-3">
+      <h1 className="text-muted max-w-xl font-mono text-sm tracking-wide">
+        VENDOR DASHBOARD . {storeName.toUpperCase()}
+      </h1>
+      <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-section text-ink font-display mt-2 font-medium">
+          {requestsNumber} new <span className="text-lime-deep">orders.</span>
+        </h2>
+        <div className="">
+          <div className="flex items-center gap-3">
+            <Badge
+              variant="accent"
+              className="border-ink flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
+            >
+              <Dot size={20} />
+              Verified Vendor
+            </Badge>
+            <Avatar className="size-10">
+              <AvatarImage
+                src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmxhY2slMjBwZW9wbGV8ZW58MHx8MHx8fDA%3D"
+                alt="Aisha O."
+              />
+              <AvatarFallback>AO</AvatarFallback>
+            </Avatar>
+          </div>
+          <Link href={'/vendor/promotions'}>
+            <Button className="mt-4 flex items-center gap-2">
+              <Megaphone />
+              ADVERTISE NOW
+            </Button>
+          </Link>
         </div>
       </div>
-
-      {/* Page title */}
-      <h1 className="font-display mb-8 text-2xl leading-tight">
-        8 new orders <span className="font-mono font-semibold text-[#c8f135]">this week.</span>
-      </h1>
-
-      {/* Stats */}
-      <div className="mb-8 grid h-40 w-full grid-cols-4 gap-2">
-        {[
-          { label: 'This week', value: '₦68,500', sub: '+24%', highlight: true },
-          { label: 'Next payout', value: '₦52,300', sub: 'Sat 11pm', highlight: false },
-          { label: 'Conversion', value: '31%', sub: 'views → orders', highlight: false },
-          { label: 'Plan usage', value: '6/10', sub: 'listings · Pro yearly', highlight: false },
-        ].map((s) => (
-          <div
-            key={s.label}
-            className={`rounded-2xl border px-4 py-3 ${
-              s.highlight ? 'border-[#b8e020] bg-[#c8f135]' : 'border-[#e0ddd5] bg-white'
-            }`}
-          >
-            <p
-              className={`font-display mb-2 text-sm font-medium tracking-widest uppercase ${
-                s.highlight ? 'text-[#6a7a00]' : 'text-[#aaa]'
-              }`}
-            >
-              {s.label}
-            </p>
-            <p
-              className={`font-display mb-2 text-[26px] leading-none font-semibold ${
-                s.highlight ? 'text-[#1a1a1a]' : 'text-[#1a1a1a]'
-              }`}
-            >
-              {s.value}
-            </p>
-            <p
-              className={`font-display text-xs font-medium ${
-                s.highlight ? 'text-[#4a5800]' : 'text-[#888]'
-              }`}
-            >
-              {s.sub}
-            </p>
-          </div>
+      {/* New section for stats */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+        {vendorStats.map(({ label, value, sub, icon: Icon }) => (
+          <Card key={label} className="border-ink border bg-transparent">
+            <CardHeader>
+              <CardTitle className="text-muted font-mono tracking-wide">{label}</CardTitle>
+            </CardHeader>
+            <CardContent className="text-section font-body text-3xl font-bold">
+              <p>{value}</p>
+              <CardDescription className="mt-3.5 border-transparent">
+                <p className="text-lime-deep font-body flex items-center gap-1 text-sm font-medium">
+                  {Icon && <Icon className="size-3.75" />}
+                  {sub}
+                </p>
+              </CardDescription>
+            </CardContent>
+          </Card>
         ))}
       </div>
-
-      {/* Two columns */}
-      <div className="mb-3 grid grid-cols-2 gap-3">
-        {/* Orders */}
-        <div className="rounded-2xl border border-[#e0ddd5] bg-white p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <p className="font-display text-sm tracking-widest text-[#b8e020] uppercase">
-              Live orders · 3 pending
-            </p>
-            <Link
-              href="/vendor/orders"
-              className="font-display text-sm text-[#1a1a1a] hover:underline"
-            >
-              View all →
-            </Link>
+      {/* PENDING BOOKING REQUESTS SECTION */}
+      <section className="mt-5">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          {/* PENDING BOOKING REQUESTS */}
+          <div className="flex-1">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-muted text-body font-mono capitalize">
+                PENDING ORDERS . {requestsNumber}
+              </h2>
+              <Link href={'/vendor/orders'}>
+                <Button variant={'outline'} className="text-muted border-transparent font-light">
+                  View all <ArrowRight />
+                </Button>
+              </Link>
+            </div>
+            {/* booking requests content */}
+            <div className="flex flex-col gap-4">
+              <BookingRequestCard key={bookingRequests[0]?.orderId} data={bookingRequests} />
+            </div>
           </div>
 
-          {orders.map((o) => (
-            <div
-              key={o.name}
-              className="flex items-center gap-3 border-t border-[#f0ede5] py-2.5 first:border-t-0 first:pt-0"
-            >
-              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-[#e0ddd5] bg-[#f0ede5] font-mono text-[12px] text-[#888]">
-                {o.initials}
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <p className="font-display text-sm leading-tight font-semibold">{o.name}</p>
-                <p className="font-display mt-0.5 truncate text-xs text-[#aaa]">{o.meta}</p>
-              </div>
-
-              <div className="flex flex-shrink-0 items-center gap-1.5">
-                <span
-                  className={`rounded-full border px-2.5 py-1 text-[11px] font-medium ${statusBadge[o.status]}`}
-                >
-                  {o.statusLabel}
-                </span>
-                <button className="font-display flex items-center gap-1 rounded-full border border-[#b8e020] bg-[#c8f135] px-3 py-1 text-[11px] text-[#1a1a1a] transition-colors hover:bg-[#b8e020]">
-                  Next →
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Listings */}
-        <div className="rounded-2xl border border-[#e0ddd5] bg-white p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <p className="font-display text-sm tracking-widest text-[#b8e020] uppercase">
-              My listings · 3
-            </p>
-            <button className="font-display text-sm text-[#1a1a1a] hover:underline">+ Add</button>
+          {/* STATISTICS CHART */}
+          <div className="flex-1">
+            <Card className="border-ink mb-4 h-full border bg-transparent">
+              <CardHeader>
+                <CardTitle className="text-muted flex items-center justify-between font-mono tracking-wide">
+                  <p>REVENUE . LAST 12 WEEKS</p>
+                  <Button
+                    variant={'outline'}
+                    className="text-muted mt-2 flex items-center gap-1 border-transparent font-light"
+                  >
+                    Weekly
+                    <ChevronDown className="size-3.75" />
+                  </Button>{' '}
+                </CardTitle>
+              </CardHeader>
+              {/* chart content */}
+              <CardContent>
+                <VendorChartComponent />
+              </CardContent>
+            </Card>
           </div>
-
-          {listings.map((l) => (
-            <div
-              key={l.name}
-              className="flex items-center gap-3 border-t border-[#f0ede5] py-2.5 first:border-t-0 first:pt-0"
-            >
-              {/* Image — dashed placeholder matching screenshot */}
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-[1.5px] border-dashed border-[#d6d2c8] bg-[#fafaf8]">
-                {l.img ? (
-                  <Image
-                    src={l.img}
-                    alt={l.name}
-                    width={40}
-                    height={40}
-                    className="h-full w-full rounded-lg object-cover"
-                  />
-                ) : (
-                  // placeholder X lines when no image
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <rect
-                      x="1"
-                      y="1"
-                      width="18"
-                      height="18"
-                      rx="2"
-                      stroke="#d6d2c8"
-                      strokeWidth="1.5"
-                    />
-                    <line x1="1" y1="1" x2="19" y2="19" stroke="#d6d2c8" strokeWidth="1.5" />
-                    <line x1="19" y1="1" x2="1" y2="19" stroke="#d6d2c8" strokeWidth="1.5" />
-                  </svg>
-                )}
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <p className="font-display text-sm leading-tight font-semibold">{l.name}</p>
-                <p className="font-display mt-0.5 text-[11px] text-[#aaa]">{l.meta}</p>
-              </div>
-
-              <span
-                className={`font-display rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap ${statusBadge[l.status]}`}
-              >
-                {l.statusLabel}
-              </span>
-            </div>
-          ))}
         </div>
-      </div>
-
-      {/* Subscription bar */}
-      <div className="font-display flex items-center justify-between gap-4 rounded-xl border border-[#e0ddd5] bg-white px-4 py-3">
+      </section>
+      <section className="flex items-start gap-4 lg:gap-8">
         <div>
-          <p className="mb-1 text-xs tracking-widest text-[#aaa] uppercase">
-            Subscription · Pro yearly
-          </p>
-          <p className="text-xs font-medium">
-            Renews Apr 12, 2027 · ₦39,600 · Paystack card ending 2241
-          </p>
+          <h1 className="text-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
+            MY PRODUCTS
+          </h1>
+          <ProductsCard products={foodProducts} />
         </div>
-        <div className="flex flex-shrink-0 items-center gap-2">
-          <button className="rounded-full border border-[#d6d2c8] bg-white px-3 py-1.5 text-xs text-[#1a1a1a] transition-colors hover:border-[#b8e020]">
-            Update payment
-          </button>
-          <button className="rounded-full border border-[#b8e020] bg-[#c8f135] px-3 py-1.5 text-xs font-medium text-[#4a5800] transition-colors hover:bg-[#b8e020]">
-            Upgrade to Business
-          </button>
+        <div>
+          {/* EARNINGS SUMMARY */}
+          <h1 className="text-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
+            MY EARNINGS
+          </h1>
+          <EarningsSummaryCard data={earningsSummary[0]} />
         </div>
-      </div>
-    </main>
+      </section>
+    </section>
   );
 }
