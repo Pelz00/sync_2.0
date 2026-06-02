@@ -22,14 +22,17 @@ import { toast } from '@/components/ui/toast';
 import { loginSchema, type LoginInput } from '@/lib/validations';
 import { signIn } from '@/modules/auth/actions';
 
-export function LoginForm({ next }: { next?: string }) {
+export function LoginForm({ next, email }: { next?: string; email?: string }) {
   const router = useRouter();
   const {
     register,
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: email ?? '' },
+  });
 
   const signupHref = next ? `/signup?next=${encodeURIComponent(next)}` : '/signup';
 

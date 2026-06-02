@@ -10,6 +10,12 @@ export type Role = 'student' | 'vendor';
  *  client can surface a friendly message and never sees raw Supabase errors. */
 export type AuthResult = { ok: true } | { ok: false; error: string };
 
+/** Signup result. `alreadyRegistered` lets the form send the user to /login
+ *  instead of /verify when the email already has a confirmed account. */
+export type SignUpResult =
+  | { ok: true }
+  | { ok: false; error: string; alreadyRegistered?: boolean };
+
 /** Verify result also carries the role so the client can route to the right
  *  landing (vendors → /onboarding, students → the app). */
 export type VerifyResult = { ok: true; role: Role } | { ok: false; error: string };

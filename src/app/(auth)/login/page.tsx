@@ -16,12 +16,12 @@ export const metadata: Metadata = { title: 'Log in' };
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; email?: string }>;
 }) {
-  const { next } = await searchParams;
+  const { next, email } = await searchParams;
   return (
     <AuthLayout eyebrow="Welcome back" title="Log in to Sync">
-      <LoginForm next={next} />
+      <LoginForm next={next} email={email} />
     </AuthLayout>
   );
 }

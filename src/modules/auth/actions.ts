@@ -23,7 +23,7 @@ import {
   type SignupInput,
   type VerifyOtpInput,
 } from '@/lib/validations';
-import type { AuthResult, Role, VerifyResult } from './types';
+import type { AuthResult, Role, SignUpResult, VerifyResult } from './types';
 
 /** First zod issue message, or a sensible fallback. */
 function firstIssue(error: { issues: { message: string }[] }, fallback: string): string {
@@ -34,13 +34,13 @@ function firstIssue(error: { issues: { message: string }[] }, fallback: string):
  * Create an account. Stores name/phone/role in user_metadata and triggers the
  * confirmation OTP email. Does NOT sign the user in - they must verify first.
  */
-export async function signUp(input: SignupInput): Promise<AuthResult> {
+export async function signUp(input: SignupInput): Promise<SignUpResult> {
   const parsed = signupSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error, 'Invalid details') };
 
   const { email, password, fullName, phone, role, vendorCategory, trade } = parsed.data;
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -55,7 +55,20 @@ export async function signUp(input: SignupInput): Promise<AuthResult> {
       },
     },
   });
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    const alreadyRegistered = /already registered|already exists/i.test(error.message);
+    return { ok: false, error: error.message, alreadyRegistered };
+  }
+  // Supabase obfuscates an existing confirmed account: it returns a user with an
+  // empty `identities` array and sends no email. Treat that as already-registered
+  // so the form can route to login instead of a dead-end /verify.
+  if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+    return {
+      ok: false,
+      error: 'An account with this email already exists. Please log in.',
+      alreadyRegistered: true,
+    };
+  }
   return { ok: true };
 }
 

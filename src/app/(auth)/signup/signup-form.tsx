@@ -89,6 +89,10 @@ export function SignupForm({ next }: { next?: string }) {
     const res = await signUp(values);
     if (!res.ok) {
       toast(res.error);
+      // Existing account → send them to login (with their email preserved).
+      if (res.alreadyRegistered) {
+        router.push(`/login?email=${encodeURIComponent(values.email)}`);
+      }
       return;
     }
     router.push(`/verify?email=${encodeURIComponent(values.email)}`);
