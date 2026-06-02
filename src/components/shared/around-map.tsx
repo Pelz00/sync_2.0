@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 const Map = dynamic(() => import('./around-map-leaflet'), {
   ssr: false,
   loading: () => (
-    <div className="border-line/10 bg-surface-deep flex aspect-[4/5] w-full items-center justify-center rounded-2xl border sm:aspect-[16/10]">
+    <div className="border-line/10 bg-surface-deep flex h-[72vh] min-h-104 w-full items-center justify-center rounded-2xl border lg:h-[calc(100dvh-8rem)]">
       <p className="text-content-muted text-sm">Loading map…</p>
     </div>
   ),

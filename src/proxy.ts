@@ -26,19 +26,24 @@ import { updateSession } from '@/lib/supabase/middleware';
 
 type Role = 'student' | 'vendor' | 'admin';
 
+// Shared marketplace modules: any signed-in user (student or vendor) can browse
+// and transact. The only role difference is the dashboard (/me vs /vendor).
+const ALL: Role[] = ['student', 'vendor'];
+
 const PROTECTED_PREFIXES: { prefix: string; roles: Role[] }[] = [
   // /around is the public "home of the full Sync app" per the wireframe -
   // signed-out users land here, so it's deliberately not in the gate list.
-  { prefix: '/hostels', roles: ['student'] },
-  { prefix: '/events', roles: ['student'] },
-  { prefix: '/food', roles: ['student'] },
-  { prefix: '/beauty', roles: ['student'] },
-  { prefix: '/workmanship', roles: ['student'] },
-  { prefix: '/laundry', roles: ['student'] },
-  { prefix: '/hotspots', roles: ['student'] },
-  { prefix: '/search', roles: ['student'] },
-  { prefix: '/checkout', roles: ['student'] },
-  { prefix: '/wallet', roles: ['student'] },
+  { prefix: '/hostels', roles: ALL },
+  { prefix: '/events', roles: ALL },
+  { prefix: '/food', roles: ALL },
+  { prefix: '/beauty', roles: ALL },
+  { prefix: '/workmanship', roles: ALL },
+  { prefix: '/laundry', roles: ALL },
+  { prefix: '/hotspots', roles: ALL },
+  { prefix: '/search', roles: ALL },
+  { prefix: '/checkout', roles: ALL },
+  { prefix: '/wallet', roles: ALL },
+  // Dashboards - role-specific. This is the only access difference.
   { prefix: '/me', roles: ['student'] },
   { prefix: '/onboarding', roles: ['vendor'] },
   { prefix: '/vendor', roles: ['vendor'] },

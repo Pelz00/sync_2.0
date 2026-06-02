@@ -76,10 +76,10 @@ export default function Page() {
             <CardContent className="text-section font-body text-3xl font-bold">
               <p>{value}</p>
               <CardDescription className="mt-3.5 border-transparent">
-                <p className="text-lime-deep font-body flex items-center gap-1 text-sm font-medium">
+                <span className="text-lime-deep font-body flex items-center gap-1 text-sm font-medium">
                   {Icon && <Icon className="size-3.75" />}
                   {sub}
-                </p>
+                </span>
               </CardDescription>
             </CardContent>
           </Card>

@@ -24,17 +24,31 @@ import {
 import { toast } from '@/components/ui/toast';
 import { signOut } from '@/modules/auth/actions';
 
+const ROLE_LABELS: Record<string, string> = { student: 'Student', vendor: 'Vendor' };
+const CATEGORY_LABELS: Record<string, string> = {
+  landlord: 'Landlord',
+  food: 'Food vendor',
+  beauty: 'Beauty pro',
+  laundry: 'Laundry',
+  tradesman: 'Tradesman',
+};
+
 export interface UserMenuProps {
   name: string;
   email: string;
   initial: string;
   role?: string;
+  category?: string;
 }
 
-export function UserMenu({ name, email, initial, role }: UserMenuProps) {
+export function UserMenu({ name, email, initial, role, category }: UserMenuProps) {
   const router = useRouter();
   // Vendors get a dashboard link; students live in /me.
   const dashboardHref = role === 'vendor' ? '/vendor' : null;
+
+  const roleLabel = role ? (ROLE_LABELS[role] ?? role) : null;
+  const categoryLabel = category ? (CATEGORY_LABELS[category] ?? category) : null;
+  const badge = [roleLabel, role === 'vendor' ? categoryLabel : null].filter(Boolean).join(' · ');
 
   async function handleSignOut() {
     const res = await signOut();
@@ -64,19 +78,24 @@ export function UserMenu({ name, email, initial, role }: UserMenuProps) {
         <DropdownMenuLabel>
           <p className="text-content truncate text-sm font-medium">{name}</p>
           <p className="text-content-muted truncate text-xs">{email}</p>
+          {badge && (
+            <span className="bg-lime/15 text-accent-fg mt-1.5 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium">
+              {badge}
+            </span>
+          )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
-          <Link href="/me">
-            <User className="h-4 w-4" /> Profile
-          </Link>
-        </DropdownMenuItem>
-
-        {dashboardHref && (
+        {dashboardHref ? (
           <DropdownMenuItem asChild>
             <Link href={dashboardHref}>
               <LayoutDashboard className="h-4 w-4" /> Dashboard
+            </Link>
+          </DropdownMenuItem>
+        ) : (
+          <DropdownMenuItem asChild>
+            <Link href="/me">
+              <User className="h-4 w-4" /> Profile
             </Link>
           </DropdownMenuItem>
         )}

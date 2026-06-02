@@ -58,6 +58,7 @@ export async function MarketingHeader({ dockMode = false }: MarketingHeaderProps
   const name = (meta.full_name as string | undefined) || user?.email?.split('@')[0] || 'You';
   const initial = (getFirstName(user) ?? name).charAt(0).toUpperCase();
   const role = meta.role as string | undefined;
+  const category = meta.vendor_category as string | undefined;
 
   return (
     <header className="bg-surface/90 border-line/5 sticky top-0 z-40 border-b backdrop-blur">
@@ -97,7 +98,13 @@ export async function MarketingHeader({ dockMode = false }: MarketingHeaderProps
           </nav>
           <ThemeToggle className="hidden md:inline-flex" />
           {user ? (
-            <UserMenu name={name} email={user.email ?? ''} initial={initial} role={role} />
+            <UserMenu
+              name={name}
+              email={user.email ?? ''}
+              initial={initial}
+              role={role}
+              category={category}
+            />
           ) : (
             <div className="hidden items-center gap-2 md:flex">
               <Button

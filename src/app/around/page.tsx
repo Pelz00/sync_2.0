@@ -94,34 +94,33 @@ export default async function AroundPage() {
       {/* ─── Smart search row ───────────────────────────────────────── */}
       <SmartSearch />
 
-      {/* ─── On the map (radius view with distances) ────────────────── */}
-      <section aria-labelledby="around-map-heading" className="mt-8">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="eyebrow text-content-muted">On the map</p>
-            <h2 id="around-map-heading" className="font-display text-section text-foreground mt-1">
-              Everything within your radius
-            </h2>
+      {/* ─── Map + feed, side by side ───────────────────────────────── */}
+      <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:items-start">
+        {/* Map - sticky on desktop so it stays in view while the feed scrolls */}
+        <section aria-labelledby="around-map-heading" className="lg:sticky lg:top-24">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="eyebrow text-content-muted">On the map</p>
+              <h2 id="around-map-heading" className="font-display text-section text-foreground mt-1">
+                Everything within your radius
+              </h2>
+            </div>
+            <p className="text-content-muted text-xs">Tap a pin · distances</p>
           </div>
-          <p className="text-content-muted text-xs">Tap a pin · distances from your hostel</p>
+          <AroundMap />
+        </section>
+
+        {/* Feed - stacked beside the map */}
+        <div className="flex flex-col gap-5">
+          <FeaturedEventCard />
+          <FoodCard />
+          <LaundryCard />
+          <SponsoredCard />
+          <HotspotsCard />
+          <HostelBoardCard />
+          <ResumeBookingCard />
         </div>
-        <AroundMap className="mt-5" />
-      </section>
-
-      {/* ─── 3-column mosaic ────────────────────────────────────────── */}
-      <section className="mt-6 grid gap-5 lg:grid-cols-12">
-        <FeaturedEventCard className="lg:col-span-5 lg:row-span-2" />
-        <FoodCard className="lg:col-span-4" />
-        <LaundryCard className="lg:col-span-3" />
-        <SponsoredCard className="lg:col-span-4" />
-        <HotspotsCard className="lg:col-span-3" />
-      </section>
-
-      {/* ─── Bottom row ─────────────────────────────────────────────── */}
-      <section className="mt-5 grid gap-5 lg:grid-cols-12">
-        <HostelBoardCard className="lg:col-span-7" />
-        <ResumeBookingCard className="lg:col-span-5" />
-      </section>
+      </div>
     </main>
   );
 }
@@ -136,7 +135,7 @@ function QuickStats() {
         {QUICK_STATS.map((s) => (
           <div
             key={s.label}
-            className="border-line/5 bg-panel/70 flex gap-1.5 rounded-xl border p-4"
+            className="border-line/5 bg-panel/70 flex flex-col text-center gap-1.5 rounded-xl border p-4"
           >
             <p
               className={cn(

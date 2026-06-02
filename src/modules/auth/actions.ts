@@ -100,16 +100,19 @@ export async function resendSignupOtp(rawEmail: string): Promise<AuthResult> {
   return { ok: true };
 }
 
-/** Email + password sign-in. Establishes the session on success. */
-export async function signIn(input: LoginInput): Promise<AuthResult> {
+/** Email + password sign-in. Establishes the session and returns the role so
+ *  the form can route vendors to their dashboard. */
+export async function signIn(input: LoginInput): Promise<VerifyResult> {
   const parsed = loginSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error, 'Invalid credentials') };
 
   const { email, password } = parsed.data;
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { ok: false, error: error.message };
-  return { ok: true };
+
+  const role = (data.user?.user_metadata?.role as Role | undefined) ?? 'student';
+  return { ok: true, role };
 }
 
 /** Sign out the current user. Clears the session cookies. */

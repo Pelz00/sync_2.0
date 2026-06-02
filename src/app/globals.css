@@ -132,6 +132,9 @@
     --ac-fg: #c5ff4a;
     /* bright lime for contrast on dark */
     --ln: #f4f1e8;
+    /* Deeper lime for fills on dark - less glare than the bright brand lime.
+       Drives every bg-lime/accent in dark mode. Tune this one value. */
+    --color-lime: #a8db3c;
     color-scheme: dark;
   }
 }
@@ -144,6 +147,8 @@
   --ct-muted: #9b9ba3;
   --ac-fg: #c5ff4a;
   --ln: #f4f1e8;
+  /* Deeper lime for fills on dark (see note above). */
+  --color-lime: #a8db3c;
   color-scheme: dark;
 }
 
@@ -165,9 +170,9 @@ body {
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-text-fill-color: var(--color-ink);
-  -webkit-box-shadow: 0 0 0 1000px var(--color-white) inset;
-  caret-color: var(--color-ink);
+  -webkit-text-fill-color: var(--color-content);
+  -webkit-box-shadow: 0 0 0 1000px var(--color-panel) inset;
+  caret-color: var(--color-content);
   transition: background-color 9999s ease-in-out 0s;
 }
 

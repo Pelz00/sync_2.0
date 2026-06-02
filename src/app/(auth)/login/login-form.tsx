@@ -43,8 +43,9 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
       return;
     }
     // Session cookie is set by the server action; refresh so the proxy + RSC
-    // pick it up, then head to the originally-requested page (or the app home).
-    router.push(next ?? '/around');
+    // pick it up. Vendors land on their dashboard first; students resume the
+    // originally-requested page (or the app home).
+    router.push(next ?? (res.role === 'vendor' ? '/vendor' : '/around'));
     router.refresh();
   }
 
