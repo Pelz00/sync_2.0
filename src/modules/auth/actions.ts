@@ -14,6 +14,7 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import {
   email as emailRule,
   loginSchema,
@@ -111,7 +112,37 @@ export async function signIn(input: LoginInput): Promise<VerifyResult> {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { ok: false, error: error.message };
 
-  const role = (data.user?.user_metadata?.role as Role | undefined) ?? 'student';
+  let role = (data.user?.user_metadata?.role as Role | undefined) ?? 'student';
+
+  // Archive lifecycle: <30d → self-restore on login; 30–60d → blocked, admin
+  // must restore; >60d → account is purged (so it usually won't get here).
+  try {
+    const admin = createAdminClient();
+    const { data: prof } = await admin
+      .from('profiles')
+      .select('role, archived_at')
+      .eq('id', data.user.id)
+      .maybeSingle();
+    if (prof?.role) role = prof.role as Role;
+    if (prof?.archived_at) {
+      const days = (Date.now() - new Date(prof.archived_at).getTime()) / 86_400_000;
+      if (days < 30) {
+        await admin.from('profiles').update({ archived_at: null, archived_reason: null }).eq('id', data.user.id);
+      } else {
+        await supabase.auth.signOut();
+        return {
+          ok: false,
+          error:
+            days < 60
+              ? 'Your account is archived. Contact support to restore it.'
+              : 'This account is no longer available.',
+        };
+      }
+    }
+  } catch {
+    // profiles table not migrated yet - fall back to the metadata role.
+  }
+
   return { ok: true, role };
 }
 

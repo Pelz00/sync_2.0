@@ -25,6 +25,7 @@ import { ProductsCard } from './(components)/ProductsCard';
 import { bookingRequests, earningsSummary, foodProducts, vendorStats } from '@/mock/vendor';
 import Link from 'next/link';
 import EarningsSummaryCard from './(components)/EarningsSummaryCard';
+import { DeleteAccountButton } from '@/components/account/delete-account-button';
 
 export const metadata: Metadata = { title: 'Vendor dashboard' };
 
@@ -144,6 +145,8 @@ export default function Page() {
           <EarningsSummaryCard data={earningsSummary[0]} />
         </div>
       </section>
+
+      <DeleteAccountButton />
     </section>
   );
 }

@@ -3,6 +3,7 @@ import { ArrowRight, Bell, Star, MessageCircle, Check, Search, Plus } from 'luci
 import type { Metadata } from 'next';
 import { BookingBillboard } from './(components)/BillboardComponent';
 import { HostelCardList } from './(components)/HostelCard';
+import { DeleteAccountButton } from '@/components/account/delete-account-button';
 import { hostels } from '@/mock/hostels';
 
 export const metadata: Metadata = { title: 'Account' };
@@ -127,6 +128,8 @@ export default function Page() {
         </h2>
         <HostelCardList hostels={hostels.slice(0, 3)} />
       </section>
+
+      <DeleteAccountButton />
     </section>
   );
 }
