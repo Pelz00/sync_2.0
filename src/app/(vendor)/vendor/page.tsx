@@ -8,7 +8,6 @@
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
   Badge,
   Button,
   Card,
@@ -25,13 +24,15 @@ import { ProductsCard } from './(components)/ProductsCard';
 import { bookingRequests, earningsSummary, foodProducts, vendorStats } from '@/mock/vendor';
 import Link from 'next/link';
 import EarningsSummaryCard from './(components)/EarningsSummaryCard';
-import { DeleteAccountButton } from '@/components/account/delete-account-button';
+import { getDashboardProfile } from '@/components/layouts/dashboard-profile';
 
 export const metadata: Metadata = { title: 'Vendor dashboard' };
 
-export default function Page() {
+export default async function Page() {
   const requestsNumber = 8;
-  const storeName = 'HiFoods';
+  const profile = await getDashboardProfile('vendor');
+  const storeName = profile.metaValue ?? 'your store';
+  const verified = profile.eyebrow === 'Verified vendor';
 
   return (
     <section className="flex flex-col gap-3">
@@ -44,19 +45,17 @@ export default function Page() {
         </h2>
         <div className="">
           <div className="flex items-center gap-3">
-            <Badge
-              variant="accent"
-              className="border-line flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
-            >
-              <Dot size={20} />
-              Verified Vendor
-            </Badge>
+            {verified && (
+              <Badge
+                variant="accent"
+                className="border-line flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
+              >
+                <Dot size={20} />
+                Verified Vendor
+              </Badge>
+            )}
             <Avatar className="size-10">
-              <AvatarImage
-                src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmxhY2slMjBwZW9wbGV8ZW58MHx8MHx8fDA%3D"
-                alt="Aisha O."
-              />
-              <AvatarFallback>AO</AvatarFallback>
+              <AvatarFallback>{profile.initial}</AvatarFallback>
             </Avatar>
           </div>
           <Link href={'/vendor/promotions'}>
@@ -96,7 +95,10 @@ export default function Page() {
                 PENDING ORDERS . {requestsNumber}
               </h2>
               <Link href={'/vendor/orders'}>
-                <Button variant={'outline'} className="text-content-muted border-transparent font-light">
+                <Button
+                  variant={'outline'}
+                  className="text-content-muted border-transparent font-light"
+                >
                   View all <ArrowRight />
                 </Button>
               </Link>
@@ -145,8 +147,6 @@ export default function Page() {
           <EarningsSummaryCard data={earningsSummary[0]} />
         </div>
       </section>
-
-      <DeleteAccountButton />
     </section>
   );
 }

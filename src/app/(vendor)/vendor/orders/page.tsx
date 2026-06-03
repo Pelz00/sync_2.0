@@ -40,12 +40,12 @@ export default function Page() {
               </CardHeader>
               <CardContent className="text-section font-body text-3xl font-bold">
                 <CardDescription className="mt-3.5 border-transparent">
-                  <p
+                  <span
                     className={`font-body flex items-center justify-between gap-1 text-sm font-medium ${iconColor}`}
                   >
                     {Icon && <Icon className="size-[25px]" />}
-                    <p className="text-2xl">{value}</p>
-                  </p>
+                    <span className="text-2xl">{value}</span>
+                  </span>
                 </CardDescription>
               </CardContent>
             </Card>

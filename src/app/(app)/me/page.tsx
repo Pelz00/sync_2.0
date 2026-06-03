@@ -1,9 +1,9 @@
-import { AvatarFallback, Avatar, AvatarImage, Button, Badge } from '@/components/ui';
+import { AvatarFallback, Avatar, Button } from '@/components/ui';
 import { ArrowRight, Bell, Star, MessageCircle, Check, Search, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
 import { BookingBillboard } from './(components)/BillboardComponent';
 import { HostelCardList } from './(components)/HostelCard';
-import { DeleteAccountButton } from '@/components/account/delete-account-button';
+import { getDashboardProfile } from '@/components/layouts/dashboard-profile';
 import { hostels } from '@/mock/hostels';
 
 export const metadata: Metadata = { title: 'Account' };
@@ -15,11 +15,11 @@ const recentActivity = [
   { id: '4', icon: Search, label: '3 new hostels match your search', time: '2d ago' },
 ];
 
-export default function Page() {
-  const studentName = 'Kanyinsola';
+export default async function Page() {
+  const profile = await getDashboardProfile('student');
+  const studentName = profile.name;
   const notificationCount = 3;
   const savedCount = 12;
-  const studentBudget = 250000;
 
   return (
     <section className="flex flex-col gap-3">
@@ -39,8 +39,7 @@ export default function Page() {
             <p>{notificationCount}</p>
           </Button>
           <Avatar className="border-line border">
-            <AvatarImage src="/avatar-placeholder.png" alt={studentName} />
-            <AvatarFallback>{studentName.slice(0, 2).toUpperCase()}</AvatarFallback>
+            <AvatarFallback>{profile.initial}</AvatarFallback>
           </Avatar>
         </div>
       </section>
@@ -128,8 +127,6 @@ export default function Page() {
         </h2>
         <HostelCardList hostels={hostels.slice(0, 3)} />
       </section>
-
-      <DeleteAccountButton />
     </section>
   );
 }

@@ -146,6 +146,63 @@ export async function signIn(input: LoginInput): Promise<VerifyResult> {
   return { ok: true, role };
 }
 
+/** Send a passwordless sign-in code to an existing account (used by the OTP
+ *  login flow — e.g. admins / super_admins who have no password). Won't create
+ *  a new user. */
+export async function sendLoginOtp(rawEmail: string): Promise<AuthResult> {
+  const parsed = emailRule.safeParse(rawEmail);
+  if (!parsed.success) return { ok: false, error: firstIssue(parsed.error, 'Enter a valid email') };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithOtp({
+    email: parsed.data,
+    options: { shouldCreateUser: false },
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
+/** Verify a passwordless login OTP and establish the session. Returns the
+ *  trusted role so the form can route. */
+export async function verifyLoginOtp(input: VerifyOtpInput): Promise<VerifyResult> {
+  const parsed = verifyOtpSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: firstIssue(parsed.error, 'Invalid code') };
+
+  const { email, code } = parsed.data;
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.verifyOtp({ email, token: code, type: 'email' });
+  if (error) return { ok: false, error: error.message };
+
+  let role = (data.user?.user_metadata?.role as Role | undefined) ?? 'student';
+  try {
+    const admin = createAdminClient();
+    const { data: prof } = await admin
+      .from('profiles')
+      .select('role, archived_at')
+      .eq('id', data.user!.id)
+      .maybeSingle();
+    if (prof?.role) role = prof.role as Role;
+    if (prof?.archived_at) {
+      const days = (Date.now() - new Date(prof.archived_at).getTime()) / 86_400_000;
+      if (days < 30) {
+        await admin.from('profiles').update({ archived_at: null, archived_reason: null }).eq('id', data.user!.id);
+      } else {
+        await supabase.auth.signOut();
+        return {
+          ok: false,
+          error:
+            days < 60
+              ? 'Your account is archived. Contact support to restore it.'
+              : 'This account is no longer available.',
+        };
+      }
+    }
+  } catch {
+    // profiles table not migrated yet.
+  }
+  return { ok: true, role };
+}
+
 /** Sign out the current user. Clears the session cookies. */
 export async function signOut(): Promise<AuthResult> {
   const supabase = await createClient();

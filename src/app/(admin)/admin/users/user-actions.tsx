@@ -1,12 +1,13 @@
 /**
  * Row actions for the admin users table: Restore an archived account (admin+),
- * or permanently Purge it (super_admin only, irreversible).
+ * or permanently Purge it (super_admin only, irreversible — confirmed via modal).
  */
 'use client';
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from '@/components/ui/toast';
 import { purgeAccount, restoreAccount } from '@/modules/account/actions';
 
@@ -21,7 +22,7 @@ export function UserRowActions({
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
-  const [confirming, setConfirming] = useState(false);
+  const [purgeOpen, setPurgeOpen] = useState(false);
 
   function restore() {
     start(async () => {
@@ -32,14 +33,10 @@ export function UserRowActions({
   }
 
   function purge() {
-    if (!confirming) {
-      setConfirming(true);
-      return;
-    }
     start(async () => {
       const res = await purgeAccount(userId);
       toast(res.ok ? 'Account purged.' : res.error);
-      setConfirming(false);
+      setPurgeOpen(false);
       if (res.ok) router.refresh();
     });
   }
@@ -52,15 +49,27 @@ export function UserRowActions({
         </Button>
       )}
       {canPurge && (
-        <Button
-          size="sm"
-          variant="outline"
-          disabled={pending}
-          onClick={purge}
-          className="text-coral border-coral/30 hover:bg-coral/10"
-        >
-          {confirming ? 'Confirm purge' : 'Purge'}
-        </Button>
+        <>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={pending}
+            onClick={() => setPurgeOpen(true)}
+            className="text-coral border-coral/30 hover:bg-coral/10"
+          >
+            Purge
+          </Button>
+          <ConfirmDialog
+            open={purgeOpen}
+            onOpenChange={setPurgeOpen}
+            title="Purge this account?"
+            description="This permanently removes the account and its data from the system. This cannot be undone."
+            confirmLabel="Purge permanently"
+            destructive
+            loading={pending}
+            onConfirm={purge}
+          />
+        </>
       )}
     </div>
   );
