@@ -48,3 +48,21 @@ export interface ChatCustomer {
   totalSpent: string;
   recentOrders: ChatOrder[];
 }
+
+export type DocStatus = 'approved' | 'under_review' | 'needs_action' | 'not_uploaded';
+
+export interface DocumentItem {
+  id: string;
+  title: string;
+  description: string;
+  status: DocStatus;
+  uploadedAt?: string;
+  actionMessage?: string;
+}
+
+export interface TimelineEvent {
+  label: string;
+  date?: string;
+  done: boolean;
+  active?: boolean;
+}
