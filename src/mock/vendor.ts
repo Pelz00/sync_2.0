@@ -1,4 +1,16 @@
-import { AlertTriangle, LucideIcon, ShoppingBag, Star, TrendingUp } from 'lucide-react';
+import { Order } from '@/types/order';
+import {
+  AlertTriangle,
+  CircleCheckBig,
+  CircleOff,
+  Clock4,
+  LucideIcon,
+  Package,
+  ShoppingBag,
+  Star,
+  TrendingUp,
+  Truck,
+} from 'lucide-react';
 
 export interface VendorCard {
   label: string;
@@ -173,5 +185,127 @@ export const earningsSummary: EarningsSummary[] = [
     lastWeek: 9000,
     thisMonth: 50000,
     lastMonth: 45000,
+  },
+];
+
+export const orderStats = [
+  {
+    label: 'NEW',
+    value: '3',
+    sub: '+18% this week',
+    icon: ShoppingBag,
+    iconColor: 'text-lime-deep',
+  },
+  {
+    label: 'PROCESSING',
+    value: '3',
+    sub: '6 pending fulfillment',
+    icon: Package,
+    iconColor: 'text-yellow-500',
+  },
+  { label: 'SHIPPED', value: '2', icon: Truck, iconColor: 'text-blue-500' },
+  { label: 'COMPLETED', value: '2', icon: CircleCheckBig, iconColor: 'text-green-500' },
+  { label: 'CANCELLED', value: '1', icon: CircleOff, iconColor: 'text-red-500' },
+];
+
+export const orders: Order[] = [
+  {
+    id: '#1234',
+    customer: 'John Doe',
+    product: 'Nike Air Max',
+    date: '2026-06-01',
+    amount: 50000,
+    payment: 'Paid',
+    status: 'Delivered',
+  },
+  {
+    id: '#1235',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
+  },
+  {
+    id: '#12356',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
+  },
+  {
+    id: '#123567',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
+  },
+  {
+    id: '#1235678',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
+  },
+  {
+    id: '#12356789',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
+  },
+  {
+    id: '#123567890',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
+  },
+  {
+    id: '#1235678901',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
+  },
+  {
+    id: '#12356789012',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
+  },
+  {
+    id: '#123567890123',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
+  },
+  {
+    id: '#1235678901234',
+    customer: 'Mary Johnson',
+    product: 'iPhone 17',
+    date: '2026-06-02',
+    amount: 1200000,
+    payment: 'Pending',
+    status: 'Processing',
   },
 ];

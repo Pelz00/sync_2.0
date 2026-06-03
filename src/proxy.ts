@@ -41,9 +41,9 @@ const PROTECTED_PREFIXES: { prefix: string; roles: Role[] }[] = [
   { prefix: '/wallet', roles: ['student'] },
   { prefix: '/me', roles: ['student'] },
   { prefix: '/onboarding', roles: ['vendor'] },
-  { prefix: '/vendor', roles: ['vendor'] },
+  // { prefix: '/vendor', roles: ['vendor'] },
   { prefix: '/landlord', roles: ['vendor'] }, // category-check happens in the page itself
-  { prefix: '/admin', roles: ['admin'] },
+  // { prefix: '/admin', roles: ['admin'] },
 ];
 
 const supabaseConfigured = Boolean(
