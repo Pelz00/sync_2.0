@@ -10,16 +10,42 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import * as Dialog from '@radix-ui/react-dialog';
-import { ArrowRight, Info, Menu, X } from 'lucide-react';
+import { ArrowRight, Info, LayoutDashboard, LogOut, Menu, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { toast } from '@/components/ui/toast';
 import { MODULES } from '@/config/modules';
 import { SITE } from '@/config/site';
+import { signOut } from '@/modules/auth/actions';
 
-export function MobileMenu() {
+export function MobileMenu({
+  signedIn = false,
+  name,
+  email,
+  role,
+}: {
+  signedIn?: boolean;
+  name?: string;
+  email?: string;
+  role?: 'student' | 'vendor' | 'admin';
+}) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   const close = () => setOpen(false);
+  const dashboardHref = role === 'vendor' ? '/vendor' : role === 'admin' ? '/admin' : '/me';
+
+  async function handleSignOut() {
+    close();
+    const res = await signOut();
+    if (!res.ok) {
+      toast(res.error);
+      return;
+    }
+    router.push('/');
+    router.refresh();
+  }
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -98,20 +124,56 @@ export function MobileMenu() {
 
           {/* Sticky auth/CTA footer */}
           <div className="border-line/5 bg-surface flex shrink-0 flex-col gap-2 border-t px-6 py-5">
-            <Button asChild size="lg" onClick={close}>
-              <Link href="/signup?role=vendor&category=landlord">
-                List a property <ArrowRight />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              onClick={close}
-              className="text-foreground border-foreground/20 hover:bg-foreground/10"
-            >
-              <Link href="/login">Sign in / Sign up</Link>
-            </Button>
+            {signedIn ? (
+              <>
+                <div className="flex items-center gap-3 pb-1">
+                  <span className="bg-lime text-ink font-display flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm">
+                    {(name ?? 'You').charAt(0).toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-foreground truncate text-sm font-medium">{name}</p>
+                    <p className="text-content-muted truncate text-xs">{email}</p>
+                  </div>
+                </div>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  onClick={close}
+                  className="text-foreground border-foreground/20 hover:bg-foreground/10"
+                >
+                  <Link href={dashboardHref}>
+                    {role === 'vendor' || role === 'admin' ? <LayoutDashboard /> : <User />}
+                    {role === 'vendor' ? 'Dashboard' : role === 'admin' ? 'Admin' : 'Profile'}
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleSignOut}
+                  className="text-coral border-coral/30 hover:bg-coral/10"
+                >
+                  <LogOut /> Sign out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button asChild size="lg" onClick={close}>
+                  <Link href="/signup?role=vendor&category=landlord">
+                    List a property <ArrowRight />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  size="lg"
+                  onClick={close}
+                  className="text-foreground border-foreground/20 hover:bg-foreground/10"
+                >
+                  <Link href="/login">Sign in / Sign up</Link>
+                </Button>
+              </>
+            )}
           </div>
         </Dialog.Content>
       </Dialog.Portal>

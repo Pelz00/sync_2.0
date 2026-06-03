@@ -11,13 +11,20 @@
 import { MarketingHeader } from './marketing-header';
 import { ServicesDock } from './services-dock';
 import { SearchBar } from '@/components/shared/search-bar';
-import { MobileBottomNav } from './mobile-bottom-nav';
+import { getCurrentUser, getProfile } from '@/modules/auth/queries';
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export async function AppShell({ children }: { children: React.ReactNode }) {
+  const [user, profile] = await Promise.all([getCurrentUser(), getProfile()]);
+  const role = (profile?.role ?? (user?.user_metadata?.role as string | undefined)) as
+    | 'student'
+    | 'vendor'
+    | 'admin'
+    | undefined;
+
   return (
     <div className="bg-surface text-foreground flex min-h-screen flex-col">
       <MarketingHeader dockMode />
-      <ServicesDock />
+      <ServicesDock role={role} />
 
       {/* Search row - sits under the nav (was inline in the old top bar). */}
       <div className="border-line/5 border-b">
@@ -29,8 +36,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className="mx-auto w-full min-w-0 max-w-7xl flex-1 px-4 pt-6 pb-24 md:px-6 md:pb-12">
         {children}
       </main>
-
-      <MobileBottomNav />
     </div>
   );
 }

@@ -14,7 +14,7 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { MobileMenu } from './mobile-menu';
 import { ActiveModuleIndicator } from './active-module-indicator';
 import { UserMenu } from './user-menu';
-import { getCurrentUser, getFirstName } from '@/modules/auth/queries';
+import { getCurrentUser, getFirstName, getProfile } from '@/modules/auth/queries';
 import { SITE } from '@/config/site';
 
 // Module nav from the hi-fi guide, split around the centered logo. These are
@@ -54,11 +54,19 @@ interface MarketingHeaderProps {
 
 export async function MarketingHeader({ dockMode = false }: MarketingHeaderProps) {
   const user = await getCurrentUser();
+  const profile = await getProfile();
   const meta = user?.user_metadata ?? {};
-  const name = (meta.full_name as string | undefined) || user?.email?.split('@')[0] || 'You';
+  // Trusted role from the profiles table, falling back to metadata (e.g. before
+  // the migration is run). See modules/auth/queries.ts.
+  const role = (profile?.role ?? (meta.role as 'student' | 'vendor' | 'admin' | undefined)) as
+    | 'student'
+    | 'vendor'
+    | 'admin'
+    | undefined;
+  const name =
+    profile?.full_name || (meta.full_name as string | undefined) || user?.email?.split('@')[0] || 'You';
   const initial = (getFirstName(user) ?? name).charAt(0).toUpperCase();
-  const role = meta.role as string | undefined;
-  const category = meta.vendor_category as string | undefined;
+  const category = profile?.vendor_category ?? (meta.vendor_category as string | undefined);
 
   return (
     <header className="bg-surface/90 border-line/5 sticky top-0 z-40 border-b backdrop-blur">
@@ -123,7 +131,7 @@ export async function MarketingHeader({ dockMode = false }: MarketingHeaderProps
             </div>
           )}
           {/* Hamburger - mobile only, far right */}
-          <MobileMenu />
+          <MobileMenu signedIn={!!user} name={name} email={user?.email ?? ''} role={role} />
         </div>
       </div>
     </header>

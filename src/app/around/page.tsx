@@ -54,7 +54,7 @@ export default async function AroundPage() {
   const dateLine = `${format(today, 'EEE').toUpperCase()} · ${format(today, 'MMM d').toUpperCase()} · ${MOCK_USER.campus.toUpperCase()}`;
 
   return (
-    <main className="mx-auto max-w-7xl px-6 pt-8 pb-12">
+    <main className="mx-auto flex max-w-7xl flex-col px-6 pt-8 pb-12">
       {/* ─── Eyebrow row ────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-content-muted font-mono text-[11px] tracking-wider">{dateLine}</p>
@@ -97,7 +97,7 @@ export default async function AroundPage() {
       {/* ─── Map + feed, side by side ───────────────────────────────── */}
       <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:items-start">
         {/* Map - sticky on desktop so it stays in view while the feed scrolls */}
-        <section aria-labelledby="around-map-heading" className="lg:sticky lg:top-24">
+        <section aria-labelledby="around-map-heading" className="order-last lg:order-none lg:sticky lg:top-24">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="eyebrow text-content-muted">On the map</p>

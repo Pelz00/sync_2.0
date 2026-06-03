@@ -24,7 +24,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 
-type Role = 'student' | 'vendor' | 'admin';
+type Role = 'student' | 'vendor' | 'admin' | 'super_admin';
 
 // Shared marketplace modules: any signed-in user (student or vendor) can browse
 // and transact. The only role difference is the dashboard (/me vs /vendor).
@@ -48,7 +48,7 @@ const PROTECTED_PREFIXES: { prefix: string; roles: Role[] }[] = [
   { prefix: '/onboarding', roles: ['vendor'] },
   { prefix: '/vendor', roles: ['vendor'] },
   { prefix: '/landlord', roles: ['vendor'] }, // category-check happens in the page itself
-  { prefix: '/admin', roles: ['admin'] },
+  { prefix: '/admin', roles: ['admin', 'super_admin'] },
 ];
 
 const supabaseConfigured = Boolean(
