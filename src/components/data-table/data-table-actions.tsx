@@ -12,11 +12,17 @@ interface Props {
 export function DataTableActions({ row, onView, onEdit, onDelete }: Props) {
   return (
     <div className="flex gap-2">
-      <Eye className="h-4 w-4 cursor-pointer" onClick={() => onView(row)} />
+      <button type="button" aria-label="View" onClick={() => onView(row)}>
+        <Eye className="h-4 w-4 cursor-pointer" />
+      </button>
 
-      <Pencil className="h-4 w-4 cursor-pointer" onClick={() => onEdit(row)} />
+      <button type="button" aria-label="Edit" onClick={() => onEdit(row)}>
+        <Pencil className="h-4 w-4 cursor-pointer" />
+      </button>
 
-      <Trash2 className="h-4 w-4 cursor-pointer text-red-500" onClick={() => onDelete(row)} />
+      <button type="button" aria-label="Delete" onClick={() => onDelete(row)}>
+        <Trash2 className="h-4 w-4 cursor-pointer text-red-500" />
+      </button>
     </div>
   );
 }

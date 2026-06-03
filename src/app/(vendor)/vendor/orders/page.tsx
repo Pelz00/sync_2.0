@@ -16,8 +16,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = { title: 'Orders' };
 
 export default function Page() {
-  const numberOfOrders = 8;
-
+  const numberOfOrders = orders.length;
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
