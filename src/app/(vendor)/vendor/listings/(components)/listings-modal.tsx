@@ -8,11 +8,22 @@ import { cn } from '@/lib/utils';
 import { mockCategories } from '@/mock/listings';
 import { Listing } from '@/modules/vendor/types';
 
-// ── shared backdrop ──────────────────────────────────────────────
 function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-panel relative w-full max-w-md rounded-2xl p-6 shadow-xl">
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="bg-panel relative w-full max-w-md rounded-2xl p-6 shadow-xl"
+      >
         <button onClick={onClose} className="text-muted hover:text-ink absolute top-4 right-4">
           <X className="size-4" />
         </button>
@@ -21,7 +32,6 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose: () =
     </div>
   );
 }
-
 // ── Delete confirm ───────────────────────────────────────────────
 export function DeleteModal({
   listing,
