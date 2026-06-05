@@ -21,6 +21,7 @@ import { SITE } from '@/config/site';
 import { DASHBOARD_NAV, type DashboardNavKey } from '@/config/dashboard-nav';
 import type { DashboardProfile } from './dashboard-profile';
 import { toast } from '@/components/ui/toast';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { signOut } from '@/modules/auth/actions';
 
 interface DashboardSidebarProps {
@@ -123,16 +124,17 @@ export function DashboardSidebar({ navKey, profile, onNavigate }: DashboardSideb
         ))}
       </nav>
 
-      {/* Log out */}
-      <div className="border-line/10 border-t pt-3">
+      {/* Theme toggle + Log out */}
+      <div className="border-line/10 flex items-center gap-2 border-t pt-3">
         <button
           type="button"
           onClick={handleSignOut}
-          className="text-coral hover:bg-coral/10 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
+          className="text-coral hover:bg-coral/10 flex flex-1 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
         >
           <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
           Log out
         </button>
+        <ThemeToggle className="text-content shrink-0" />
       </div>
     </div>
   );
