@@ -13,6 +13,8 @@ interface Hostel {
   numericPrice: number;
   tags: string[];
   host?: string;
+  totalRooms: number;   
+  roomsLeft: number;    
 }
 
 const HOSTELS: Hostel[] = [
@@ -26,6 +28,8 @@ const HOSTELS: Hostel[] = [
     numericPrice: 180000,
     tags: ['Wi-Fi', 'Water', '24h light', 'Sync-verified', 'Top-rated'],
     host: 'Alhaji Woss',
+    totalRooms: 24,
+    roomsLeft: 5,
   },
   {
     slug: 'la-marida-malete',
@@ -37,6 +41,8 @@ const HOSTELS: Hostel[] = [
     numericPrice: 150000,
     tags: ['Wi-Fi', 'Water', 'Security', 'Tiled flooring'],
     host: 'Mama Yetunde',
+    totalRooms: 40,
+    roomsLeft: 12,
   },
   {
     slug: 'amina-villa',
@@ -48,6 +54,8 @@ const HOSTELS: Hostel[] = [
     numericPrice: 95000,
     tags: ['Wi-Fi', 'Water', 'Female only', 'Borehole'],
     host: 'Baba Amina',
+    totalRooms: 18,
+    roomsLeft: 0,
   },
   {
     slug: 'success-hostel',
@@ -59,6 +67,8 @@ const HOSTELS: Hostel[] = [
     numericPrice: 70000,
     tags: ['Water', '24h light', 'Budget-friendly'],
     host: 'Bro. Success',
+    totalRooms: 30,
+    roomsLeft: 2,
   },
   {
     slug: 'montresor-capitol',
@@ -70,6 +80,8 @@ const HOSTELS: Hostel[] = [
     numericPrice: 165000,
     tags: ['Wi-Fi', 'Water', 'Security', 'CCTV at gate'],
     host: 'Capitol Admins',
+    totalRooms: 35,
+    roomsLeft: 7,
   },
   {
     slug: 'eniduro-villa',
@@ -81,6 +93,8 @@ const HOSTELS: Hostel[] = [
     numericPrice: 110000,
     tags: ['Wi-Fi', 'Water', 'Male only', 'Inverter Backup'],
     host: 'Pa Eniduro',
+    totalRooms: 15,
+    roomsLeft: 0,
   },
 ];
 
@@ -111,12 +125,10 @@ export default function Page() {
   const [active, setActive] = useState<(typeof FILTERS)[number]['value']>('all');
   const [selectedHostel, setSelectedHostel] = useState<Hostel | null>(null);
 
-  // Modal and Hold Reservation systems state
   const [showModal, setShowModal] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(86400); // 24 hours in seconds
+  const [timeLeft, setTimeLeft] = useState(86400);
 
-  // Inline Chat Box Overlay Toggle
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<{ sender: 'user' | 'agent'; text: string }[]>([
@@ -125,12 +137,10 @@ export default function Page() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Reset temporary allocations when moving between context views
     setIsLocked(false);
     setChatOpen(false);
   }, [selectedHostel]);
 
-  // Active Countdown Ticking Engine Thread
   useEffect(() => {
     if (!isLocked) return;
     const interval = setInterval(() => {
@@ -159,11 +169,16 @@ export default function Page() {
     setMessages((prev) => [...prev, { sender: 'user', text: chatMessage }]);
     setChatMessage('');
     
-    // Simulate swift agent dynamic acknowledgement response
     setTimeout(() => {
       setMessages((prev) => [...prev, { sender: 'agent', text: 'Got it. Holding allocation open. Please drop your WhatsApp line so we can sync documents.' }]);
     }, 1200);
   };
+
+  const totalHostelsCount = HOSTELS.length;
+  const remainingHostels = useMemo(() => {
+    if (!selectedHostel) return [];
+    return HOSTELS.filter((h) => h.slug !== selectedHostel.slug);
+  }, [selectedHostel]);
 
   const visible = useMemo(
     () =>
@@ -183,12 +198,12 @@ export default function Page() {
     [active, query],
   );
 
-  /* ==================== SCREEN 2: DEDICATED HOSTEL DETAIL VIEW (TRANSPARENT BACKGROUND) ==================== */
+  /* ==================== SCREEN 2: DEDICATED HOSTEL DETAIL VIEW ==================== */
   if (selectedHostel) {
     return (
       <main className="min-h-screen text-current transition-colors duration-300 animate-in fade-in duration-500 relative">
         
-        {/* MODAL WINDOW SYSTEM - FLOATS ABOVE APARTMENT ROOT CANVAS */}
+        {/* Reservation Modal popup window overlay */}
         {showModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/60 animate-in fade-in duration-200">
             <div className="border border-zinc-800 bg-zinc-950 p-6 md:p-8 rounded-3xl max-w-md w-full text-center shadow-2xl space-y-5 animate-in zoom-in-95 duration-300">
@@ -202,9 +217,6 @@ export default function Page() {
                 </p>
                 <p className="text-xs bg-lime-500/5 text-lime-400 border border-lime-500/20 p-3 rounded-xl font-mono mt-4 font-bold">
                   ⚠️ HOLD WINDOW DURATION: 24 HOURS ONLY
-                </p>
-                <p className="text-[11px] text-zinc-500 mt-2">
-                  If payment authorization documentation isn’t uploaded before expiration, the allotment system releases the inventory key back to open directory streams.
                 </p>
               </div>
               <button
@@ -223,8 +235,8 @@ export default function Page() {
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
           
-          {/* Top Navigation Row */}
-          <div className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-800/40">
+          {/* Top Navigation Navigation Bar */}
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-800/40">
             <button
               type="button"
               onClick={() => setSelectedHostel(null)}
@@ -238,9 +250,37 @@ export default function Page() {
             <ThemeToggle />
           </div>
 
+          {/* CAPACITY MONITOR HUD BANNER SHOWING ACTIVE SELECTED COUNTS */}
+          <div className="mb-8 border border-zinc-800/60 rounded-2xl p-4 bg-zinc-500/5 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-300">
+            <div className="space-y-1">
+              <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Directory Capacity Monitoring</span>
+              <div className="text-xs text-zinc-300">
+                Viewing <span className="text-white font-bold">{selectedHostel.name}</span> ({selectedHostel.roomsLeft} left of {selectedHostel.totalRooms} total rooms) · Global pool totals <span className="text-lime-400 font-extrabold">{totalHostelsCount} complexes</span>.
+              </div>
+            </div>
+            
+            {/* Quick Hop Horizontal Alternative Carousel Stream */}
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+              <span className="text-[10px] font-mono whitespace-nowrap uppercase text-zinc-400 bg-zinc-900 border border-zinc-800 rounded px-2 py-1">
+                Explore Remaining ({remainingHostels.length}):
+              </span>
+              {remainingHostels.map((hostel) => (
+                <button
+                  key={hostel.slug}
+                  onClick={() => setSelectedHostel(hostel)}
+                  type="button"
+                  className="whitespace-nowrap text-[11px] font-medium border border-zinc-800 hover:border-zinc-700 bg-zinc-950 text-zinc-300 hover:text-lime-400 px-3 py-1.5 rounded-xl transition-all"
+                >
+                  {hostel.name} ({hostel.roomsLeft}/{hostel.totalRooms} left)
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Core Content Shell */}
           <div className="bg-transparent rounded-3xl overflow-hidden">
             
-            {/* Wireframe Grid Blueprint Panels */}
+            {/* Wireframe Mock Panels Framework */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-2 p-0 pb-6 border-b border-zinc-800/40">
               <div className="md:col-span-2 h-64 bg-zinc-500/5 rounded-2xl relative flex items-center justify-center border border-zinc-800/30 overflow-hidden group">
                 <span className="text-xs font-mono opacity-30 text-zinc-400">primary room view</span>
@@ -258,11 +298,11 @@ export default function Page() {
               </div>
             </div>
 
-            {/* Core Content Segment Layout */}
+            {/* Core Data Fields */}
             <div className="py-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
               
               {/* Left Column Structural Details */}
-              <div className="lg:col-span-7 space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+              <div className="lg:col-span-7 space-y-8">
                 <div>
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="bg-lime-500 text-black px-3 py-0.5 rounded-full text-xs font-bold tracking-tight shadow-sm flex items-center gap-1">
@@ -293,7 +333,7 @@ export default function Page() {
                   </p>
                 </div>
 
-                {/* Amenities grid frameworks */}
+                {/* Amenities framework layout lists */}
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Facility Amenities Framework</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -308,7 +348,7 @@ export default function Page() {
                   </div>
                 </div>
 
-                {/* Route Maps segment blueprints */}
+                {/* MAP BLUEPRINT SEGMENT RE-ADDED HERE */}
                 <div className="border-t border-dashed border-zinc-800/60 pt-6">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Malete Geographic Coordinate Route</h3>
                   
@@ -338,10 +378,11 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
+
               </div>
 
-              {/* Right Column Financial Calculations Segment & Booking Controls */}
-              <div className="lg:col-span-5 space-y-4 animate-in slide-in-from-right-4 duration-500">
+              {/* Right Sidebar Calculations & CTA Interaction Deck */}
+              <div className="lg:col-span-5 space-y-4">
                 <div className="border border-zinc-800/60 rounded-2xl p-6 bg-zinc-500/5 shadow-xl relative overflow-hidden">
                   
                   <div className="flex justify-between items-start mb-4">
@@ -365,21 +406,6 @@ export default function Page() {
                     </div>
                   </div>
 
-                  <div className="space-y-2 text-xs border-b border-dashed border-zinc-800/40 pb-4 mb-4">
-                    <div className="flex justify-between text-zinc-400">
-                      <span>Base Hostel Rent Invoice</span>
-                      <span className="font-mono">{selectedHostel.price}</span>
-                    </div>
-                    <div className="flex justify-between text-zinc-400">
-                      <span>Refundable Caution Deposit</span>
-                      <span className="font-mono">₦20,000</span>
-                    </div>
-                    <div className="flex justify-between text-zinc-400">
-                      <span>Utility & Maintenance Setup</span>
-                      <span className="font-mono">₦5,000</span>
-                    </div>
-                  </div>
-
                   <div className="flex justify-between items-center text-sm font-bold text-current mb-6">
                     <span>Total Estimated Due</span>
                     <span className="text-xl font-mono text-lime-400">
@@ -387,7 +413,7 @@ export default function Page() {
                     </span>
                   </div>
 
-                  {/* INTERACTIVE BOOKING MATRIX AND SIDE-BY-SIDE CHAT HOOK */}
+                  {/* Actions Matrix */}
                   <div className="space-y-3">
                     {!isLocked ? (
                       <button
@@ -399,7 +425,6 @@ export default function Page() {
                       </button>
                     ) : (
                       <div className="space-y-2">
-                        {/* 24-Hour Countdown HUD Element */}
                         <div className="border border-red-500/30 bg-red-500/5 p-4 rounded-xl text-center space-y-1">
                           <p className="text-[10px] text-red-400 uppercase tracking-widest font-bold">Lockout Hold Expiring In</p>
                           <h4 className="text-2xl font-black font-mono text-red-500 tracking-wider animate-pulse">
@@ -407,7 +432,6 @@ export default function Page() {
                           </h4>
                         </div>
 
-                        {/* Split Action Layer: Extension / Active Contact Trigger Interface */}
                         <div className="grid grid-cols-5 gap-2">
                           <div className="col-span-3 bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex flex-col justify-center">
                             <span className="text-[9px] uppercase text-zinc-500 block">Status Flag</span>
@@ -416,7 +440,6 @@ export default function Page() {
                             </span>
                           </div>
                           
-                          {/* Chat Box Adjacent Trigger Toggle Button */}
                           <button
                             type="button"
                             onClick={() => setChatOpen(!chatOpen)}
@@ -440,26 +463,21 @@ export default function Page() {
                   </div>
                 </div>
 
-                {/* INLINE AGENT DOCK CHAT DRAWER */}
+                {/* Inline Drawer messaging pane block element */}
                 {isLocked && chatOpen && (
                   <div className="border border-zinc-800 rounded-2xl bg-zinc-950 p-4 shadow-xl flex flex-col h-72 animate-in slide-in-from-top-4 duration-300">
                     <div className="flex items-center justify-between pb-2 border-b border-zinc-800/60 mb-2">
                       <div className="flex items-center gap-2">
                         <div className="h-2 w-2 rounded-full bg-emerald-400" />
                         <span className="text-xs font-bold text-white">{selectedHostel.host || 'Listing Agent'}</span>
-                        <span className="text-[9px] font-mono bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-400">Assigned</span>
                       </div>
-                      <span className="text-[10px] text-zinc-500">Hostel Desk</span>
                     </div>
 
-                    {/* Messages Container */}
                     <div className="flex-1 overflow-y-auto space-y-2 p-1 text-xs no-scrollbar">
                       {messages.map((msg, idx) => (
                         <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-[85%] rounded-xl px-3 py-2 ${
-                            msg.sender === 'user' 
-                              ? 'bg-lime-400 text-black font-medium' 
-                              : 'bg-zinc-900 border border-zinc-800 text-zinc-300'
+                            msg.sender === 'user' ? 'bg-lime-400 text-black font-medium' : 'bg-zinc-900 border border-zinc-800 text-zinc-300'
                           }`}>
                             {msg.text}
                           </div>
@@ -467,7 +485,6 @@ export default function Page() {
                       ))}
                     </div>
 
-                    {/* Chat Form Element */}
                     <form onSubmit={handleSendMessage} className="mt-2 flex gap-1.5 pt-2 border-t border-zinc-800/60">
                       <input
                         type="text"
@@ -476,17 +493,14 @@ export default function Page() {
                         placeholder="Ask about deposits, documents..."
                         className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-3 text-xs outline-none text-white focus:border-lime-500/50"
                       />
-                      <button
-                        type="submit"
-                        className="bg-zinc-100 hover:bg-white text-black px-3 rounded-xl text-xs font-bold transition-all"
-                      >
+                      <button type="submit" className="bg-zinc-100 hover:bg-white text-black px-3 rounded-xl text-xs font-bold transition-all">
                         Send
                       </button>
                     </form>
                   </div>
                 )}
-
               </div>
+
             </div>
           </div>
         </div>
@@ -499,7 +513,7 @@ export default function Page() {
     <main className="min-h-screen text-current transition-colors duration-300 animate-in fade-in duration-500">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
         
-        {/* Navigation Core Header links element */}
+        {/* Navigation Core Header */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-800/40">
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-lime-400 animate-pulse" />
@@ -508,7 +522,7 @@ export default function Page() {
           <ThemeToggle />
         </div>
 
-        {/* Hero Banner text section */}
+        {/* Hero Section */}
         <section className="mb-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display tracking-tight font-extrabold text-current leading-tight">
             Find your{' '}
@@ -522,10 +536,8 @@ export default function Page() {
 
           <div className="grid grid-cols-3 gap-3 mt-8 max-w-2xl">
             <div className="bg-zinc-500/5 border border-zinc-800/40 rounded-2xl p-4">
-              <p className="text-xs text-zinc-500 font-medium">Vetted Openings</p>
-              <h3 className="text-2xl font-bold mt-1 text-zinc-200">
-                {HOSTELS.filter((h) => h.status === 'available').length} Available
-              </h3>
+              <p className="text-xs text-zinc-500 font-medium">Total Vetted Complexes</p>
+              <h3 className="text-2xl font-bold mt-1 text-zinc-200">{totalHostelsCount} Pool Items</h3>
             </div>
             <div className="bg-zinc-500/5 border border-zinc-800/40 rounded-2xl p-4">
               <p className="text-xs text-zinc-500 font-medium">Starting Price</p>
@@ -538,7 +550,7 @@ export default function Page() {
           </div>
         </section>
 
-        {/* Input Text Box element field setup */}
+        {/* Search Bar element */}
         <div className="flex items-center gap-3 bg-zinc-500/5 border border-zinc-800/40 focus-within:border-lime-500 focus-within:ring-2 focus-within:ring-lime-500/10 rounded-2xl px-4 h-12 mb-4 transition-all duration-200">
           <svg className="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -552,7 +564,7 @@ export default function Page() {
           />
         </div>
 
-        {/* Filter selection Row Pills button sets */}
+        {/* Filter selection row pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-5 no-scrollbar scroll-smooth">
           {FILTERS.map((filter) => {
             const isSelected = active === filter.value;
@@ -575,11 +587,11 @@ export default function Page() {
 
         <div className="mb-4">
           <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-            Showing {visible.length} Matching Complex{visible.length !== 1 ? 'es' : ''}
+            Showing {visible.length} of {totalHostelsCount} Match Complexes
           </p>
         </div>
 
-        {/* Core Hostel card elements matrix lists */}
+        {/* Hostels Directory Cards Block Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {visible.map((hostel) => (
             <div
@@ -614,6 +626,16 @@ export default function Page() {
                     <div className="bg-lime-500/10 text-lime-400 border border-lime-500/20 font-bold text-xs px-2 py-1 rounded-lg flex items-center whitespace-nowrap">
                       ★ {hostel.rating}
                     </div>
+                  </div>
+
+                  {/* Room counters matrix */}
+                  <div className="mt-3 flex items-center justify-between border border-zinc-800/50 rounded-xl p-2 bg-zinc-900/40 text-[11px] font-mono">
+                    <span className="text-zinc-500">Structural Capacity:</span>
+                    <span className="text-zinc-300 font-bold">{hostel.totalRooms} Rooms</span>
+                    <span className="text-zinc-500">|</span>
+                    <span className={`${hostel.roomsLeft === 0 ? 'text-red-400 font-black' : 'text-lime-400 font-black'}`}>
+                      {hostel.roomsLeft === 0 ? 'SOLD OUT' : `${hostel.roomsLeft} LEFT`}
+                    </span>
                   </div>
 
                   <div className="mt-4">
