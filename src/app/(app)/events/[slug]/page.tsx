@@ -1,160 +1,140 @@
-/**
- * ROUTE: /events/[slug]
- * ACCESS: authenticated student
- * PURPOSE: Event detail + ticket purchase. Cover image, when/where, organiser block, ticket tiers, Paystack inline checkout.
- * BUILT HERE: Hero, tier selector (<RadioGroup>), <QuantityStepper>, organiser <VerifiedBadge>.
- * TODO: implement the full screen once dependent modules + data are wired.
- */
-import Link from "next/link";
 import { LuDot } from "react-icons/lu"
-import { TbCurrencyNaira } from "react-icons/tb";
-import { CirclePlus } from 'lucide-react';
-import { CircleMinus } from 'lucide-react';
-import { MoveRight } from 'lucide-react';
-import { GoDotFill } from "react-icons/go";
-import { ArrowLeft } from 'lucide-react';
-import Image from "next/image";
+import { TbCurrencyNaira } from "react-icons/tb"
+import { MoveRight } from "lucide-react"
+import { GoDotFill } from "react-icons/go"
+import { ArrowLeft } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import type { Metadata } from 'next'
+
+import partyEvent from '@/assets/images/partyImage.jpg'
+import OpenMicImage from '@/assets/images/OpenMic.jpg'
+import techMeetUpImage from '@/assets/images/techmeet.jpg'
+import soccer from '@/assets/images/soccer.jpg'
+import BookClubImage from '@/assets/images/bookclub.jpg'
+import sundayBrunchImage from '@/assets/images/sundaybrunch.jpg'
+import comedyImage from '@/assets/images/comedy.jpg'
+import hackathon from '@/assets/images/hackathon.jpg'
 import partyImage from "@/assets/images/party.jpeg"
+import taylorSwiftImage from '@/assets/images/taylor-swift.jpg'
+import kendrickImage from '@/assets/images/kendrick.jpg'
+import lilYatchyImage from '@/assets/images/lil-yatchy.jpg'
+import TicketPanel from "@/components/event-comps/TicketPanel"
 
-import type { Metadata } from 'next';
+const events = [
+  { slug: "freshers-night-phyno-live", image: partyEvent, date: "TUE 28", price: "₦3,500", title: "Fresher's Night '26 — Phyno Live", location: "UNILORIN Sports Hall", time: "8pm", going: 312, category: "Concert", tags: ["Concert", "18+"] },
+  { slug: "open-mic-night", image: OpenMicImage, date: "TUE 28", price: "₦1,000", title: "Open mic night", location: "Caffeine Co.", time: "6pm", going: 42, category: "Campus", tags: ["Campus"] },
+  { slug: "tech-meetup", image: techMeetUpImage, date: "WED 28", price: "Free", title: "Tech meetup: AI", location: "UNILORIN ICT", time: "4pm", going: 43, category: "Campus", tags: ["Campus", "Free"] },
+  { slug: "book-club", image: BookClubImage, date: "THU 28", price: "₦500", title: "Book club: Achebe", location: "The Cube", time: "6pm", going: 19, category: "Campus", tags: ["Campus"] },
+  { slug: "afro-house-pool", image: partyImage, date: "FRI 28", price: "₦2,500", title: "Afro House Pool Party", location: "Crystal Park", time: "6pm", going: 203, category: "Nightlife", tags: ["Nightlife"] },
+  { slug: "kwasu-unilorin", image: soccer, date: "SAT 28", price: "Free", title: "KWASU vs UNILORIN", location: "Sports complex", time: "2pm", going: 511, category: "Sports", tags: ["Sports", "Free"] },
+  { slug: "comedy", image: comedyImage, date: "SAT 28", price: "₦5,000", title: "Comedy: I Go Dye", location: "Convocation Hall", time: "8pm", going: 134, category: "Campus", tags: ["Campus"] },
+  { slug: "sunday-brunch-vibes", image: sundayBrunchImage, date: "SUN 28", price: "₦3,000", title: "Sunday brunch and vibes", location: "Flower garden", time: "1pm", going: 67, category: "Nightlife", tags: ["Nightlife"] },
+  { slug: "hackathon-kickoff", image: hackathon, date: "MON 28", price: "Free", title: "Hackathon kickoff", location: "Skyview Hall", time: "10am", going: 298, category: "Campus", tags: ["Campus", "Free"] },
+]
+const lineup = [
+  { name: "Phyno", role: "Headliner", image: taylorSwiftImage },
+  { name: "DJ Neptune", role: "Artist", image: kendrickImage },
+  { name: "Local opening", role: "Artist", image: lilYatchyImage },
+]
 
-export const metadata: Metadata = { title: 'Event detail' };
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const event = events.find(e => e.slug === slug)
+  return { title: event?.title ?? 'Event detail' }
+}
+
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const event = events.find(e => e.slug === slug)
+
+  if (!event) {
+    return (
+      <section className="flex flex-col gap-3">
+        <p className="text-muted text-sm">Event not found.</p>
+        <Link href="/events" className="flex items-center border-1 w-fit px-2 py-1 rounded-lg bg-[#C5FF4A] text-sm">
+          <ArrowLeft strokeWidth={1} width={16} /> Back to events
+        </Link>
+      </section>
+    )
+  }
+
+  const tickets = [
+    { id: "regular", name: "Regular", desc: "Standing • open floor", price: 3500 },
+    { id: "vip", name: "VIP", desc: "Reserved seats • meet & greet", price: 7500 },
+    { id: "table", name: "Table for 4", desc: "Booth • drinks included", price: 25000 },
+  ]
 
   return (
     <section className="flex flex-col gap-3">
       <p className="eyebrow text-lime-deep">/events/{slug}</p>
 
       <main>
-        <Link href="/events" className="flex items-center border-1 w-fit px-1 py-[1px] rounded-lg bg-[#C5FF4A] text-sm cursor-pointer"><ArrowLeft strokeWidth={1} width={16} /> Events</Link>
-        <div className='flex items-start gap-5 mt-5'>
+        <Link href="/events" className="flex items-center border-1 font-mono font-medium w-fit px-2 py-1 rounded-lg bg-[#C5FF4A] text-sm cursor-pointer shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+          <ArrowLeft strokeWidth={2} width={15} /> Events
+        </Link>
 
-          <div className='w-full lg:w-[70%]'>
+        <div className="flex flex-col items-start gap-5 mt-5 lg:flex-row">
+
+          {/* LEFT SIDE */}
+          <div className="w-full lg:w-[70%]">
             <div className="h-[300px] lg:h-[350px]">
-              <Image src={partyImage} alt="" className="object-cover h-[100%] w-full rounded-lg" />
+              <Image src={event.image} alt={event.title} className="object-cover h-full w-full rounded-lg" />
             </div>
 
-            <div className="flex flex-col lg:block">
-              <div className="mt-5 flex items-center gap-2">
-                <div className="flex items-center lg:border-1 mt-0 lg:mt-0 rounded-xl w-fit px-2 py-[2px] lg:px-2 lg:py-[6px] bg-[#C5FF4A] text-[10px] order-2 lg:order-0"><GoDotFill /> Tonight <LuDot /> 8:00pm</div>
-                <div className="border-1 rounded-xl px-2 py-[1px] text-[10px] lg:text-[16px] lg:px-3 lg:py-1 w-fit order-4 lg:order-0">Concert</div>
+            <div className="mt-5 flex items-center gap-2">
+              <div className="flex items-center rounded-xl w-fit px-2 py-[2px] bg-[#C5FF4A] text-[10px]">
+                <GoDotFill className="animate-pulse" /> Tonight <LuDot /> 8:00pm
               </div>
-              <h1 className="text-2xl mt-[6px] lg:mt-[10px] lg:text-[44px] lg:tracking-wider lg:h-fit lg:block">{slug}</h1>
-              <div className="lg:block">
-                <p className="flex text-[10px] lg:text-[16px] items-center w-full font-normal lg:font-normal lg:w-fit">UNILORIN Sports Hall <LuDot /> 3 min from Tanke <LuDot /> doors 7pm</p>
-              </div>
+              {event.tags.map(tag => (
+                <div key={tag} className="border-1 rounded-xl px-2 py-[1px] text-[10px]">{tag}</div>
+              ))}
+            </div>
 
-              {/* About Section */}
-              <div className="border-y-1 lg:border-y-2 lg:border-dashed mt-3 py-2 lg:block">
-                <h1 className="font-bold">About</h1>
-                <p className="lg:text-base">Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis reprehenderit excepturi pariatur veniam enim vero illum exercitationem saepe vel, natus id quia voluptates hic? Facilis assumenda exercitationem veritatis beatae consequuntur fuga.</p>
-              </div>
+            <h1 className="text-2xl mt-[6px] lg:text-[44px]">{event.title}</h1>
 
-              {/* Celebrity Lineup */}
-              <div className="mt-[2px] py-2 lg:py-3 border-b-1 lg:border-b-2 lg:border-dashed lg:block">
-                <h1 className="font-bold">Line Up</h1>
-                <div className="flex mt-2 flex-col lg:flex-row justify-between gap-2 lg:gap-0">
-                  <div className="border-2 flex lg:flex-row w-full lg:w-[30%] rounded-lg p-2 items-center gap-2">
-                    <div className="border-2 h-10 w-10 rounded-[50%]"></div>
+            <p className="flex text-[10px] lg:text-[16px] items-center">
+              {event.location} <LuDot /> doors {event.time}
+            </p>
+
+            <div className="border-y-1 mt-3 py-2">
+              <h1 className="font-bold">About</h1>
+              <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque cum nihil facilis sit cupiditate vitae nesciunt reiciendis animi quasi error autem vero tempore fugiat molestiae quos eos, accusamus velit excepturi?
+                Enim adipisci fugiat pariatur officiis vitae ratione a consectetur odit dignissimos debitis. Odit a, architecto ipsam vitae sequi veniam. Iste tempora molestias optio. At laborum quasi cumque quaerat nesciunt placeat.</p>
+            </div>
+
+            <div className="mt-2 py-2 border-b-1">
+              <h1 className="font-bold">Line Up</h1>
+              <div className="flex mt-2 flex-col lg:flex-row gap-2">
+                {lineup.map((artist) => (
+                  <div key={artist.name} className="border-2 flex w-full lg:w-[30%] rounded-lg p-2 items-center gap-2">
+
+                    {/* Circle image — position relative + overflow hidden is the key */}
+                    <div className="relative h-10 w-10 rounded-full overflow-hidden flex-shrink-0 border-2">
+                      <Image
+                        src={artist.image}
+                        alt={artist.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+
                     <div>
-                      <h1 className="font-bold">Phyno</h1>
-                      <p className="text-sm">Headliner</p>
+                      <h1 className="font-bold">{artist.name}</h1>
+                      <p className="text-sm text-muted">{artist.role}</p>
                     </div>
                   </div>
-
-                  <div className="border-2 flex lg:flex-row w-full lg:w-[30%] rounded-lg p-2 items-center gap-2">
-                    <div className="border-2 h-10 w-10 rounded-[50%]"></div>
-                    <div>
-                      <h1 className="font-bold">DJ Neptune</h1>
-                      <p className="text-sm">Support</p>
-                    </div>
-                  </div>
-
-                  <div className="border-2 flex lg:flex-row w-full lg:w-[30%] rounded-lg p-2 items-center gap-2">
-                    <div className="border-2 h-10 w-10 rounded-[50%]"></div>
-                    <div>
-                      <h1 className="font-bold">Local opening</h1>
-                      <p className="text-sm">Sync student</p>
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
-
-
             </div>
           </div>
 
-
-          <div className='hidden border-1 w-[30%] px-4 py-3 rounded-lg lg:sticky lg:block'>
-            <h1>PICK YOUR TICKET</h1>
-
-            <div className="border-1 flex justify-between items-start p-3 mt-2 rounded-lg">
-              <div>
-                <h1 className="font-bold text-lg">Regular</h1>
-                <p className="flex items-center text-xs">Standing <LuDot /> open floor</p>
-              </div>
-              <h1 className="font-black text-xl flex items-center gap-0"><TbCurrencyNaira className="font-black text-2xl" /> 3500</h1>
-            </div>
-
-            <div className="border-1 flex justify-between items-start p-3 mt-2 rounded-lg">
-              <div>
-                <h1 className="font-bold text-lg">VIP</h1>
-                <p className="flex items-center text-xs">Reserved seats <LuDot /> meet & greet</p>
-              </div>
-              <h1 className="font-black text-xl flex items-center gap-0"><TbCurrencyNaira className="font-black text-2xl" /> 7500</h1>
-            </div>
-
-            <div className="border-1 flex justify-between items-start p-3 mt-2 rounded-lg">
-              <div>
-                <h1 className="font-bold text-lg">Table for 4</h1>
-                <p className="flex items-center text-xs">Booth <LuDot /> drinks included</p>
-              </div>
-              <h1 className="font-black text-xl flex items-center gap-0"><TbCurrencyNaira className="font-black text-2xl" /> 25000</h1>
-            </div>
-
-            <div className="border-y-2 border-dashed flex justify-between items-center p-3 mt-3">
-              <p>Quantity </p>
-              <div className="flex items-center gap-2">
-                <CircleMinus strokeWidth={1} />
-                <span className="text-lg">2</span>
-                <CirclePlus strokeWidth={1} />
-              </div>
-            </div>
-
-
-            <div className="border-1 flex flex-col p-3 mt-2 rounded-lg">
-              <div className="flex justify-between items-center w-full">
-                <p className="font-medium text-sm">2 <span>x</span> ticket type</p>
-                <h1 className="flex items-center gap-0 text-lg font-medium"><TbCurrencyNaira className="font-black text-2xl" /> xxxx</h1>
-              </div>
-
-              <div className="flex justify-between items-center w-full">
-                <p className="font-medium text-sm">Sync Fee</p>
-                <h1 className="flex items-center gap-0 text-lg font-medium"><TbCurrencyNaira className="font-medium text-xl" /> 500</h1>
-              </div>
-
-
-              <div className="flex justify-between items-center w-full">
-                <p className="font-medium text-sm">Total</p>
-                <h1 className="flex items-center gap-0 text-lg font-medium"><TbCurrencyNaira className="font-medium text-xl" /> xxxx</h1>
-              </div>
-            </div>
-
-            <button className="border-1 flex items-center rounded-lg mt-3 w-full justify-center gap-2 bg-[#C5FF4A] py-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] cursor-pointer">Buy 2 tickets <MoveRight strokeWidth={1} width={15} /></button>
-            <div className="flex justify-center items-center mt-3 text-xs">
-              <input type="checkbox" name="" id="" defaultChecked />
-              QR ticket lands in your Sync wallet
-            </div>
-          </div>
+          {/* RIGHT SIDE — needs useState so it's a Client Component */}
+          <TicketPanel tickets={tickets} />
 
         </div>
       </main>
     </section>
-  );
+  )
 }
