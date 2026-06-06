@@ -129,7 +129,7 @@ export default function Page() {
   const [isLocked, setIsLocked] = useState(false);
   const [timeLeft, setTimeLeft] = useState(86400);
 
-  // New states for the Inspection Scheduler System
+  // Inspection Scheduler System States
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
@@ -147,7 +147,6 @@ export default function Page() {
     setIsLocked(false);
     setChatOpen(false);
     setShowScheduleModal(false);
-    // Reset form states when switching layouts
     setClientName('');
     setClientPhone('');
     setClientAvailableTime('');
@@ -192,13 +191,10 @@ export default function Page() {
     
     setIsSubmittingSchedule(true);
     
-    // Simulate API Gateway transmission delay
     setTimeout(() => {
       setIsSubmittingSchedule(false);
       setShowScheduleModal(false);
       alert(`Walkthrough Schedule Logged!\n\nName: ${clientName}\nPhone: ${clientPhone}\nTarget Window: ${clientAvailableTime}\n\nOur field representative will sync with your device via SMS shortly to confirm receipt of the ₦5,000 inspection processing token.`);
-      
-      // Reset form fields cleanly
       setClientName('');
       setClientPhone('');
       setClientAvailableTime('');
@@ -349,7 +345,7 @@ export default function Page() {
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
           
-          {/* Top Navigation Navigation Bar */}
+          {/* Top Navigation Bar */}
           <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-800/40">
             <button
               type="button"
@@ -364,7 +360,7 @@ export default function Page() {
             <ThemeToggle />
           </div>
 
-          {/* CAPACITY MONITOR HUD BANNER SHOWING ACTIVE SELECTED COUNTS */}
+          {/* CAPACITY MONITOR HUD BANNER */}
           <div className="mb-8 border border-zinc-800/60 rounded-2xl p-4 bg-zinc-500/5 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-300">
             <div className="space-y-1">
               <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Directory Capacity Monitoring</span>
@@ -520,10 +516,26 @@ export default function Page() {
                     </div>
                   </div>
 
+                  {/* UNCHANGED BREAKDOWN CALCULATION SEGMENTS WITH ADDED INSPECTION FEE */}
+                  <div className="space-y-2 border-b border-dashed border-zinc-800/60 pb-4 mb-4 text-xs text-zinc-400">
+                    <div className="flex justify-between">
+                      <span>Base Rental Amount</span>
+                      <span className="font-mono text-zinc-200">₦{selectedHostel.numericPrice.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Original Breakdown Overhead Fee</span>
+                      <span className="font-mono text-zinc-200">₦25,000</span>
+                    </div>
+                    <div className="flex justify-between text-amber-400/90">
+                      <span>Mandatory Inspection Fee</span>
+                      <span className="font-mono font-bold">+ ₦5,000</span>
+                    </div>
+                  </div>
+
                   <div className="flex justify-between items-center text-sm font-bold text-current mb-6">
                     <span>Total Estimated Due</span>
                     <span className="text-xl font-mono text-lime-400">
-                      ₦{(selectedHostel.numericPrice + 25000).toLocaleString()}
+                      ₦{(selectedHostel.numericPrice + 25000 + 5000).toLocaleString()}
                     </span>
                   </div>
 
@@ -568,7 +580,6 @@ export default function Page() {
                       </div>
                     )}
 
-                    {/* INTERACTION TRIGGER: Opens the Inspection Registration Form Portal */}
                     <button
                       type="button"
                       onClick={() => setShowScheduleModal(true)}
