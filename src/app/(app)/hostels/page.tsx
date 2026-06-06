@@ -15,6 +15,7 @@ interface Hostel {
   host?: string;
   totalRooms: number;   
   roomsLeft: number;    
+  type: 'self contain' | 'room and parlour' | 'two bedroom' | 'others';
 }
 
 const HOSTELS: Hostel[] = [
@@ -30,6 +31,7 @@ const HOSTELS: Hostel[] = [
     host: 'Alhaji Woss',
     totalRooms: 24,
     roomsLeft: 5,
+    type: 'self contain',
   },
   {
     slug: 'la-marida-malete',
@@ -43,6 +45,7 @@ const HOSTELS: Hostel[] = [
     host: 'Mama Yetunde',
     totalRooms: 40,
     roomsLeft: 12,
+    type: 'self contain',
   },
   {
     slug: 'amina-villa',
@@ -56,6 +59,7 @@ const HOSTELS: Hostel[] = [
     host: 'Baba Amina',
     totalRooms: 18,
     roomsLeft: 0,
+    type: 'others',
   },
   {
     slug: 'success-hostel',
@@ -69,6 +73,7 @@ const HOSTELS: Hostel[] = [
     host: 'Bro. Success',
     totalRooms: 30,
     roomsLeft: 2,
+    type: 'others',
   },
   {
     slug: 'montresor-capitol',
@@ -82,6 +87,7 @@ const HOSTELS: Hostel[] = [
     host: 'Capitol Admins',
     totalRooms: 35,
     roomsLeft: 7,
+    type: 'self contain',
   },
   {
     slug: 'eniduro-villa',
@@ -95,14 +101,58 @@ const HOSTELS: Hostel[] = [
     host: 'Pa Eniduro',
     totalRooms: 15,
     roomsLeft: 0,
+    type: 'room and parlour',
+  },
+  {
+    slug: 'apex-executive-suites',
+    name: 'Apex Executive Suites',
+    location: '5 min walk · Safari Area',
+    status: 'available',
+    rating: 4.9,
+    price: '₦280,000',
+    numericPrice: 280000,
+    tags: ['AC Unit', 'Prepaid Meter', 'Modern Kitchen', 'Fenced Guard'],
+    host: 'Engr. Dele',
+    totalRooms: 12,
+    roomsLeft: 4,
+    type: 'room and parlour',
+  },
+  {
+    slug: 'legacy-apartments',
+    name: 'Legacy Luxury Apartments',
+    location: '7 min walk · Behind School Gate',
+    status: 'limited',
+    rating: 4.8,
+    price: '₦420,000',
+    numericPrice: 420000,
+    tags: ['Two Bathrooms', 'Balcony', 'Gated Community', 'Water Heater'],
+    host: 'Alhaja Kudirat',
+    totalRooms: 8,
+    roomsLeft: 1,
+    type: 'two bedroom',
+  },
+  {
+    slug: 'emerald-court',
+    name: 'Emerald Premium Court',
+    location: '10 min walk · Eleko Junction',
+    status: 'available',
+    rating: 4.7,
+    price: '₦390,000',
+    numericPrice: 390000,
+    tags: ['Spacious Living', 'Car Park', '24h Security', 'Water Treatment'],
+    host: 'Chief Kola',
+    totalRooms: 16,
+    roomsLeft: 6,
+    type: 'two bedroom',
   },
 ];
 
 const FILTERS = [
-  { value: 'all', label: 'All' },
-  { value: 'available', label: 'Available' },
-  { value: 'reserved', label: 'Reserved' },
-  { value: 'limited', label: 'Limited' },
+  { value: 'all', label: 'All Layouts' },
+  { value: 'self contain', label: 'Self Contain' },
+  { value: 'room and parlour', label: 'Room and Parlour' },
+  { value: 'two bedroom', label: 'Two Bedroom' },
+  { value: 'others', label: 'Others' },
 ] as const;
 
 const STATUS_MAP = {
@@ -218,7 +268,7 @@ export default function Page() {
             .includes(query.toLowerCase());
 
         const matchesFilter =
-          active === 'all' ? true : hostel.status === active;
+          active === 'all' ? true : hostel.type === active;
 
         return matchesQuery && matchesFilter;
       }),
@@ -421,6 +471,9 @@ export default function Page() {
                     <span className={`px-3 py-0.5 rounded-full border text-xs font-semibold ${STATUS_MAP[selectedHostel.status].cls}`}>
                       {STATUS_MAP[selectedHostel.status].label} Allocation
                     </span>
+                    <span className="px-3 py-0.5 rounded-full border border-zinc-800 bg-zinc-900 text-zinc-400 text-xs font-mono capitalize">
+                      Layout: {selectedHostel.type}
+                    </span>
                   </div>
 
                   <h1 className="text-4xl font-black tracking-tight text-current">
@@ -516,7 +569,7 @@ export default function Page() {
                     </div>
                   </div>
 
-                  {/* UNCHANGED BREAKDOWN CALCULATION SEGMENTS WITH ADDED INSPECTION FEE */}
+                  {/* PRESERVED BREAKDOWN CALCULATIONS MATRIX */}
                   <div className="space-y-2 border-b border-dashed border-zinc-800/60 pb-4 mb-4 text-xs text-zinc-400">
                     <div className="flex justify-between">
                       <span>Base Rental Amount</span>
@@ -658,7 +711,7 @@ export default function Page() {
             </span>
           </h1>
           <p className="mt-4 max-w-2xl text-sm md:text-base text-zinc-400">
-            Browse comprehensively vetted off-campus student accommodations around Malete town. Click any item card to see standalone geographic routes and pricing structures.
+            Browse comprehensively vetted off-campus student accommodations around Malete town. Filter by your layout requirements to pinpoint available allocations.
           </p>
 
           <div className="grid grid-cols-3 gap-3 mt-8 max-w-2xl">
@@ -691,7 +744,7 @@ export default function Page() {
           />
         </div>
 
-        {/* Filter selection row pills */}
+        {/* Layout Filter Row Pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-5 no-scrollbar scroll-smooth">
           {FILTERS.map((filter) => {
             const isSelected = active === filter.value;
@@ -731,6 +784,10 @@ export default function Page() {
                   {STATUS_MAP[hostel.status].label}
                 </span>
                 
+                <span className="absolute bottom-3 left-4 text-[10px] uppercase tracking-wider font-mono bg-black/60 text-zinc-300 border border-zinc-800 px-2 py-0.5 rounded">
+                  {hostel.type}
+                </span>
+
                 <svg className="w-14 h-14 text-zinc-800/60 group-hover:scale-110 group-hover:text-lime-500/20 transition-all duration-500" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M19 9.3V4h-3v2.6L12 3 2 12h3v8h5v-6h4v6h5v-8h3L19 9.3zM10 10c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1z"/>
                 </svg>
