@@ -129,6 +129,13 @@ export default function Page() {
   const [isLocked, setIsLocked] = useState(false);
   const [timeLeft, setTimeLeft] = useState(86400);
 
+  // New states for the Inspection Scheduler System
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [clientName, setClientName] = useState('');
+  const [clientPhone, setClientPhone] = useState('');
+  const [clientAvailableTime, setClientAvailableTime] = useState('');
+  const [isSubmittingSchedule, setIsSubmittingSchedule] = useState(false);
+
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<{ sender: 'user' | 'agent'; text: string }[]>([
@@ -139,6 +146,11 @@ export default function Page() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setIsLocked(false);
     setChatOpen(false);
+    setShowScheduleModal(false);
+    // Reset form states when switching layouts
+    setClientName('');
+    setClientPhone('');
+    setClientAvailableTime('');
   }, [selectedHostel]);
 
   useEffect(() => {
@@ -172,6 +184,25 @@ export default function Page() {
     setTimeout(() => {
       setMessages((prev) => [...prev, { sender: 'agent', text: 'Got it. Holding allocation open. Please drop your WhatsApp line so we can sync documents.' }]);
     }, 1200);
+  };
+
+  const handleScheduleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!clientName || !clientPhone || !clientAvailableTime) return;
+    
+    setIsSubmittingSchedule(true);
+    
+    // Simulate API Gateway transmission delay
+    setTimeout(() => {
+      setIsSubmittingSchedule(false);
+      setShowScheduleModal(false);
+      alert(`Walkthrough Schedule Logged!\n\nName: ${clientName}\nPhone: ${clientPhone}\nTarget Window: ${clientAvailableTime}\n\nOur field representative will sync with your device via SMS shortly to confirm receipt of the ₦5,000 inspection processing token.`);
+      
+      // Reset form fields cleanly
+      setClientName('');
+      setClientPhone('');
+      setClientAvailableTime('');
+    }, 1000);
   };
 
   const totalHostelsCount = HOSTELS.length;
@@ -229,6 +260,89 @@ export default function Page() {
               >
                 Acknowledge & Start Timer
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* ==================== SCHEDULE INSPECTION MODAL SYSTEM ==================== */}
+        {showScheduleModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md bg-black/60 animate-in fade-in duration-200">
+            <div className="border border-zinc-800 bg-zinc-950 p-6 md:p-8 rounded-3xl max-w-md w-full shadow-2xl relative space-y-4 animate-in zoom-in-95 duration-300 text-left">
+              
+              <button 
+                type="button"
+                onClick={() => setShowScheduleModal(false)}
+                className="absolute top-4 right-4 text-zinc-400 hover:text-white transition-colors text-lg p-1 font-mono focus:outline-none"
+              >
+                ✕
+              </button>
+
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold text-lime-400 tracking-wider font-mono">Field Inspection Request</span>
+                <h3 className="text-xl font-black tracking-tight text-white">Book Physical Walkthrough</h3>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Coordinate context windows directly with field marshals allocated to <span className="text-zinc-200 font-bold">{selectedHostel.name}</span>.
+                </p>
+              </div>
+
+              {/* CRITICAL DISPATCH NOTE: ₦5,000 Inspection Processing Statement */}
+              <div className="border border-amber-500/20 bg-amber-500/5 rounded-xl p-3.5 flex items-start gap-3">
+                <span className="text-base mt-0.5">⚠️</span>
+                <div className="text-xs text-amber-300/90 leading-relaxed">
+                  <span className="font-extrabold text-white block mb-0.5">Logistics & Inspection Processing Fee Notice</span>
+                  Please note that a mandatory, non-refundable sum of <span className="text-white font-bold underline decoration-amber-400">₦5,000</span> is required to cover logistics framework overhead prior to physical building penetration and key synchronization.
+                </div>
+              </div>
+
+              <form onSubmit={handleScheduleSubmit} className="space-y-3 pt-2">
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-zinc-400 block tracking-wider">Full Legal Name</label>
+                  <input 
+                    type="text"
+                    required
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    placeholder="Enter your first and last name"
+                    className="w-full h-11 bg-zinc-900 border border-zinc-800 focus:border-lime-400 rounded-xl px-3.5 text-xs text-white outline-none transition-colors placeholder-zinc-600"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-zinc-400 block tracking-wider">Phone / WhatsApp Line</label>
+                  <input 
+                    type="tel"
+                    required
+                    value={clientPhone}
+                    onChange={(e) => setClientPhone(e.target.value)}
+                    placeholder="e.g., +234 812 345 6789"
+                    className="w-full h-11 bg-zinc-900 border border-zinc-800 focus:border-lime-400 rounded-xl px-3.5 text-xs text-white outline-none transition-colors placeholder-zinc-600"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] uppercase font-bold text-zinc-400 block tracking-wider">Availability Time Slot</label>
+                  <input 
+                    type="text"
+                    required
+                    value={clientAvailableTime}
+                    onChange={(e) => setClientAvailableTime(e.target.value)}
+                    placeholder="e.g., Saturday morning between 10am - 2pm"
+                    className="w-full h-11 bg-zinc-900 border border-zinc-800 focus:border-lime-400 rounded-xl px-3.5 text-xs text-white outline-none transition-colors placeholder-zinc-600"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingSchedule}
+                  className="w-full h-12 bg-lime-400 hover:bg-lime-500 disabled:bg-zinc-800 text-black disabled:text-zinc-500 font-extrabold rounded-xl text-xs uppercase tracking-wider transition-all mt-4 shadow-lg flex items-center justify-center gap-2"
+                >
+                  {isSubmittingSchedule ? (
+                    <span>Registering Record Window...</span>
+                  ) : (
+                    <span>Acknowledge Notice & Book Walkthrough</span>
+                  )}
+                </button>
+              </form>
             </div>
           </div>
         )}
@@ -348,7 +462,7 @@ export default function Page() {
                   </div>
                 </div>
 
-                {/* MAP BLUEPRINT SEGMENT RE-ADDED HERE */}
+                {/* MAP BLUEPRINT SEGMENT */}
                 <div className="border-t border-dashed border-zinc-800/60 pt-6">
                   <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Malete Geographic Coordinate Route</h3>
                   
@@ -454,9 +568,11 @@ export default function Page() {
                       </div>
                     )}
 
+                    {/* INTERACTION TRIGGER: Opens the Inspection Registration Form Portal */}
                     <button
                       type="button"
-                      className="w-full py-3 border border-zinc-800/60 text-zinc-300 font-bold rounded-xl text-xs hover:bg-zinc-900/40 transition-all"
+                      onClick={() => setShowScheduleModal(true)}
+                      className="w-full py-3 border border-zinc-800/60 text-zinc-300 hover:text-lime-400 font-bold rounded-xl text-xs hover:bg-zinc-900/40 transition-all active:scale-98"
                     >
                       Schedule In-Person Inspection Walk
                     </button>
