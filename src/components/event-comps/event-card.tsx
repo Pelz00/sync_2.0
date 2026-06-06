@@ -28,8 +28,6 @@ export default function EventCards({
     return (
         <Link href={`/events/${slug}`} className="w-full group block">
             <div className="w-full">
-
-                {/* IMAGE */}
                 <div className="w-full relative h-[200px] overflow-hidden rounded-t-lg">
                     <Image
                         src={image}
@@ -39,7 +37,6 @@ export default function EventCards({
                     />
                 </div>
 
-                {/* CONTENT */}
                 <div className="rounded-b-lg px-3 py-3 shadow-lg bg-white">
                     <div className="flex items-center gap-2">
                         <div className="border-none rounded-xl px-[4px] py-[2px] w-fit lg:px-2 lg:py-[2px] bg-black font-medium text-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] text-xs lg:text-sm">

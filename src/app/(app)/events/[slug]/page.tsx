@@ -108,10 +108,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               <h1 className="font-bold">Line Up</h1>
               <div className="flex mt-2 flex-col lg:flex-row gap-2">
                 {lineup.map((artist) => (
-                  <div key={artist.name} className="border-2 flex w-full lg:w-[30%] rounded-lg p-2 items-center gap-2">
+                  <div key={artist.name} className="flex w-full lg:w-[30%] rounded-lg p-2 items-center gap-2 shadow-lg bg-white">
 
                     {/* Circle image — position relative + overflow hidden is the key */}
-                    <div className="relative h-10 w-10 rounded-full overflow-hidden flex-shrink-0 border-2">
+                    <div className="relative h-10 w-10 rounded-full overflow-hidden flex-shrink-0 border-1">
                       <Image
                         src={artist.image}
                         alt={artist.name}
