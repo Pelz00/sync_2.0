@@ -16,21 +16,21 @@ import {
   Bell,
   Bookmark,
   Building2,
+  CalendarDays,
   ClipboardCheck,
   ClipboardList,
   Inbox,
   LayoutDashboard,
   List,
   Megaphone,
-  MessageCircle,
   Newspaper,
-  ScrollText,
   Settings,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
   Star,
-  User,
+  TicketIcon,
+  TrendingUp,
   Users,
   Wallet,
 } from 'lucide-react';
@@ -44,6 +44,8 @@ export interface DashboardNavItem {
   icon: LucideIcon;
   /** Optional count pill rendered on the right of the row. */
   badge?: number;
+  /** Descriptive page title for the header (falls back to `label`). */
+  heading?: string;
 }
 
 export interface DashboardNavSection {
@@ -58,6 +60,35 @@ export interface DashboardNavConfig {
   /** Base route for the role - used so the overview row only matches exactly. */
   rootHref: string;
   sections: DashboardNavSection[];
+}
+
+/**
+ * The nav item the current path falls under (longest-prefix match), resolving
+ * handle-based hrefs the same way the sidebar does. Used by the header to show
+ * "what screen we're on": `label` for the breadcrumb, `heading` for the big
+ * title. Falls back to the role's brand label.
+ */
+export function activeNav(
+  navKey: DashboardNavKey,
+  pathname: string,
+  handle?: string,
+): { label: string; heading: string } {
+  const { sections, brandLabel, rootHref } = DASHBOARD_NAV[navKey];
+  const toHref = (href: string) => (handle ? `/${handle}${href.slice(rootHref.length)}` : href);
+  let label = brandLabel;
+  let heading = brandLabel;
+  let bestLen = -1;
+  for (const section of sections) {
+    for (const item of section.items) {
+      const href = toHref(item.href);
+      if ((pathname === href || pathname.startsWith(href + '/')) && href.length > bestLen) {
+        label = item.label;
+        heading = item.heading ?? item.label;
+        bestLen = href.length;
+      }
+    }
+  }
+  return { label, heading };
 }
 
 export const DASHBOARD_NAV: Record<DashboardNavKey, DashboardNavConfig> = {
@@ -83,10 +114,7 @@ export const DASHBOARD_NAV: Record<DashboardNavKey, DashboardNavConfig> = {
       },
       {
         label: 'Account',
-        items: [
-          { href: '/vendor/documents', label: 'Documents', icon: ScrollText },
-          { href: '/vendor/settings', label: 'Settings', icon: Settings },
-        ],
+        items: [{ href: '/vendor/settings', label: 'Settings', icon: Settings }],
       },
     ],
   },
@@ -109,10 +137,7 @@ export const DASHBOARD_NAV: Record<DashboardNavKey, DashboardNavConfig> = {
       },
       {
         label: 'Account',
-        items: [
-          { href: '/landlord/documents', label: 'Documents', icon: ScrollText },
-          { href: '/landlord/settings', label: 'Settings', icon: Settings },
-        ],
+        items: [{ href: '/landlord/settings', label: 'Settings', icon: Settings }],
       },
     ],
   },
@@ -150,24 +175,35 @@ export const DASHBOARD_NAV: Record<DashboardNavKey, DashboardNavConfig> = {
     sections: [
       {
         items: [
-          { href: '/me', label: 'Overview', icon: LayoutDashboard },
-          { href: '/me/saved', label: 'Saved', icon: Bookmark },
-          { href: '/me/bookings', label: 'Bookings', icon: ClipboardList },
-          { href: '/me/messages', label: 'Messages', icon: MessageCircle },
+          { href: '/me', label: 'Overview', heading: 'Your dashboard', icon: LayoutDashboard },
+          {
+            href: '/me/insights',
+            label: 'Insights',
+            heading: 'Your spending & usage',
+            icon: TrendingUp,
+          },
+          { href: '/me/wallet', label: 'Wallet', heading: 'Your wallet', icon: Wallet },
+          { href: '/me/saved', label: 'Saved', heading: 'Saved places', icon: Bookmark },
+          {
+            href: '/me/bookings',
+            label: 'Bookings',
+            heading: 'Your bookings',
+            icon: ClipboardList,
+          },
         ],
       },
       {
         label: 'Activity',
         items: [
-          { href: '/me/notifications', label: 'Notifications', icon: Bell },
-          { href: '/me/reviews', label: 'Reviews', icon: Star },
-        ],
-      },
-      {
-        label: 'Account',
-        items: [
-          { href: '/me/profile', label: 'Profile', icon: User },
-          { href: '/me/settings', label: 'Settings', icon: Settings },
+          { href: '/me/events', label: 'Events', heading: 'Your events', icon: CalendarDays },
+          { href: '/me/tickets', label: 'Tickets', heading: 'Your tickets', icon: TicketIcon },
+          {
+            href: '/me/notifications',
+            label: 'Notifications',
+            heading: 'Notifications',
+            icon: Bell,
+          },
+          { href: '/me/reviews', label: 'Reviews', heading: 'Your reviews', icon: Star },
         ],
       },
     ],

@@ -4,21 +4,30 @@
  *   - cart  (multi-step purchase flows)
  *   - wizard (multi-step forms: onboarding, request, etc)
  *   - ui     (mobile nav, dismissed banners - transient UI state)
+ *   - api    (RTK Query - all client-side data fetching, via /api route handlers)
  *
- * Server data lives in RSCs (queries.ts) or TanStack Query (for realtime).
- * NEVER add a "user" slice here - auth comes from Supabase, not Redux.
+ * Server data is fetched in RSCs (queries.ts). For client-side reads/writes use
+ * RTK Query (src/store/api), which talks to our Next route handlers, not
+ * Supabase directly. NEVER add a "user" slice here - auth comes from Supabase.
  */
 import { configureStore, type ThunkAction, type Action } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/query';
+import { baseApi } from './api/base-api';
 import cart from './slices/cart';
 import wizard from './slices/wizard';
 import ui from './slices/ui';
 
-export const makeStore = () =>
-  configureStore({
-    reducer: { cart, wizard, ui },
+export const makeStore = () => {
+  const store = configureStore({
+    reducer: { cart, wizard, ui, [baseApi.reducerPath]: baseApi.reducer },
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
     // Use Redux DevTools in development only.
     devTools: process.env.NODE_ENV !== 'production',
   });
+  // Enables refetchOnFocus / refetchOnReconnect behaviour for RTK Query.
+  setupListeners(store.dispatch);
+  return store;
+};
 
 export type AppStore = ReturnType<typeof makeStore>;
 export type RootState = ReturnType<AppStore['getState']>;

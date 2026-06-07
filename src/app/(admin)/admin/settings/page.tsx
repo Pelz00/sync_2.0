@@ -1,25 +1,24 @@
 /**
  * ROUTE: /admin/settings
  * ACCESS: authenticated admin
- * PURPOSE: Account settings - currently the danger zone (delete account).
+ * PURPOSE: Account settings, organised into sections. Currently the danger zone
+ * (delete account); add further setting classes as sections.
  */
 import type { Metadata } from 'next';
 import { DeleteAccountButton } from '@/components/account/delete-account-button';
+import { SettingsSection } from '@/components/account/settings-section';
 
 export const metadata: Metadata = { title: 'Settings' };
 
 export default function Page() {
   return (
-    <section className="flex max-w-2xl flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <p className="eyebrow text-content-muted">ADMIN . SETTINGS</p>
-        <h1 className="text-section text-content font-display font-medium">Settings</h1>
-      </header>
-
-      <div className="flex flex-col gap-3">
-        <p className="eyebrow text-content-muted">DANGER ZONE</p>
+    <section className="flex flex-col gap-8">
+      <SettingsSection
+        title="Danger zone"
+        description="Irreversible and destructive actions for your account."
+      >
         <DeleteAccountButton />
-      </div>
+      </SettingsSection>
     </section>
   );
 }

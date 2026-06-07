@@ -8,6 +8,7 @@
  * shell uses.
  */
 import { getCurrentUser, getProfile } from '@/modules/auth/queries';
+import { resolveHandle } from '@/lib/handle';
 import type { DashboardNavKey } from '@/config/dashboard-nav';
 
 export interface DashboardProfile {
@@ -20,6 +21,14 @@ export interface DashboardProfile {
   /** Optional secondary detail (label + value), e.g. "Business · HiFoods". */
   metaLabel?: string;
   metaValue?: string;
+  /** Profile picture URL (Supabase Storage later); falls back to initials. */
+  avatarUrl?: string;
+  /**
+   * Personalised dashboard handle (student/vendor only) used to build name-based
+   * URLs like `/muiz-owolabi/insights`. Derived from the same user_metadata the
+   * proxy uses, so sidebar links and the proxy rewrite always agree.
+   */
+  handle?: string;
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -43,6 +52,19 @@ export async function getDashboardProfile(navKey: DashboardNavKey): Promise<Dash
   const initial = name.trim().charAt(0).toUpperCase() || 'Y';
   const verified = profile?.verification_status === 'verified';
 
+  // Handle is derived from user_metadata (+ email), NOT the profile row, so it
+  // matches exactly what the proxy computes when rewriting the name-based URL.
+  const handleRole = navKey === 'student' ? 'student' : 'vendor';
+  const handle =
+    navKey === 'admin'
+      ? undefined
+      : (resolveHandle({
+          role: handleRole,
+          full_name: meta.full_name as string | undefined,
+          business_name: meta.business_name as string | undefined,
+          email: user?.email,
+        }) ?? undefined);
+
   switch (navKey) {
     case 'vendor':
       return {
@@ -50,6 +72,7 @@ export async function getDashboardProfile(navKey: DashboardNavKey): Promise<Dash
         name,
         email,
         initial,
+        handle,
         metaLabel: 'Business',
         metaValue:
           profile?.business_name ||
@@ -61,6 +84,7 @@ export async function getDashboardProfile(navKey: DashboardNavKey): Promise<Dash
         name,
         email,
         initial,
+        handle,
         metaLabel: 'Properties',
         metaValue: profile?.business_name || undefined,
       };
@@ -73,6 +97,6 @@ export async function getDashboardProfile(navKey: DashboardNavKey): Promise<Dash
       };
     case 'student':
     default:
-      return { eyebrow: 'Student', name, email, initial };
+      return { eyebrow: 'Student', name, email, initial, handle };
   }
 }

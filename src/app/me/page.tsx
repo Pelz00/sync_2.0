@@ -1,12 +1,16 @@
-import { AvatarFallback, Avatar, Button } from '@/components/ui';
-import { ArrowRight, Bell, Star, MessageCircle, Check, Search, Plus } from 'lucide-react';
+import { Button } from '@/components/ui';
+import { ArrowRight, Star, MessageCircle, Check, Search, Plus } from 'lucide-react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { BookingBillboard } from './(components)/BillboardComponent';
 import { HostelCardList } from './(components)/HostelCard';
+import { UsageSummary } from './(components)/UsageSummary';
+import { BookingsTracker } from './(components)/BookingsTracker';
+import { EventsTicketsSummary } from './(components)/EventsTickets';
 import { getDashboardProfile } from '@/components/layouts/dashboard-profile';
 import { hostels } from '@/mock/hostels';
 
-export const metadata: Metadata = { title: 'Account' };
+export const metadata: Metadata = { title: 'Dashboard' };
 
 const recentActivity = [
   { id: '1', icon: Star, label: 'You saved Pipeline Court', time: '2h ago' },
@@ -18,82 +22,72 @@ const recentActivity = [
 export default async function Page() {
   const profile = await getDashboardProfile('student');
   const studentName = profile.name;
-  const notificationCount = 3;
+  const base = profile.handle ? `/${profile.handle}` : '/me';
   const savedCount = 12;
 
   return (
-    <section className="flex flex-col gap-3">
-      <p className="text-content-muted font-mono text-lg">WELCOME BACK</p>
-
-      {/* Header */}
-      <section className="flex items-center justify-between">
-        <h1 className="font-display mt-2 text-3xl">
-          Hi <span className="text-lime-deep">{studentName}</span> - let&apos;s find your spot.
+    <section className="flex flex-col gap-6">
+      <div>
+        <p className="text-content-muted font-mono text-sm tracking-wide">WELCOME BACK</p>
+        <h1 className="font-display mt-1 text-3xl">
+          Hi <span className="text-lime-deep">{studentName}</span> - here&apos;s your spot.
         </h1>
-        <div className="flex items-center gap-4">
-          <Button
-            variant={'outline'}
-            className="border-line flex items-center gap-2 rounded-2xl border px-3 py-2"
-          >
-            <Bell size={20} />
-            <p>{notificationCount}</p>
-          </Button>
-          <Avatar className="border-line border">
-            <AvatarFallback>{profile.initial}</AvatarFallback>
-          </Avatar>
-        </div>
-      </section>
+      </div>
 
-      {/* Billboard */}
-      <section className="bg-ink mt-3.5 h-full w-full rounded-xl">
-        <BookingBillboard
-          propertyName="Tanke Crescent Lodge"
-          room="Room 4B"
-          moveInDate="Sept 5"
-          daysAway={18}
-          requestedAgo="2 hrs ago"
-        />
+      {/* Usage / spending summary */}
+      <UsageSummary />
+
+      {/* Featured active booking */}
+      <BookingBillboard
+        propertyName="Tanke Crescent Lodge"
+        room="Room 4B"
+        moveInDate="Sept 5"
+        daysAway={18}
+        requestedAgo="2 hrs ago"
+      />
+
+      {/* Bookings tracker - hostels + countdown to when they end */}
+      <section>
+        <h2 className="text-content-muted mb-3 font-mono text-sm tracking-wide">MY BOOKINGS</h2>
+        <BookingsTracker basePath={base} />
       </section>
 
       {/* SAVED HOSTELS + RECENT ACTIVITY */}
-      <section className="mt-2 flex flex-col gap-6 lg:flex-row lg:items-start">
+      <section className="flex flex-col gap-6 lg:flex-row lg:items-start">
         {/* LEFT: Saved Hostels */}
         <div className="min-w-0 flex-1">
-          {/* Header */}
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-content-muted font-mono text-sm tracking-wide">
               SAVED HOSTELS · {savedCount}
             </h2>
             <Button
+              asChild
               variant="outline"
               className="text-body text-content-muted flex shrink-0 items-center gap-1 border-none"
             >
-              Manage <ArrowRight className="ml-1 size-4" />
+              <Link href={`${base}/saved`}>
+                Manage <ArrowRight className="ml-1 size-4" />
+              </Link>
             </Button>
           </div>
 
-          {/* Cards — show only first 3 */}
           <HostelCardList hostels={hostels.slice(0, 3)} />
 
-          {/* More link */}
           <Button
-            variant={'outline'}
+            asChild
+            variant="outline"
             className="text-content-muted mt-4 flex items-center gap-2 border-none"
           >
-            <Plus className="size-4" />
-            {savedCount} more
-            <ArrowRight className="ml-1 size-4" />
+            <Link href={`${base}/saved`}>
+              <Plus className="size-4" />
+              {savedCount} more
+              <ArrowRight className="ml-1 size-4" />
+            </Link>
           </Button>
-          {/* {hostels.length > 3 && (
-            <Button className="text-content-muted mt-4 flex items-center gap-1 text-sm hover:underline">
-              + {hostels.length - 3} more <ArrowRight className="size-3.5" />
-            </Button>
-          )} */}
         </div>
 
         {/* RIGHT: Recent Activity */}
         <div className="w-full shrink-0 lg:w-72 xl:w-80">
-          {/* Header — same height as the left header row */}
           <div className="mb-4 flex h-9 items-center">
             <h2 className="text-content-muted font-mono text-sm tracking-wide">RECENT ACTIVITY</h2>
           </div>
@@ -121,7 +115,17 @@ export default async function Page() {
           </div>
         </div>
       </section>
-      <section className="mt-6">
+
+      {/* Events & tickets */}
+      <section>
+        <h2 className="text-content-muted mb-3 font-mono text-sm tracking-wide">
+          EVENTS & TICKETS
+        </h2>
+        <EventsTicketsSummary basePath={base} />
+      </section>
+
+      {/* Recommendations */}
+      <section>
         <h2 className="text-content-muted mb-4 font-mono text-sm tracking-wide">
           PICKED FOR YOU . BASED ON TANKE + 250K
         </h2>

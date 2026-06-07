@@ -1,26 +1,28 @@
 /**
- * LoginForm - email + password sign-in, with a passwordless OTP mode.
+ * LoginForm - email-first, adaptive sign-in.
  *
- * Password mode is the default for students/vendors. The "email code" mode
- * (signInWithOtp → verify) is for accounts without a password — e.g. admins /
- * super_admins, who sign in with a one-time code. Both route by role.
+ * Step 1: enter email. We detect the account type (getLoginMethod):
+ *   - students / vendors  → reveal a PASSWORD field (signIn)
+ *   - admins / super_admins (passwordless) → email a code + show OTP boxes
  *
- * `next` is preserved so the flow resumes at the originally-requested page.
+ * Detection defaults to "password" for unknown emails (and when the backend
+ * isn't reachable), and there's still a manual "use an email code" fallback.
+ * Both paths route by the trusted role. `next` resumes the requested page.
  */
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
+import { OtpInput } from '@/components/ui/otp-input';
 import { FormField } from '@/components/forms';
 import { toast } from '@/components/ui/toast';
-import { loginSchema, type LoginInput } from '@/lib/validations';
-import { sendLoginOtp, signIn, verifyLoginOtp } from '@/modules/auth/actions';
+import { getLoginMethod, sendLoginOtp, signIn, verifyLoginOtp } from '@/modules/auth/actions';
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function destFor(role: string | undefined, next?: string) {
   if (next) return next;
@@ -29,30 +31,50 @@ function destFor(role: string | undefined, next?: string) {
   return '/around';
 }
 
-export function LoginForm({ next, email }: { next?: string; email?: string }) {
+type Step = 'email' | 'password' | 'otp';
+
+export function LoginForm({ next, email: initialEmail }: { next?: string; email?: string }) {
   const router = useRouter();
-  const [mode, setMode] = useState<'password' | 'otp'>('password');
-
-  // Passwordless OTP state.
-  const [otpEmail, setOtpEmail] = useState(email ?? '');
-  const [otpCode, setOtpCode] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpBusy, setOtpBusy] = useState(false);
-
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: email ?? '' },
-  });
+  const [step, setStep] = useState<Step>('email');
+  const [email, setEmail] = useState(initialEmail ?? '');
+  const [password, setPassword] = useState('');
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
 
   const signupHref = next ? `/signup?next=${encodeURIComponent(next)}` : '/signup';
 
-  async function onSubmit(values: LoginInput) {
-    const res = await signIn(values);
+  async function continueFromEmail(e: React.FormEvent) {
+    e.preventDefault();
+    const value = email.trim();
+    if (!EMAIL_RE.test(value)) {
+      toast('Enter a valid email.');
+      return;
+    }
+    setBusy(true);
+    try {
+      const { method } = await getLoginMethod(value);
+      if (method === 'otp') {
+        // Show the OTP boxes regardless; still attempt to send the code.
+        setStep('otp');
+        const res = await sendLoginOtp(value);
+        toast(res.ok ? 'Sign-in code sent — check your email.' : res.error);
+      } else {
+        setStep('password');
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function submitPassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (!password) {
+      toast('Enter your password.');
+      return;
+    }
+    setBusy(true);
+    const res = await signIn({ email: email.trim(), password });
+    setBusy(false);
     if (!res.ok) {
       toast(res.error);
       return;
@@ -62,25 +84,26 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
   }
 
   async function sendCode() {
-    if (!otpEmail.trim()) {
-      toast('Enter your email first.');
-      return;
-    }
-    setOtpBusy(true);
-    const res = await sendLoginOtp(otpEmail.trim());
-    setOtpBusy(false);
+    setBusy(true);
+    const res = await sendLoginOtp(email.trim());
+    setBusy(false);
     if (!res.ok) {
       toast(res.error);
       return;
     }
-    setOtpSent(true);
+    setStep('otp');
     toast('Sign-in code sent — check your email.');
   }
 
-  async function verifyCode() {
-    setOtpBusy(true);
-    const res = await verifyLoginOtp({ email: otpEmail.trim(), code: otpCode.trim() });
-    setOtpBusy(false);
+  async function verify(e: React.FormEvent) {
+    e.preventDefault();
+    if (code.length < 6) {
+      toast('Enter the 6-digit code.');
+      return;
+    }
+    setBusy(true);
+    const res = await verifyLoginOtp({ email: email.trim(), code });
+    setBusy(false);
     if (!res.ok) {
       toast(res.error);
       return;
@@ -89,122 +112,92 @@ export function LoginForm({ next, email }: { next?: string; email?: string }) {
     router.refresh();
   }
 
+  function changeEmail() {
+    setStep('email');
+    setPassword('');
+    setCode('');
+  }
+
+  // The entered email, shown above the password/OTP step with a "Change" link.
+  const emailRow = (
+    <div className="border-line/10 flex items-center justify-between rounded-lg border px-3 py-2.5">
+      <span className="text-content truncate text-sm">{email.trim()}</span>
+      <button
+        type="button"
+        onClick={changeEmail}
+        className="text-lime-deep ml-2 shrink-0 text-sm font-medium hover:underline"
+      >
+        Change
+      </button>
+    </div>
+  );
+
   return (
     <div className="flex flex-col gap-6">
-      {mode === 'password' ? (
-        <>
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
-            <FormField label="Email" htmlFor="email" error={errors.email?.message}>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@student.edu.ng"
-                {...register('email')}
-              />
-            </FormField>
+      {step === 'email' && (
+        <form onSubmit={continueFromEmail} className="flex flex-col gap-4" noValidate>
+          <FormField label="Email" htmlFor="email">
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              autoFocus
+              placeholder="you@student.edu.ng"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </FormField>
+          <Button type="submit" size="lg" disabled={busy} className="w-full">
+            {busy ? 'Checking…' : 'Continue'}
+          </Button>
+        </form>
+      )}
 
-            <FormField label="Password" htmlFor="password" error={errors.password?.message}>
-              <Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <PasswordInput
-                    id="password"
-                    autoComplete="current-password"
-                    placeholder="••••••••"
-                    value={field.value ?? ''}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    ref={field.ref}
-                  />
-                )}
-              />
-            </FormField>
-
-            <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? 'Logging in…' : 'Log in'}
-            </Button>
-          </form>
-
+      {step === 'password' && (
+        <form onSubmit={submitPassword} className="flex flex-col gap-4" noValidate>
+          {emailRow}
+          <FormField label="Password" htmlFor="password">
+            <PasswordInput
+              id="password"
+              autoComplete="current-password"
+              autoFocus
+              placeholder="••••••••"
+              value={password}
+              onChange={setPassword}
+            />
+          </FormField>
+          <Button type="submit" size="lg" disabled={busy} className="w-full">
+            {busy ? 'Logging in…' : 'Log in'}
+          </Button>
           <button
             type="button"
-            onClick={() => setMode('otp')}
-            className="text-content-muted hover:text-content text-center text-sm"
+            onClick={sendCode}
+            disabled={busy}
+            className="text-content-muted hover:text-content text-center text-sm disabled:opacity-50"
           >
             Sign in with an email code instead
           </button>
-        </>
-      ) : (
-        <div className="flex flex-col gap-4">
-          <FormField label="Email" htmlFor="otp-email">
-            <Input
-              id="otp-email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@raavon.com"
-              value={otpEmail}
-              onChange={(e) => setOtpEmail(e.target.value)}
-              disabled={otpSent}
-            />
+        </form>
+      )}
+
+      {step === 'otp' && (
+        <form onSubmit={verify} className="flex flex-col gap-4" noValidate>
+          {emailRow}
+          <FormField label="Sign-in code" htmlFor="otp">
+            <OtpInput value={code} onChange={setCode} autoFocus disabled={busy} />
           </FormField>
-
-          {otpSent && (
-            <FormField label="Sign-in code" htmlFor="otp-code">
-              <Input
-                id="otp-code"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                maxLength={6}
-                placeholder="123456"
-                value={otpCode}
-                onChange={(e) => setOtpCode(e.target.value)}
-              />
-            </FormField>
-          )}
-
-          <Button
-            type="button"
-            size="lg"
-            disabled={otpBusy}
-            onClick={otpSent ? verifyCode : sendCode}
-            className="w-full"
-          >
-            {otpBusy
-              ? otpSent
-                ? 'Verifying…'
-                : 'Sending…'
-              : otpSent
-                ? 'Verify & sign in'
-                : 'Email me a code'}
+          <Button type="submit" size="lg" disabled={busy || code.length < 6} className="w-full">
+            {busy ? 'Verifying…' : 'Verify & sign in'}
           </Button>
-
-          <div className="flex items-center justify-between text-sm">
-            {otpSent ? (
-              <button
-                type="button"
-                onClick={sendCode}
-                disabled={otpBusy}
-                className="text-lime-deep font-medium hover:underline disabled:opacity-50"
-              >
-                Resend code
-              </button>
-            ) : (
-              <span />
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                setMode('password');
-                setOtpSent(false);
-              }}
-              className="text-content-muted hover:text-content"
-            >
-              Use password instead
-            </button>
-          </div>
-        </div>
+          <button
+            type="button"
+            onClick={sendCode}
+            disabled={busy}
+            className="text-lime-deep text-center text-sm font-medium hover:underline disabled:opacity-50"
+          >
+            Resend code
+          </button>
+        </form>
       )}
 
       <p className="text-content-muted text-center text-sm">

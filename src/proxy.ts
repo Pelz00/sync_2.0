@@ -23,6 +23,7 @@
  */
 import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
+import { isReservedHandle, resolveHandle } from '@/lib/handle';
 
 type Role = 'student' | 'vendor' | 'admin' | 'super_admin';
 
@@ -64,6 +65,8 @@ function redirectToLogin(request: NextRequest, pathname: string) {
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const segments = pathname.split('/').filter(Boolean);
+  const firstSeg = segments[0];
   const guarded = PROTECTED_PREFIXES.find(({ prefix }) => pathname.startsWith(prefix));
 
   // Supabase not configured yet → no session can exist → everyone is
@@ -76,6 +79,41 @@ export async function proxy(request: NextRequest) {
   }
 
   const { response, user } = await updateSession(request);
+
+  // Personalised dashboard handles: /<handle>/<page> → the real /me or /vendor
+  // page, but ONLY when <handle> is the signed-in user's own handle (private).
+  // Non-handle / unknown segments fall through and Next renders 404 as usual.
+  if (firstSeg && !isReservedHandle(firstSeg)) {
+    if (user) {
+      const meta = user.user_metadata ?? {};
+      const role = (meta.role as Role | undefined) ?? 'student';
+      const handle = resolveHandle({
+        role,
+        full_name: meta.full_name as string | undefined,
+        business_name: meta.business_name as string | undefined,
+        email: user.email,
+      });
+      const base =
+        role === 'student'
+          ? '/me'
+          : role === 'vendor'
+            ? meta.vendor_category === 'landlord'
+              ? '/landlord'
+              : '/vendor'
+            : null;
+      if (handle && base && firstSeg === handle) {
+        const rest = segments.slice(1).join('/');
+        const url = request.nextUrl.clone();
+        url.pathname = rest ? `${base}/${rest}` : base;
+        const rewritten = NextResponse.rewrite(url, { request });
+        // Carry over the refreshed Supabase auth cookies onto the rewrite.
+        response.cookies.getAll().forEach((c) => rewritten.cookies.set(c));
+        return rewritten;
+      }
+    }
+    return response;
+  }
+
   if (!guarded) return response;
 
   if (!user) return redirectToLogin(request, pathname);

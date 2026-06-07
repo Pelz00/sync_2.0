@@ -11,7 +11,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LayoutDashboard, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -39,12 +39,16 @@ export interface UserMenuProps {
   initial: string;
   role?: string;
   category?: string;
+  /** Name-based dashboard handle for students/vendors (e.g. "muiz-owolabi"). */
+  handle?: string;
 }
 
-export function UserMenu({ name, email, initial, role, category }: UserMenuProps) {
+export function UserMenu({ name, email, initial, role, category, handle }: UserMenuProps) {
   const router = useRouter();
-  // Vendors get a dashboard link; students live in /me.
-  const dashboardHref = role === 'vendor' ? '/vendor' : null;
+  // Everyone gets a "Dashboard" link. Students/vendors go to their name-based
+  // handle URL (/muiz-owolabi); admins to /admin; fall back to the static base.
+  const dashboardHref =
+    role === 'admin' ? '/admin' : handle ? `/${handle}` : role === 'vendor' ? '/vendor' : '/me';
 
   const roleLabel = role ? (ROLE_LABELS[role] ?? role) : null;
   const categoryLabel = category ? (CATEGORY_LABELS[category] ?? category) : null;
@@ -86,19 +90,11 @@ export function UserMenu({ name, email, initial, role, category }: UserMenuProps
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        {dashboardHref ? (
-          <DropdownMenuItem asChild>
-            <Link href={dashboardHref}>
-              <LayoutDashboard className="h-4 w-4" /> Dashboard
-            </Link>
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem asChild>
-            <Link href="/me">
-              <User className="h-4 w-4" /> Profile
-            </Link>
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem asChild>
+          <Link href={dashboardHref}>
+            <LayoutDashboard className="h-4 w-4" /> Dashboard
+          </Link>
+        </DropdownMenuItem>
 
         <DropdownMenuSeparator />
         <DropdownMenuItem

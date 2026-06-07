@@ -9,7 +9,7 @@
  * by the proxy (middleware), not here.
  */
 import { DashboardSidebar } from './dashboard-sidebar';
-import { DashboardMobileBar } from './dashboard-mobile-bar';
+import { DashboardHeader } from './dashboard-header';
 import { getDashboardProfile } from './dashboard-profile';
 import type { DashboardNavKey } from '@/config/dashboard-nav';
 
@@ -29,12 +29,14 @@ export async function DashboardShell({
 
   return (
     <div className="bg-surface text-content min-h-screen">
-      <DashboardMobileBar navKey={navKey} profile={profile} />
       <div className={`mx-auto flex ${maxWidth}`}>
         <aside className="border-line/10 bg-panel sticky top-0 hidden h-screen w-64 shrink-0 overflow-y-auto border-r p-4 md:block">
           <DashboardSidebar navKey={navKey} profile={profile} />
         </aside>
-        <main className="min-w-0 flex-1 p-4 md:p-8">{children}</main>
+        <div className="flex min-w-0 flex-1 flex-col">
+          <DashboardHeader navKey={navKey} profile={profile} />
+          <main className="flex-1 p-4 md:p-8">{children}</main>
+        </div>
       </div>
     </div>
   );

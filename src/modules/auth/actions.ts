@@ -127,7 +127,10 @@ export async function signIn(input: LoginInput): Promise<VerifyResult> {
     if (prof?.archived_at) {
       const days = (Date.now() - new Date(prof.archived_at).getTime()) / 86_400_000;
       if (days < 30) {
-        await admin.from('profiles').update({ archived_at: null, archived_reason: null }).eq('id', data.user.id);
+        await admin
+          .from('profiles')
+          .update({ archived_at: null, archived_reason: null })
+          .eq('id', data.user.id);
       } else {
         await supabase.auth.signOut();
         return {
@@ -144,6 +147,36 @@ export async function signIn(input: LoginInput): Promise<VerifyResult> {
   }
 
   return { ok: true, role };
+}
+
+/** Bootstrap list of passwordless admin emails (comma-separated in env). Lets
+ *  the login form detect admins even before Supabase is wired, and is a fallback
+ *  if the DB lookup is unavailable. The DB (`login_method`) stays the source of
+ *  truth - this just pre-knows the founding admins. */
+const ADMIN_EMAILS = new Set(
+  (process.env.ADMIN_EMAILS ?? '')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean),
+);
+
+/** Which input the login form should show for an email: admins/super_admins are
+ *  passwordless ('otp'), everyone else uses a password. Defaults to 'password'
+ *  for unknown emails (and when Supabase isn't reachable) so we don't reveal
+ *  whether an account exists. Backed by the env allowlist + the `login_method`
+ *  SQL function. */
+export async function getLoginMethod(rawEmail: string): Promise<{ method: 'password' | 'otp' }> {
+  const parsed = emailRule.safeParse(rawEmail);
+  if (!parsed.success) return { method: 'password' };
+  if (ADMIN_EMAILS.has(parsed.data.toLowerCase())) return { method: 'otp' };
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin.rpc('login_method', { p_email: parsed.data });
+    if (error) return { method: 'password' };
+    return { method: data === 'otp' ? 'otp' : 'password' };
+  } catch {
+    return { method: 'password' };
+  }
 }
 
 /** Send a passwordless sign-in code to an existing account (used by the OTP
@@ -185,7 +218,10 @@ export async function verifyLoginOtp(input: VerifyOtpInput): Promise<VerifyResul
     if (prof?.archived_at) {
       const days = (Date.now() - new Date(prof.archived_at).getTime()) / 86_400_000;
       if (days < 30) {
-        await admin.from('profiles').update({ archived_at: null, archived_reason: null }).eq('id', data.user!.id);
+        await admin
+          .from('profiles')
+          .update({ archived_at: null, archived_reason: null })
+          .eq('id', data.user!.id);
       } else {
         await supabase.auth.signOut();
         return {

@@ -12,7 +12,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import * as Dialog from '@radix-ui/react-dialog';
-import { ArrowRight, Info, LayoutDashboard, LogOut, Menu, User, X } from 'lucide-react';
+import { ArrowRight, Info, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { toast } from '@/components/ui/toast';
@@ -25,16 +25,20 @@ export function MobileMenu({
   name,
   email,
   role,
+  handle,
 }: {
   signedIn?: boolean;
   name?: string;
   email?: string;
   role?: 'student' | 'vendor' | 'admin';
+  handle?: string;
 }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const close = () => setOpen(false);
-  const dashboardHref = role === 'vendor' ? '/vendor' : role === 'admin' ? '/admin' : '/me';
+  // Students/vendors use their name-based handle URL; admins keep /admin.
+  const dashboardHref =
+    role === 'admin' ? '/admin' : handle ? `/${handle}` : role === 'vendor' ? '/vendor' : '/me';
 
   async function handleSignOut() {
     close();
@@ -68,7 +72,12 @@ export function MobileMenu({
 
           {/* Top bar - logo + theme toggle + close */}
           <div className="border-line/5 flex h-16 shrink-0 items-center justify-between border-b px-6">
-            <Link href="/" onClick={close} className="flex items-center gap-2" aria-label="Sync home">
+            <Link
+              href="/"
+              onClick={close}
+              className="flex items-center gap-2"
+              aria-label="Sync home"
+            >
               <span aria-hidden="true" className="flex items-center gap-1">
                 <span className="bg-foreground block h-2 w-2 rounded-full" />
                 <span className="bg-accent-fg block h-1.5 w-1.5 rounded-full" />
@@ -143,8 +152,8 @@ export function MobileMenu({
                   className="text-foreground border-foreground/20 hover:bg-foreground/10"
                 >
                   <Link href={dashboardHref}>
-                    {role === 'vendor' || role === 'admin' ? <LayoutDashboard /> : <User />}
-                    {role === 'vendor' ? 'Dashboard' : role === 'admin' ? 'Admin' : 'Profile'}
+                    <LayoutDashboard />
+                    {role === 'admin' ? 'Admin' : 'Dashboard'}
                   </Link>
                 </Button>
                 <Button

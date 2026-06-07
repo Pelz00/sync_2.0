@@ -15,7 +15,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LogOut } from 'lucide-react';
+import { Home, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SITE } from '@/config/site';
 import { DASHBOARD_NAV, type DashboardNavKey } from '@/config/dashboard-nav';
@@ -33,12 +33,18 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ navKey, profile, onNavigate }: DashboardSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { brandLabel, sections } = DASHBOARD_NAV[navKey];
+  const { brandLabel, sections, rootHref } = DASHBOARD_NAV[navKey];
+
+  // Student + vendor dashboards live at a name-based root (e.g. /muiz-owolabi),
+  // so rewrite each item's href from its static base (/me, /vendor) to the
+  // handle. Other roles keep their static hrefs.
+  const handle = navKey === 'student' || navKey === 'vendor' ? profile.handle : undefined;
+  const toHref = (href: string) => (handle ? `/${handle}${href.slice(rootHref.length)}` : href);
 
   // Best match = the longest item href that the current path falls under, so the
-  // overview row (e.g. /vendor) stays inactive on /vendor/orders.
+  // overview row (e.g. /muiz-owolabi) stays inactive on /muiz-owolabi/orders.
   const activeHref = sections
-    .flatMap((s) => s.items.map((i) => i.href))
+    .flatMap((s) => s.items.map((i) => toHref(i.href)))
     .filter((href) => pathname === href || pathname.startsWith(href + '/'))
     .sort((a, b) => b.length - a.length)[0];
 
@@ -55,12 +61,15 @@ export function DashboardSidebar({ navKey, profile, onNavigate }: DashboardSideb
 
   return (
     <div className="flex h-full flex-col gap-5">
-      {/* Wordmark + role */}
-      <div className="flex items-baseline gap-2 px-2">
-        <Link href="/" onClick={onNavigate} className="font-display text-card text-content">
-          {SITE.name}
-        </Link>
-        <span className="eyebrow text-content-muted">{brandLabel}</span>
+      {/* Wordmark + role, with the mode toggle pinned to the edge */}
+      <div className="flex items-center justify-between gap-2 px-2">
+        <div className="flex items-baseline gap-2">
+          <Link href="/" onClick={onNavigate} className="font-display text-card text-content">
+            {SITE.name}
+          </Link>
+          <span className="eyebrow text-content-muted">{brandLabel}</span>
+        </div>
+        <ThemeToggle className="text-content shrink-0" />
       </div>
 
       {/* Profile card */}
@@ -87,17 +96,28 @@ export function DashboardSidebar({ navKey, profile, onNavigate }: DashboardSideb
 
       {/* Grouped nav */}
       <nav aria-label={`${brandLabel} navigation`} className="flex flex-1 flex-col gap-5">
+        {/* Back to the public home page (outside the dashboard). */}
+        <Link
+          href="/"
+          onClick={onNavigate}
+          className="text-content hover:bg-ink/5 flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
+        >
+          <Home className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span className="flex-1 truncate">Home</span>
+        </Link>
+
         {sections.map((section, i) => (
           <div key={section.label ?? i} className="flex flex-col gap-1">
             {section.label && (
               <p className="eyebrow text-content-muted mb-1 px-3">{section.label}</p>
             )}
             {section.items.map(({ href, label, icon: Icon, badge }) => {
-              const active = href === activeHref;
+              const resolved = toHref(href);
+              const active = resolved === activeHref;
               return (
                 <Link
                   key={href}
-                  href={href}
+                  href={resolved}
                   onClick={onNavigate}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
@@ -124,17 +144,16 @@ export function DashboardSidebar({ navKey, profile, onNavigate }: DashboardSideb
         ))}
       </nav>
 
-      {/* Theme toggle + Log out */}
-      <div className="border-line/10 flex items-center gap-2 border-t pt-3">
+      {/* Log out */}
+      <div className="border-line/10 border-t pt-3">
         <button
           type="button"
           onClick={handleSignOut}
-          className="text-coral hover:bg-coral/10 flex flex-1 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
+          className="text-coral hover:bg-coral/10 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
         >
           <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
           Log out
         </button>
-        <ThemeToggle className="text-content shrink-0" />
       </div>
     </div>
   );

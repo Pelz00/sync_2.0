@@ -1,25 +1,32 @@
 /**
  * ROUTE: /landlord/settings
  * ACCESS: authenticated landlord
- * PURPOSE: Account settings - currently the danger zone (delete account).
+ * PURPOSE: Account settings, organised into sections - verification documents
+ * and the danger zone (delete account). Add further setting classes as sections.
  */
 import type { Metadata } from 'next';
 import { DeleteAccountButton } from '@/components/account/delete-account-button';
+import { DocumentsPanel } from '@/components/account/documents-panel';
+import { SettingsSection } from '@/components/account/settings-section';
 
 export const metadata: Metadata = { title: 'Settings' };
 
 export default function Page() {
   return (
-    <section className="flex max-w-2xl flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <p className="eyebrow text-content-muted">LANDLORD . SETTINGS</p>
-        <h1 className="text-section text-content font-display font-medium">Settings</h1>
-      </header>
+    <section className="flex flex-col gap-8">
+      <SettingsSection
+        title="Verification documents"
+        description="Your uploaded documents (CAC, ID, proof of ownership) and their verification status."
+      >
+        <DocumentsPanel />
+      </SettingsSection>
 
-      <div className="flex flex-col gap-3">
-        <p className="eyebrow text-content-muted">DANGER ZONE</p>
+      <SettingsSection
+        title="Danger zone"
+        description="Irreversible and destructive actions for your account."
+      >
         <DeleteAccountButton />
-      </div>
+      </SettingsSection>
     </section>
   );
 }

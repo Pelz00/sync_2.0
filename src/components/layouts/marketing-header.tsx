@@ -15,6 +15,7 @@ import { MobileMenu } from './mobile-menu';
 import { ActiveModuleIndicator } from './active-module-indicator';
 import { UserMenu } from './user-menu';
 import { getCurrentUser, getFirstName, getProfile } from '@/modules/auth/queries';
+import { resolveHandle } from '@/lib/handle';
 import { SITE } from '@/config/site';
 
 // Module nav from the hi-fi guide, split around the centered logo. These are
@@ -64,9 +65,20 @@ export async function MarketingHeader({ dockMode = false }: MarketingHeaderProps
     | 'admin'
     | undefined;
   const name =
-    profile?.full_name || (meta.full_name as string | undefined) || user?.email?.split('@')[0] || 'You';
+    profile?.full_name ||
+    (meta.full_name as string | undefined) ||
+    user?.email?.split('@')[0] ||
+    'You';
   const initial = (getFirstName(user) ?? name).charAt(0).toUpperCase();
   const category = profile?.vendor_category ?? (meta.vendor_category as string | undefined);
+  // Name-based dashboard handle (matches the proxy's rewrite source).
+  const handle =
+    resolveHandle({
+      role,
+      full_name: meta.full_name as string | undefined,
+      business_name: meta.business_name as string | undefined,
+      email: user?.email,
+    }) ?? undefined;
 
   return (
     <header className="bg-surface/90 border-line/5 sticky top-0 z-40 border-b backdrop-blur">
@@ -112,6 +124,7 @@ export async function MarketingHeader({ dockMode = false }: MarketingHeaderProps
               initial={initial}
               role={role}
               category={category}
+              handle={handle}
             />
           ) : (
             <div className="hidden items-center gap-2 md:flex">
@@ -131,7 +144,13 @@ export async function MarketingHeader({ dockMode = false }: MarketingHeaderProps
             </div>
           )}
           {/* Hamburger - mobile only, far right */}
-          <MobileMenu signedIn={!!user} name={name} email={user?.email ?? ''} role={role} />
+          <MobileMenu
+            signedIn={!!user}
+            name={name}
+            email={user?.email ?? ''}
+            role={role}
+            handle={handle}
+          />
         </div>
       </div>
     </header>
