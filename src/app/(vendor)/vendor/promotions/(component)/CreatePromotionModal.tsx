@@ -92,6 +92,7 @@ function PromotionForm({
   const [errors, setErrors] = React.useState<Partial<Record<keyof CreatePromotionPayload, string>>>(
     {},
   );
+  const budget = parseFloat(dailyBudget);
 
   // Sync if parent changes the defaultPromotionType (e.g. user clicks a type card)
   React.useEffect(() => {
@@ -106,7 +107,7 @@ function PromotionForm({
     if (!endDate) next.endDate = 'End date is required.';
     if (startDate && endDate && endDate < startDate)
       next.endDate = 'End date must be after start date.';
-    if (!dailyBudget || Number(dailyBudget) <= 0)
+    if (!dailyBudget || isNaN(budget) || budget <= 0)
       next.dailyBudget = 'Enter a valid budget greater than 0.';
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -251,6 +252,7 @@ function Field({
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = React.useState(false);
   React.useEffect(() => {
+    if (typeof window === 'undefined') return;
     const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
     setIsMobile(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);

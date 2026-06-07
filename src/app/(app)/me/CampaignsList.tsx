@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import type { Campaign, CampaignStatus } from './types';
+import { Campaign, CampaignStatus } from '@/app/(vendor)/vendor/promotions/(component)';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 function fmt(n: number, currency = false) {
@@ -52,7 +52,7 @@ function BudgetBar({ spent, total }: { spent: number; total: number }) {
   const pct = total === 0 ? 0 : Math.min((spent / total) * 100, 100);
   const isOver = pct >= 100;
   return (
-    <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-surface-deep">
+    <div className="bg-surface-deep mt-1 h-1.5 w-full overflow-hidden rounded-full">
       <div
         className={cn('h-full rounded-full transition-all', isOver ? 'bg-coral' : 'bg-violet-500')}
         style={{ width: `${pct}%` }}
@@ -61,19 +61,16 @@ function BudgetBar({ spent, total }: { spent: number; total: number }) {
   );
 }
 
-// ── metric pill (mobile/tablet only) ─────────────────────────────────────────
+// ── metric pill (desktop & mobile layouts) ───────────────────────────────────
 function MetricPill({ label, value, green }: { label: string; value: string; green?: boolean }) {
   return (
     <div className="flex flex-col items-center gap-0.5">
       <span
-        className={cn(
-          'font-display text-sm font-bold',
-          green ? 'text-green-600' : 'text-content',
-        )}
+        className={cn('font-display text-sm font-bold', green ? 'text-green-600' : 'text-content')}
       >
         {value}
       </span>
-      <span className="text-[10px] text-content-muted">{label}</span>
+      <span className="text-content-muted text-[10px]">{label}</span>
     </div>
   );
 }
@@ -98,16 +95,15 @@ export function CampaignRow({ campaign, onView, onEdit, onDelete }: CampaignRowP
      * desktop (lg)       : original single horizontal row
      */
     <div className="border-line/5 border-b py-5 last:border-0">
-
       {/* ── Desktop row (lg+) ───────────────────────────────────────────────── */}
       <div className="hidden lg:flex lg:items-center lg:justify-between lg:gap-4">
         {/* Name + meta */}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-display text-sm font-semibold text-content">{campaign.name}</span>
+            <span className="font-display text-content text-sm font-semibold">{campaign.name}</span>
             <StatusBadge status={campaign.status} />
           </div>
-          <p className="mt-0.5 text-xs text-content-muted">
+          <p className="text-content-muted mt-0.5 text-xs">
             {campaign.type} · {formatDateRange(campaign.startDate, campaign.endDate)}
           </p>
         </div>
@@ -123,15 +119,20 @@ export function CampaignRow({ campaign, onView, onEdit, onDelete }: CampaignRowP
         {/* Budget + actions */}
         <div className="flex min-w-[160px] shrink-0 flex-col items-end gap-1">
           <div className="flex w-full items-center justify-between">
-            <span className="text-[11px] text-content-muted">Budget</span>
-            <span className="text-[11px] font-semibold text-content">
+            <span className="text-content-muted text-[11px]">Budget</span>
+            <span className="text-content text-[11px] font-semibold">
               {fmt(campaign.budgetSpent, true)} / {fmt(campaign.budgetTotal, true)}
             </span>
           </div>
           <BudgetBar spent={campaign.budgetSpent} total={campaign.budgetTotal} />
           {hasActions && (
             <div className="mt-2 flex items-center gap-3">
-              <ActionButtons campaign={campaign} onView={onView} onEdit={onEdit} onDelete={onDelete} />
+              <ActionButtons
+                campaign={campaign}
+                onView={onView}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
             </div>
           )}
         </div>
@@ -142,17 +143,17 @@ export function CampaignRow({ campaign, onView, onEdit, onDelete }: CampaignRowP
         {/* Col 1: name, meta, budget */}
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-display text-sm font-semibold text-content">{campaign.name}</span>
+            <span className="font-display text-content text-sm font-semibold">{campaign.name}</span>
             <StatusBadge status={campaign.status} />
           </div>
-          <p className="text-xs text-content-muted">
+          <p className="text-content-muted text-xs">
             {campaign.type} · {formatDateRange(campaign.startDate, campaign.endDate)}
           </p>
           {/* Budget */}
           <div className="mt-1">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-content-muted">Budget</span>
-              <span className="text-[11px] font-semibold text-content">
+              <span className="text-content-muted text-[11px]">Budget</span>
+              <span className="text-content text-[11px] font-semibold">
                 {fmt(campaign.budgetSpent, true)} / {fmt(campaign.budgetTotal, true)}
               </span>
             </div>
@@ -160,7 +161,12 @@ export function CampaignRow({ campaign, onView, onEdit, onDelete }: CampaignRowP
           </div>
           {hasActions && (
             <div className="mt-1 flex items-center gap-3">
-              <ActionButtons campaign={campaign} onView={onView} onEdit={onEdit} onDelete={onDelete} />
+              <ActionButtons
+                campaign={campaign}
+                onView={onView}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
             </div>
           )}
         </div>
@@ -178,15 +184,15 @@ export function CampaignRow({ campaign, onView, onEdit, onDelete }: CampaignRowP
       <div className="flex flex-col gap-3 md:hidden">
         {/* Name + status */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-display text-sm font-semibold text-content">{campaign.name}</span>
+          <span className="font-display text-content text-sm font-semibold">{campaign.name}</span>
           <StatusBadge status={campaign.status} />
         </div>
-        <p className="text-xs text-content-muted">
+        <p className="text-content-muted text-xs">
           {campaign.type} · {formatDateRange(campaign.startDate, campaign.endDate)}
         </p>
 
         {/* Metrics: 4 cols on one row */}
-        <div className="grid grid-cols-4 divide-x divide-line/10 rounded-lg border border-line/10 bg-surface-deep/40 py-3">
+        <div className="divide-line/10 border-line/10 bg-surface-deep/40 grid grid-cols-4 divide-x rounded-lg border py-3">
           <MetricPill label="Views" value={fmt(campaign.views)} />
           <MetricPill label="Clicks" value={fmt(campaign.clicks)} />
           <MetricPill label="Sales" value={fmt(campaign.sales)} />
@@ -196,8 +202,8 @@ export function CampaignRow({ campaign, onView, onEdit, onDelete }: CampaignRowP
         {/* Budget */}
         <div>
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-content-muted">Budget</span>
-            <span className="text-[11px] font-semibold text-content">
+            <span className="text-content-muted text-[11px]">Budget</span>
+            <span className="text-content text-[11px] font-semibold">
               {fmt(campaign.budgetSpent, true)} / {fmt(campaign.budgetTotal, true)}
             </span>
           </div>
@@ -207,7 +213,12 @@ export function CampaignRow({ campaign, onView, onEdit, onDelete }: CampaignRowP
         {/* Actions */}
         {hasActions && (
           <div className="flex items-center gap-3">
-            <ActionButtons campaign={campaign} onView={onView} onEdit={onEdit} onDelete={onDelete} />
+            <ActionButtons
+              campaign={campaign}
+              onView={onView}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           </div>
         )}
       </div>
@@ -218,23 +229,18 @@ export function CampaignRow({ campaign, onView, onEdit, onDelete }: CampaignRowP
 // ── shared sub-components ─────────────────────────────────────────────────────
 
 /** Small bordered metric tile used on the tablet layout */
-function MetricCard({
-  label,
-  value,
-  green,
-}: {
-  label: string;
-  value: string;
-  green?: boolean;
-}) {
+function MetricCard({ label, value, green }: { label: string; value: string; green?: boolean }) {
   return (
-    <div className="flex flex-col gap-0.5 rounded-lg border border-line/10 bg-surface-deep/40 p-3">
+    <div className="border-line/10 bg-surface-deep/40 flex flex-col gap-0.5 rounded-lg border p-3">
       <span
-        className={cn('font-display text-base font-bold', green ? 'text-green-600' : 'text-content')}
+        className={cn(
+          'font-display text-base font-bold',
+          green ? 'text-green-600' : 'text-content',
+        )}
       >
         {value}
       </span>
-      <span className="text-[10px] text-content-muted">{label}</span>
+      <span className="text-content-muted text-[10px]">{label}</span>
     </div>
   );
 }
@@ -252,7 +258,7 @@ function ActionButtons({
           type="button"
           aria-label="View campaign"
           onClick={() => onView(campaign)}
-          className="text-content-muted transition-colors hover:text-content"
+          className="text-content-muted hover:text-content transition-colors"
         >
           <Eye className="h-4 w-4" />
         </button>
@@ -262,7 +268,7 @@ function ActionButtons({
           type="button"
           aria-label="Edit campaign"
           onClick={() => onEdit(campaign)}
-          className="text-content-muted transition-colors hover:text-content"
+          className="text-content-muted hover:text-content transition-colors"
         >
           <Pencil className="h-4 w-4" />
         </button>
@@ -325,7 +331,7 @@ export function CampaignsList({
     <section>
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-display text-base font-semibold text-content">All Campaigns</h2>
+        <h2 className="font-display text-content text-base font-semibold">All Campaigns</h2>
         <Select
           value={activeFilter}
           onValueChange={(v) => handleFilterChange(v as CampaignStatus | 'all')}
@@ -344,17 +350,17 @@ export function CampaignsList({
       </div>
 
       {/* Card */}
-      <div className="rounded-xl border border-line/5 bg-panel shadow-card">
+      <div className="border-line/5 bg-panel shadow-card rounded-xl border">
         {isLoading ? (
-          <div className="flex h-40 items-center justify-center text-sm text-content-muted">
+          <div className="text-content-muted flex h-40 items-center justify-center text-sm">
             Loading campaigns…
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex h-40 items-center justify-center text-sm text-content-muted">
+          <div className="text-content-muted flex h-40 items-center justify-center text-sm">
             No campaigns found.
           </div>
         ) : (
-          <div className="divide-y divide-line/5 px-5">
+          <div className="divide-line/5 divide-y px-5">
             {filtered.map((c) => (
               <CampaignRow
                 key={c.id}

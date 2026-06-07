@@ -34,12 +34,15 @@ export interface Campaign {
   type: PromotionType;
   status: CampaignStatus;
   startDate: string; // ISO string
-  endDate: string;   // ISO string
+  endDate: string; // ISO string
   views: number;
   clicks: number;
   sales: number;
-  revenue: number;       // in kobo or whole naira — keep consistent
+  /** Revenue generated in whole Naira (no kobo). */
+  revenue: number;
+  /** Amount spent from budget in whole Naira (no kobo). */
   budgetSpent: number;
+  /** Total budget allocated in whole Naira (no kobo). */
   budgetTotal: number;
 }
 
