@@ -96,6 +96,7 @@ function PromotionForm({
 
   // Sync if parent changes the defaultPromotionType (e.g. user clicks a type card)
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: mirror the parent-controlled default
     if (defaultPromotionType) setPromotionType(defaultPromotionType);
   }, [defaultPromotionType]);
 
@@ -254,6 +255,7 @@ function useIsMobile(breakpoint = 768) {
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
     const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: read initial media-query match on mount
     setIsMobile(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     mq.addEventListener('change', handler);

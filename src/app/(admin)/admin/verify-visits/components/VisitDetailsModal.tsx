@@ -42,6 +42,7 @@ export function VisitDetailsModal({ visit, onClose, onUpdateStatus }: VisitDetai
 
   useEffect(() => {
     if (visit) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed notes from the visit prop on open
       setNotes(visit.notes ?? "");
       const id = requestAnimationFrame(() => setIsVisible(true));
       return () => cancelAnimationFrame(id);

@@ -11,7 +11,7 @@ export const mockCategories = [
   'Specials',
 ];
 
-export let mockListings: Listing[] = [
+export const mockListings: Listing[] = [
   {
     id: 'lst-001',
     name: 'Jollof Rice',

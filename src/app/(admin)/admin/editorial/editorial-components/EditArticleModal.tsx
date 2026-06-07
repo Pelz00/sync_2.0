@@ -49,6 +49,7 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
   // ── Populate form when article loads ──────────────────────────────────────
   useEffect(() => {
     if (article) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed the form from the article prop on open
       setForm({
         title:          article.title,
         category:       article.category,

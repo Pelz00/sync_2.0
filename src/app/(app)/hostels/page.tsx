@@ -192,6 +192,8 @@ export default function Page() {
     { sender: 'agent', text: 'Hello! I am the manager for this listing. Would you like to confirm a physical walkthrough or process payment details?' }
   ]);
 
+  // Reset the booking/chat UI whenever a different hostel is selected.
+  /* eslint-disable react-hooks/set-state-in-effect -- intentional reset on selection change */
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setIsLocked(false);
@@ -201,6 +203,7 @@ export default function Page() {
     setClientPhone('');
     setClientAvailableTime('');
   }, [selectedHostel]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!isLocked) return;

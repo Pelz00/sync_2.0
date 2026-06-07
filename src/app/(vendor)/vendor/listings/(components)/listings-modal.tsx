@@ -47,7 +47,8 @@ export function DeleteModal({
       <h2 className="font-display text-ink text-lg font-semibold">Delete listing</h2>
       <p className="text-muted mt-2 text-sm">
         Are you sure you want to delete{' '}
-        <span className="text-ink font-semibold">"{listing.name}"</span>? This action cannot be
+        <span className="text-ink font-semibold">&ldquo;{listing.name}&rdquo;</span>? This action
+        cannot be
         undone.
       </p>
       <div className="mt-6 flex justify-end gap-3">

@@ -163,7 +163,7 @@ function EmptyState({ onReset }: { onReset: () => void }) {
       </div>
       <h3 className="text-base font-bold text-gray-800 mb-1">No visits found</h3>
       <p className="text-sm text-gray-400 mb-5 max-w-xs">
-        Try adjusting your search or filter to find what you're looking for.
+        Try adjusting your search or filter to find what you&apos;re looking for.
       </p>
       <button
         onClick={onReset}
