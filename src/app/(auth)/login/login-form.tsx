@@ -11,7 +11,7 @@
  */
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,8 @@ import { toast } from '@/components/ui/toast';
 import { getLoginMethod, sendLoginOtp, signIn, verifyLoginOtp } from '@/modules/auth/actions';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Matches Supabase's default OTP resend window, so resends never hit its limit.
+const RESEND_COOLDOWN = 60;
 
 function destFor(role: string | undefined, next?: string) {
   if (next) return next;
@@ -40,8 +42,16 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
   const signupHref = next ? `/signup?next=${encodeURIComponent(next)}` : '/signup';
+
+  // Tick the resend cooldown down to 0.
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = setTimeout(() => setCooldown((c) => Math.max(0, c - 1)), 1000);
+    return () => clearTimeout(id);
+  }, [cooldown]);
 
   async function continueFromEmail(e: React.FormEvent) {
     e.preventDefault();
@@ -57,6 +67,7 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
         // Show the OTP boxes regardless; still attempt to send the code.
         setStep('otp');
         const res = await sendLoginOtp(value);
+        if (res.ok) setCooldown(RESEND_COOLDOWN);
         toast(res.ok ? 'Sign-in code sent — check your email.' : res.error);
       } else {
         setStep('password');
@@ -84,6 +95,7 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
   }
 
   async function sendCode() {
+    if (cooldown > 0) return;
     setBusy(true);
     const res = await sendLoginOtp(email.trim());
     setBusy(false);
@@ -92,6 +104,7 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
       return;
     }
     setStep('otp');
+    setCooldown(RESEND_COOLDOWN);
     toast('Sign-in code sent — check your email.');
   }
 
@@ -192,10 +205,10 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
           <button
             type="button"
             onClick={sendCode}
-            disabled={busy}
-            className="text-lime-deep text-center text-sm font-medium hover:underline disabled:opacity-50"
+            disabled={busy || cooldown > 0}
+            className="text-lime-deep text-center text-sm font-medium hover:underline disabled:no-underline disabled:opacity-50"
           >
-            Resend code
+            {cooldown > 0 ? `Resend code in ${cooldown}s` : 'Resend code'}
           </button>
         </form>
       )}

@@ -8,6 +8,7 @@
  */
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { adminRoleForEmail } from '@/lib/admin-emails';
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -37,5 +38,21 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  return { response, user };
+  // Trusted role for the gate: the env admin allowlist wins for founding admins
+  // (so they're recognised even if profiles.role is still the clamped default),
+  // then the server-controlled `profiles.role`, then editable user_metadata.
+  let role: string | undefined;
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+    role =
+      adminRoleForEmail(user.email) ??
+      (profile?.role as string | undefined) ??
+      (user.user_metadata?.role as string | undefined);
+  }
+
+  return { response, user, role };
 }

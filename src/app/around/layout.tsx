@@ -10,6 +10,7 @@
 import Link from 'next/link';
 import { MarketingHeader } from '@/components/layouts/marketing-header';
 import { ServicesDock } from '@/components/layouts/services-dock';
+import { ChatWidget } from '@/components/chat/chat-widget';
 import { getCurrentUser, getProfile } from '@/modules/auth/queries';
 import { LocationProvider } from './location-context';
 
@@ -35,6 +36,8 @@ export default async function AroundLayout({ children }: { children: React.React
             </Link>
           </div>
         </footer>
+        {/* Chat float - only for signed-in users on the public feed. */}
+        {user && <ChatWidget />}
       </div>
     </LocationProvider>
   );

@@ -7,9 +7,5 @@
 import { DashboardShell } from '@/components/layouts/dashboard-shell';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <DashboardShell navKey="admin" maxWidth="max-w-[1400px]">
-      {children}
-    </DashboardShell>
-  );
+  return <DashboardShell navKey="admin">{children}</DashboardShell>;
 }

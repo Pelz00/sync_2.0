@@ -15,6 +15,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { adminRoleForEmail } from '@/lib/admin-emails';
 import {
   email as emailRule,
   loginSchema,
@@ -149,17 +150,6 @@ export async function signIn(input: LoginInput): Promise<VerifyResult> {
   return { ok: true, role };
 }
 
-/** Bootstrap list of passwordless admin emails (comma-separated in env). Lets
- *  the login form detect admins even before Supabase is wired, and is a fallback
- *  if the DB lookup is unavailable. The DB (`login_method`) stays the source of
- *  truth - this just pre-knows the founding admins. */
-const ADMIN_EMAILS = new Set(
-  (process.env.ADMIN_EMAILS ?? '')
-    .split(',')
-    .map((e) => e.trim().toLowerCase())
-    .filter(Boolean),
-);
-
 /** Which input the login form should show for an email: admins/super_admins are
  *  passwordless ('otp'), everyone else uses a password. Defaults to 'password'
  *  for unknown emails (and when Supabase isn't reachable) so we don't reveal
@@ -168,7 +158,7 @@ const ADMIN_EMAILS = new Set(
 export async function getLoginMethod(rawEmail: string): Promise<{ method: 'password' | 'otp' }> {
   const parsed = emailRule.safeParse(rawEmail);
   if (!parsed.success) return { method: 'password' };
-  if (ADMIN_EMAILS.has(parsed.data.toLowerCase())) return { method: 'otp' };
+  if (adminRoleForEmail(parsed.data)) return { method: 'otp' };
   try {
     const admin = createAdminClient();
     const { data, error } = await admin.rpc('login_method', { p_email: parsed.data });
@@ -215,6 +205,15 @@ export async function verifyLoginOtp(input: VerifyOtpInput): Promise<VerifyResul
       .eq('id', data.user!.id)
       .maybeSingle();
     if (prof?.role) role = prof.role as Role;
+
+    // Bootstrap: a founding admin (env allowlist) lands as admin even if
+    // profiles.role wasn't seeded - self-heal it so the proxy + /admin pages
+    // recognise them on this and future logins.
+    const bootstrap = adminRoleForEmail(email);
+    if (bootstrap && role !== 'admin' && role !== 'super_admin') {
+      role = bootstrap;
+      await admin.from('profiles').upsert({ id: data.user!.id, role }, { onConflict: 'id' });
+    }
     if (prof?.archived_at) {
       const days = (Date.now() - new Date(prof.archived_at).getTime()) / 86_400_000;
       if (days < 30) {

@@ -11,6 +11,7 @@
 import { DashboardSidebar } from './dashboard-sidebar';
 import { DashboardHeader } from './dashboard-header';
 import { getDashboardProfile } from './dashboard-profile';
+import { ChatWidget } from '@/components/chat/chat-widget';
 import type { DashboardNavKey } from '@/config/dashboard-nav';
 
 interface DashboardShellProps {
@@ -38,6 +39,8 @@ export async function DashboardShell({
           <main className="flex-1 p-4 md:p-8">{children}</main>
         </div>
       </div>
+      {/* Chat float - every role gets it on their dashboard. */}
+      <ChatWidget />
     </div>
   );
 }

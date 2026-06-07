@@ -8,7 +8,8 @@
  */
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { getProfile } from '@/modules/auth/queries';
+import { getCurrentUser, getProfile } from '@/modules/auth/queries';
+import { adminRoleForEmail } from '@/lib/admin-emails';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { cn } from '@/lib/utils';
 import { UserRowActions } from './user-actions';
@@ -25,11 +26,14 @@ type ProfileRow = {
 };
 
 export default async function Page() {
-  const profile = await getProfile();
-  if (!profile || (profile.role !== 'admin' && profile.role !== 'super_admin')) {
+  const [user, profile] = await Promise.all([getCurrentUser(), getProfile()]);
+  // profiles.role is the source of truth; the admin allowlist is a bootstrap so
+  // a founding admin works even before their role is seeded/self-healed.
+  const role = profile?.role ?? adminRoleForEmail(user?.email);
+  if (role !== 'admin' && role !== 'super_admin') {
     redirect('/403');
   }
-  const isSuperAdmin = profile.role === 'super_admin';
+  const isSuperAdmin = role === 'super_admin';
 
   const admin = createAdminClient();
   const { data: profiles } = await admin

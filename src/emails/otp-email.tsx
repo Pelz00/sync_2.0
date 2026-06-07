@@ -3,7 +3,16 @@
  * codebase (React Email) and delivered via Resend through Supabase's Send Email
  * Hook. Inline styles only - the rule for email clients.
  */
-import { Body, Container, Head, Heading, Html, Preview, Section, Text } from '@react-email/components';
+import {
+  Body,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Preview,
+  Section,
+  Text,
+} from '@react-email/components';
 
 const CREAM = '#f4f1e8';
 const INK = '#0e0e12';
@@ -34,15 +43,23 @@ export function OtpEmail({ code }: { code: string }) {
             padding: 32,
           }}
         >
-          <Text style={{ color: INK, fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', margin: 0 }}>
+          <Text
+            style={{
+              color: INK,
+              fontSize: 22,
+              fontWeight: 700,
+              letterSpacing: '-0.02em',
+              margin: 0,
+            }}
+          >
             Sync
           </Text>
 
           <Heading style={{ color: INK, fontSize: 24, fontWeight: 700, margin: '24px 0 8px' }}>
-            Verify your email
+            Your sign-in code
           </Heading>
           <Text style={{ color: MUTED, fontSize: 14, lineHeight: '22px', margin: 0 }}>
-            Enter this code to finish creating your Sync account. It expires in a few minutes.
+            Enter this code to continue to Sync. It expires in 10 minutes and can only be used once.
           </Text>
 
           <Section
@@ -54,18 +71,27 @@ export function OtpEmail({ code }: { code: string }) {
               textAlign: 'center' as const,
             }}
           >
-            <Text style={{ color: INK, fontSize: 36, fontWeight: 700, letterSpacing: '10px', margin: 0 }}>
+            <Text
+              style={{
+                color: INK,
+                fontSize: 36,
+                fontWeight: 700,
+                letterSpacing: '10px',
+                margin: 0,
+              }}
+            >
               {code}
             </Text>
           </Section>
 
           <Text style={{ color: FAINT, fontSize: 12, lineHeight: '18px', margin: 0 }}>
-            Didn&rsquo;t request this? You can safely ignore this email — no account is created
-            until the code is entered.
+            Didn&rsquo;t request this? You can safely ignore this email.
           </Text>
         </Container>
 
-        <Text style={{ color: FAINT, fontSize: 12, margin: '16px 0 0', textAlign: 'center' as const }}>
+        <Text
+          style={{ color: FAINT, fontSize: 12, margin: '16px 0 0', textAlign: 'center' as const }}
+        >
           © Sync · Raavon Limited
         </Text>
       </Body>

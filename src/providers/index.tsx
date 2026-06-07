@@ -17,15 +17,12 @@
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { Toaster } from '@/components/ui/toast';
 import { ReduxProvider } from './redux-provider';
-import { ChatWidget } from '@/components/chat/chat-widget';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ReduxProvider>
       <TooltipProvider delayDuration={150}>
         {children}
-        {/* Floating, draggable chat - present on every page. */}
-        <ChatWidget />
         <Toaster />
       </TooltipProvider>
     </ReduxProvider>
