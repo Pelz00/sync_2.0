@@ -1,0 +1,56 @@
+import type { PromotionsPageData } from './types';
+
+/** Replace this with your real API fetch. Shape must match `PromotionsPageData`. */
+export const mockPromotionsData: PromotionsPageData = {
+  activeCampaignCount: 3,
+  stats: {
+    totalViews: 36700,
+    totalClicks: 1637,
+    conversions: 268,
+    revenueGenerated: 1027950,
+  },
+  campaigns: [
+    {
+      id: 'camp_01',
+      name: 'Jollof Rice Weekend Promo',
+      type: 'Sponsored Product',
+      status: 'Active',
+      startDate: '2026-06-01',
+      endDate: '2026-06-07',
+      views: 8400,
+      clicks: 312,
+      sales: 48,
+      revenue: 201600,
+      budgetSpent: 9200,
+      budgetTotal: 15000,
+    },
+    {
+      id: 'camp_02',
+      name: '20% Off Suya Saturdays',
+      type: 'Discount Campaign',
+      status: 'Ended',
+      startDate: '2026-05-25',
+      endDate: '2026-05-31',
+      views: 6200,
+      clicks: 240,
+      sales: 61,
+      revenue: 127750,
+      budgetSpent: 8000,
+      budgetTotal: 8000,
+    },
+    {
+      id: 'camp_03',
+      name: 'Eid Special Flash Deal',
+      type: 'Flash Sale',
+      status: 'Scheduled',
+      startDate: '2026-06-10',
+      endDate: '2026-06-10',
+      views: 0,
+      clicks: 0,
+      sales: 0,
+      revenue: 0,
+      budgetSpent: 0,
+      budgetTotal: 20000,
+    },
+  ],
+};
