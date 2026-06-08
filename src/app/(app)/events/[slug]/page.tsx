@@ -131,7 +131,15 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </div>
 
           {/* RIGHT SIDE — needs useState so it's a Client Component */}
-          <TicketPanel tickets={tickets} />
+          <TicketPanel
+            tickets={tickets}
+            event={{
+              title: event.title,
+              location: event.location,
+              date: event.date,
+              time: event.time,
+            }}
+          />
 
         </div>
       </main>
