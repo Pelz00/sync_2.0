@@ -28,9 +28,18 @@ interface Props {
 }
 
 function exportToCSV(rows: Invoice[], filename: string) {
-  const headers = ['Invoice', 'Date', 'Plan', 'Amount (₦)', 'Status'];
+  const headers = ['Invoice', 'Date', 'Plan', 'Amount', 'Status'];
+
+  const escape = (val: string | number) => {
+    const str = String(val);
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
   const lines = rows.map((r) =>
-    [r.id, r.date, r.plan, r.amount, r.status].join(','),
+    [escape(r.id), escape(r.date), escape(r.plan), `₦${r.amount}`, escape(r.status)].join(','),
   );
   const csv = [headers.join(','), ...lines].join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
@@ -97,7 +106,7 @@ export function BillingHistoryTable({ invoices }: Props) {
         />
 
         {/* Table */}
-        <div className="rounded-xl border border-line/5 bg-panel">
+        <div className="border-line/5 bg-panel rounded-xl border">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((group) => (
@@ -105,7 +114,7 @@ export function BillingHistoryTable({ invoices }: Props) {
                   {group.headers.map((header) => (
                     <TableHead
                       key={header.id}
-                      className="font-mono text-[10px] uppercase tracking-widest text-content-muted"
+                      className="text-content-muted font-mono text-[10px] tracking-widest uppercase"
                     >
                       {header.isPlaceholder
                         ? null
@@ -130,7 +139,7 @@ export function BillingHistoryTable({ invoices }: Props) {
                 <TableRow>
                   <TableCell
                     colSpan={billingColumns.length}
-                    className="h-24 text-center text-content-muted"
+                    className="text-content-muted h-24 text-center"
                   >
                     No invoices found.
                   </TableCell>
@@ -142,20 +151,44 @@ export function BillingHistoryTable({ invoices }: Props) {
 
         {/* Pagination */}
         <div className="flex items-center justify-between">
-          <p className="text-xs text-content-muted">
-            Showing {table.getRowModel().rows.length} of{' '}
-            {table.getFilteredRowModel().rows.length} invoices
+          <p className="text-content-muted text-xs">
+            Showing {table.getRowModel().rows.length} of {table.getFilteredRowModel().rows.length}{' '}
+            invoices
           </p>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            {Array.from({ length: table.getPageCount() }, (_, i) => (
+            {(() => {
+              const pageCount = table.getPageCount();
+              const current = table.getState().pagination.pageIndex;
+              const maxVisible = 5;
+              
+              if (pageCount <= maxVisible) {
+                return Array.from({ length: pageCount }, (_, i) => (
+                  <Button
+                    key={i}
+                    size="sm"
+                    variant={current === i ? 'dark' : 'outline'}
+                    onClick={() => table.setPageIndex(i)}
+                  >
+                    {i + 1}
+                  </Button>
+                ));
+              }
+              
+              // Show first, last, current, and neighbors
+              const pages = new Set([0, current - 1, current, current + 1, pageCount - 1].filter(p => p >= 0 && p < pageCount));
+              return Array.from(pages).sort((a, b) => a - b).map((i, idx, arr) => (
+                <>
+                  {idx > 0 && arr[idx - 1] !== i - 1 && <span key={`ellipsis-${i}`} className="px-2">…</span>}
+                  <Button
+                    key={i}
+                    size="sm"
+                    variant={current === i ? 'dark' : 'outline'}
+                    onClick={() => table.setPageIndex(i)}
+                  >
+                    {i + 1}
+                  </Button>
+                </>
+              ));
+            })()}
               <Button
                 key={i}
                 size="sm"

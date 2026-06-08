@@ -47,7 +47,12 @@ export default function PlanPage() {
   function handleSelectPlan(targetPlan: Plan) {
     if (targetPlan.id === currentPlan.planId) return;
 
-    const fromPlan = PLANS.find((p) => p.id === currentPlan.planId)!;
+    const fromPlan = PLANS.find((p) => p.id === currentPlan.planId);
+    if (!fromPlan) {
+      console.error('Current plan not found in PLANS array:', currentPlan.planId);
+      return;
+    }
+
     const direction = PLANS.indexOf(targetPlan) > PLANS.indexOf(fromPlan) ? 'upgrade' : 'downgrade';
 
     setPlanChangePayload({ from: fromPlan, to: targetPlan, direction });
@@ -62,15 +67,21 @@ export default function PlanPage() {
       planId: payload.to.id,
       name: payload.to.name,
       price: payload.to.price ?? 0,
-      commission: payload.to.commission ?? 0,
-    }));
-  }
-
-  /** Called when user saves new card details */
   function handleSaveCard(values: CardFormValues) {
     // TODO: call API — POST /api/payment-methods { ...values }
+    const digitsOnly = values.cardNumber.replace(/\s/g, '');
+    if (digitsOnly.length < 4) {
+      console.error('Invalid card number length');
+      return;
+    }
+    
     setPaymentMethod({
-      last4: values.cardNumber.replace(/\s/g, '').slice(-4),
+      last4: digitsOnly.slice(-4),
+      brand: 'Mastercard', // In real impl detect from BIN
+      expiresAt: `${values.expiryMonth}/${values.expiryYear}`,
+      billingEmail: values.billingEmail,
+    });
+  }
       brand: 'Mastercard', // In real impl detect from BIN
       expiresAt: `${values.expiryMonth}/${values.expiryYear}`,
       billingEmail: values.billingEmail,

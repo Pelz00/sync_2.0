@@ -53,11 +53,26 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
 
   function validate(): boolean {
     const e: Partial<CardFormValues> = {};
-    if (form.cardNumber.replace(/\s/g, '').length < 16) e.cardNumber = 'Enter a valid 16-digit card number';
+    if (form.cardNumber.replace(/\s/g, '').length < 16)
+      e.cardNumber = 'Enter a valid 16-digit card number';
     if (!form.cardHolder.trim()) e.cardHolder = 'Cardholder name is required';
     if (!form.expiryMonth || parseInt(form.expiryMonth) < 1 || parseInt(form.expiryMonth) > 12)
       e.expiryMonth = 'Invalid month';
     if (!form.expiryYear || form.expiryYear.length < 4) e.expiryYear = 'Invalid year';
+
+    // Check if card is expired
+    if (!e.expiryMonth && !e.expiryYear) {
+      const month = parseInt(form.expiryMonth);
+      const year = parseInt(form.expiryYear);
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth() + 1;
+
+      if (year < currentYear || (year === currentYear && month < currentMonth)) {
+        e.expiryMonth = 'Card has expired';
+      }
+    }
+
     if (form.cvv.length < 3) e.cvv = 'Invalid CVV';
     if (!form.billingEmail.includes('@')) e.billingEmail = 'Enter a valid email';
     setErrors(e);
@@ -122,7 +137,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
         <div className="space-y-4">
           {/* Card number */}
           <div>
-            <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-content-muted">
+            <label className="text-content-muted mb-1.5 block font-mono text-[10px] tracking-widest uppercase">
               Card Number
             </label>
             <Input
@@ -131,14 +146,12 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
               onChange={(e) => set('cardNumber', formatCardNumber(e.target.value))}
               className="font-mono tracking-wider"
             />
-            {errors.cardNumber && (
-              <p className="mt-1 text-xs text-red-500">{errors.cardNumber}</p>
-            )}
+            {errors.cardNumber && <p className="mt-1 text-xs text-red-500">{errors.cardNumber}</p>}
           </div>
 
           {/* Cardholder */}
           <div>
-            <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-content-muted">
+            <label className="text-content-muted mb-1.5 block font-mono text-[10px] tracking-widest uppercase">
               Cardholder Name
             </label>
             <Input
@@ -146,15 +159,13 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
               value={form.cardHolder}
               onChange={(e) => set('cardHolder', e.target.value)}
             />
-            {errors.cardHolder && (
-              <p className="mt-1 text-xs text-red-500">{errors.cardHolder}</p>
-            )}
+            {errors.cardHolder && <p className="mt-1 text-xs text-red-500">{errors.cardHolder}</p>}
           </div>
 
           {/* Expiry + CVV */}
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-content-muted">
+              <label className="text-content-muted mb-1.5 block font-mono text-[10px] tracking-widest uppercase">
                 Month
               </label>
               <Input
@@ -168,7 +179,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
               )}
             </div>
             <div>
-              <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-content-muted">
+              <label className="text-content-muted mb-1.5 block font-mono text-[10px] tracking-widest uppercase">
                 Year
               </label>
               <Input
@@ -182,7 +193,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
               )}
             </div>
             <div>
-              <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-content-muted">
+              <label className="text-content-muted mb-1.5 block font-mono text-[10px] tracking-widest uppercase">
                 CVV
               </label>
               <Input
@@ -198,7 +209,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
 
           {/* Billing email */}
           <div>
-            <label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-content-muted">
+            <label className="text-content-muted mb-1.5 block font-mono text-[10px] tracking-widest uppercase">
               Billing Email
             </label>
             <Input
@@ -213,7 +224,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
           </div>
 
           {/* Security note */}
-          <p className="flex items-center gap-1.5 text-xs text-content-muted">
+          <p className="text-content-muted flex items-center gap-1.5 text-xs">
             <Lock className="h-3 w-3" />
             Your card details are encrypted and stored securely. We never store your full card
             number.
@@ -235,10 +246,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button
-            className="bg-violet-600 text-white hover:bg-violet-700"
-            onClick={handleSave}
-          >
+          <Button className="bg-violet-600 text-white hover:bg-violet-700" onClick={handleSave}>
             {isNew ? 'Add Card' : 'Save Changes'}
           </Button>
         </DialogFooter>
