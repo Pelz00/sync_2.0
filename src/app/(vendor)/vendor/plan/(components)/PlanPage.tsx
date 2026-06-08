@@ -67,6 +67,9 @@ export default function PlanPage() {
       planId: payload.to.id,
       name: payload.to.name,
       price: payload.to.price ?? 0,
+    }));
+  }
+
   function handleSaveCard(values: CardFormValues) {
     // TODO: call API — POST /api/payment-methods { ...values }
     const digitsOnly = values.cardNumber.replace(/\s/g, '');
@@ -74,14 +77,9 @@ export default function PlanPage() {
       console.error('Invalid card number length');
       return;
     }
-    
+
     setPaymentMethod({
       last4: digitsOnly.slice(-4),
-      brand: 'Mastercard', // In real impl detect from BIN
-      expiresAt: `${values.expiryMonth}/${values.expiryYear}`,
-      billingEmail: values.billingEmail,
-    });
-  }
       brand: 'Mastercard', // In real impl detect from BIN
       expiresAt: `${values.expiryMonth}/${values.expiryYear}`,
       billingEmail: values.billingEmail,
