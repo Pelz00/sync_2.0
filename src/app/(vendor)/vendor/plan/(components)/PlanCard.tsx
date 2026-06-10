@@ -31,15 +31,15 @@ export function PlanCard({ plan, currentPlanId, onSelect }: Props) {
       className={cn(
         'relative flex flex-col rounded-xl border p-6 transition-shadow',
         isEnterprise
-          ? 'border-ink bg-ink text-cream'
+          ? 'text-cream border-lime-100 bg-lime-500'
           : 'border-line/10 bg-panel text-content shadow-card',
-        isCurrent && !isEnterprise && 'ring-2 ring-violet-500',
+        isCurrent && !isEnterprise && 'ring-2 ring-lime-500',
       )}
     >
       {/* Current badge */}
       {isCurrent && (
         <div className="absolute -top-3 left-4">
-          <Badge variant="accent" className="bg-violet-100 text-violet-700">
+          <Badge variant="accent" className="bg-lime-100 text-lime-700">
             Current
           </Badge>
         </div>
@@ -71,7 +71,9 @@ export function PlanCard({ plan, currentPlanId, onSelect }: Props) {
           {plan.priceLabel}
         </span>
         {plan.price !== null && plan.price > 0 && (
-          <span className={cn('ml-1 text-sm', isEnterprise ? 'text-cream/50' : 'text-content-muted')}>
+          <span
+            className={cn('ml-1 text-sm', isEnterprise ? 'text-cream/50' : 'text-content-muted')}
+          >
             /mo
           </span>
         )}
@@ -84,7 +86,7 @@ export function PlanCard({ plan, currentPlanId, onSelect }: Props) {
             <Check
               className={cn(
                 'h-3.5 w-3.5 shrink-0',
-                isEnterprise ? 'text-lime-deep' : 'text-violet-500',
+                isEnterprise ? 'text-lime-deep' : 'text-lime-500',
               )}
             />
             <span className={isEnterprise ? 'text-cream/80' : 'text-content'}>{f.label}</span>
@@ -97,7 +99,7 @@ export function PlanCard({ plan, currentPlanId, onSelect }: Props) {
         {isCurrent ? (
           <Button
             variant="outline"
-            className="w-full border-violet-200 bg-violet-50 text-violet-600 hover:bg-violet-50"
+            className="w-full border-lime-200 bg-lime-50 text-lime-600 hover:bg-lime-50"
             disabled
           >
             Current Plan
@@ -105,16 +107,13 @@ export function PlanCard({ plan, currentPlanId, onSelect }: Props) {
         ) : plan.cta === 'contact' ? (
           <Button
             variant="outline"
-            className="w-full border-cream/20 text-cream hover:bg-cream/10"
+            className="border-cream/20 text-cream hover:bg-cream/10 w-full"
             onClick={handleClick}
           >
             Contact Sales
           </Button>
         ) : plan.cta === 'upgrade' ? (
-          <Button
-            className="w-full bg-violet-600 text-white hover:bg-violet-700"
-            onClick={handleClick}
-          >
+          <Button className="w-full bg-lime-600 text-white hover:bg-lime-700" onClick={handleClick}>
             Upgrade
           </Button>
         ) : (

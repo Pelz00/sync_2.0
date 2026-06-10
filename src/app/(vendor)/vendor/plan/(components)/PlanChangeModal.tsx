@@ -35,8 +35,7 @@ export function PlanChangeModal({
   const isUpgrade = direction === 'upgrade';
   const needsPayment = isUpgrade && !hasPaymentMethod;
 
-  const priceDiff =
-    to.price !== null && from.price !== null ? to.price - from.price : null;
+  const priceDiff = to.price !== null && from.price !== null ? to.price - from.price : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -60,35 +59,43 @@ export function PlanChangeModal({
         </DialogHeader>
 
         {/* Plan comparison */}
-        <div className="rounded-xl border border-line/10 bg-surface-deep p-4">
+        <div className="border-line/10 bg-surface-deep rounded-xl border p-4">
           <div className="flex items-center justify-between gap-3">
             {/* From */}
             <div className="flex-1 text-center">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-content-muted">
+              <p className="text-content-muted font-mono text-[10px] tracking-widest uppercase">
                 Current
               </p>
-              <p className="font-display mt-0.5 text-lg font-bold text-content">{from.name}</p>
-              <p className="text-sm text-content-muted">
-                {from.price === 0 ? 'Free' : from.price !== null ? `₦${from.price.toLocaleString()}/mo` : 'Custom'}
+              <p className="font-display text-content mt-0.5 text-lg font-bold">{from.name}</p>
+              <p className="text-content-muted text-sm">
+                {from.price === 0
+                  ? 'Free'
+                  : from.price !== null
+                    ? `₦${from.price.toLocaleString()}/mo`
+                    : 'Custom'}
               </p>
             </div>
 
-            <ArrowRight className="h-5 w-5 shrink-0 text-content-muted" />
+            <ArrowRight className="text-content-muted h-5 w-5 shrink-0" />
 
             {/* To */}
             <div className="flex-1 text-center">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-content-muted">
+              <p className="text-content-muted font-mono text-[10px] tracking-widest uppercase">
                 New
               </p>
               <p
                 className={`font-display mt-0.5 text-lg font-bold ${
-                  isUpgrade ? 'text-violet-600' : 'text-amber-600'
+                  isUpgrade ? 'text-lime-600' : 'text-amber-600'
                 }`}
               >
                 {to.name}
               </p>
-              <p className="text-sm text-content-muted">
-                {to.price === 0 ? 'Free' : to.price !== null ? `₦${to.price.toLocaleString()}/mo` : 'Custom'}
+              <p className="text-content-muted text-sm">
+                {to.price === 0
+                  ? 'Free'
+                  : to.price !== null
+                    ? `₦${to.price.toLocaleString()}/mo`
+                    : 'Custom'}
               </p>
             </div>
           </div>
@@ -97,16 +104,14 @@ export function PlanChangeModal({
           {priceDiff !== null && (
             <div
               className={`mt-4 rounded-lg px-3 py-2 text-sm ${
-                isUpgrade
-                  ? 'bg-violet-50 text-violet-700'
-                  : 'bg-amber-50 text-amber-700'
+                isUpgrade ? 'bg-lime-50 text-lime-700' : 'bg-amber-50 text-amber-700'
               }`}
             >
               {isUpgrade
                 ? `Your billing will increase by ₦${Math.abs(priceDiff).toLocaleString()}/mo starting next cycle.`
                 : priceDiff === 0
-                ? 'You will move to the free plan. No further charges.'
-                : `You'll save ₦${Math.abs(priceDiff).toLocaleString()}/mo starting next cycle.`}
+                  ? 'You will move to the free plan. No further charges.'
+                  : `You'll save ₦${Math.abs(priceDiff).toLocaleString()}/mo starting next cycle.`}
             </div>
           )}
         </div>
@@ -144,13 +149,13 @@ export function PlanChangeModal({
         {/* What you'll get */}
         {isUpgrade && (
           <div>
-            <p className="mb-2 font-mono text-[10px] uppercase tracking-widest text-content-muted">
+            <p className="text-content-muted mb-2 font-mono text-[10px] tracking-widest uppercase">
               What you'll get
             </p>
             <ul className="space-y-1.5">
               {to.features.map((f) => (
-                <li key={f.label} className="flex items-center gap-2 text-sm text-content">
-                  <Check className="h-3.5 w-3.5 text-violet-500" />
+                <li key={f.label} className="text-content flex items-center gap-2 text-sm">
+                  <Check className="h-3.5 w-3.5 text-lime-500" />
                   {f.label}
                 </li>
               ))}
@@ -165,7 +170,7 @@ export function PlanChangeModal({
           <Button
             className={
               isUpgrade
-                ? 'bg-violet-600 text-white hover:bg-violet-700'
+                ? 'bg-lime-600 text-white hover:bg-lime-700'
                 : 'bg-amber-500 text-white hover:bg-amber-600'
             }
             disabled={needsPayment}

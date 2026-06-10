@@ -17,7 +17,7 @@ function formatRenewalDate(iso: string): string {
 
 export function CurrentPlanBanner({ plan }: Props) {
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-violet-600 px-8 py-7 text-white">
+    <div className="relative overflow-hidden rounded-2xl bg-lime-600 px-8 py-7 text-white">
       {/* Decorative circles */}
       <div className="pointer-events-none absolute -top-10 -right-10 h-48 w-48 rounded-full bg-white/5" />
       <div className="pointer-events-none absolute right-20 -bottom-14 h-56 w-56 rounded-full bg-white/5" />

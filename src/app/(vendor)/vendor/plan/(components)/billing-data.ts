@@ -1,6 +1,6 @@
-import type { Plan, CurrentPlan, PaymentMethod, Invoice } from '../types';
-
 // ─── Plans ────────────────────────────────────────────────────────────────────
+
+import { CurrentPlan, Invoice, PaymentMethod, Plan } from './types';
 
 export const PLANS: Plan[] = [
   {
@@ -86,7 +86,12 @@ export const CURRENT_PLAN: CurrentPlan = {
   price: 4999,
   renewsAt: '2026-07-01',
   commission: 3,
-  features: ['Up to 50 listings', '3% platform commission', 'Advanced analytics', 'Priority support'],
+  features: [
+    'Up to 50 listings',
+    '3% platform commission',
+    'Advanced analytics',
+    'Priority support',
+  ],
 };
 
 // ─── Payment Method ───────────────────────────────────────────────────────────

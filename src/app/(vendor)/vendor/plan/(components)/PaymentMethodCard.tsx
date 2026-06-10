@@ -21,14 +21,14 @@ export function PaymentMethodCard({ method, onUpdate }: Props) {
   if (!method) {
     // ── First-time / no card state ─────────────────────────────────────────
     return (
-      <Card className="border-dashed border-line/20">
+      <Card className="border-line/20 border-dashed">
         <CardContent className="flex flex-col items-center justify-center gap-3 py-8 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-ink/5">
-            <CreditCard className="h-6 w-6 text-content-muted" />
+          <div className="bg-ink/5 flex h-12 w-12 items-center justify-center rounded-full">
+            <CreditCard className="text-content-muted h-6 w-6" />
           </div>
           <div>
-            <p className="font-display text-sm font-semibold text-content">No payment method</p>
-            <p className="mt-0.5 text-xs text-content-muted">
+            <p className="font-display text-content text-sm font-semibold">No payment method</p>
+            <p className="text-content-muted mt-0.5 text-xs">
               Add a card to activate billing and manage your subscription.
             </p>
           </div>
@@ -60,10 +60,10 @@ export function PaymentMethodCard({ method, onUpdate }: Props) {
 
         {/* Details */}
         <div className="flex-1">
-          <p className="font-display text-sm font-semibold text-content">
+          <p className="font-display text-content text-sm font-semibold">
             {method.brand} ending in {method.last4}
           </p>
-          <p className="mt-0.5 text-xs text-content-muted">
+          <p className="text-content-muted mt-0.5 text-xs">
             Expires {method.expiresAt} · Billing contact: {method.billingEmail}
           </p>
         </div>
@@ -72,7 +72,7 @@ export function PaymentMethodCard({ method, onUpdate }: Props) {
         <Button
           variant="outline"
           size="sm"
-          className="shrink-0 border-violet-200 text-violet-600 hover:bg-violet-50"
+          className="shrink-0 border-lime-200 text-lime-600 hover:bg-lime-50"
           onClick={onUpdate}
         >
           Update

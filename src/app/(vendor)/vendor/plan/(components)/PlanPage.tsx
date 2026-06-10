@@ -20,16 +20,14 @@
  */
 
 import { useState } from 'react';
-
+import { CardFormValues, CurrentPlan, PaymentMethod, Plan, PlanChangePayload } from './types';
+import { CURRENT_PLAN, INVOICES, PAYMENT_METHOD, PLANS } from './billing-data';
 import { CurrentPlanBanner } from './CurrentPlanBanner';
 import { PlanGrid } from './PlanGrid';
 import { PaymentMethodCard } from './PaymentMethodCard';
+import { BillingHistoryTable } from './BillingHistoryTable';
 import { UpdateCardModal } from './UpdateCardModal';
 import { PlanChangeModal } from './PlanChangeModal';
-import { BillingHistoryTable } from './BillingHistoryTable';
-
-import type { CurrentPlan, PaymentMethod, Plan, PlanChangePayload, CardFormValues } from './types';
-import { CURRENT_PLAN, INVOICES, PAYMENT_METHOD, PLANS } from './billing-data';
 
 export default function PlanPage() {
   // ── Local state (swap for real hooks when API is ready) ──────────────────
@@ -108,7 +106,9 @@ export default function PlanPage() {
     <div className="mx-auto max-w-6xl space-y-8 px-4 py-8">
       {/* Page header */}
       <div>
-        <h1 className="font-display text-content text-2xl font-bold">Subscription Plan</h1>
+        <h1 className="font-display text-content text-2xl font-bold">
+          Subscription <span className="text-lime-500">Plan</span>
+        </h1>
         <p className="text-content-muted mt-1 text-sm">Manage your plan and billing</p>
       </div>
 
