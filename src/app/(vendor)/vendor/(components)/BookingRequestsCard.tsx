@@ -26,7 +26,7 @@ export function BookingRequestCard({ data }: BookingRequestCardProps) {
         }) => (
           <Card
             key={orderId}
-            className="border-line group flex items-center justify-between border bg-transparent px-5 py-4 transition-shadow duration-300 hover:shadow-lg"
+            className="group border-cream-deep flex items-center justify-between bg-transparent px-5 py-4 shadow-md transition-shadow duration-300 hover:shadow-2xl"
           >
             <div className="flex items-center gap-4">
               <div className="bg-ink/10 size-10 shrink-0 overflow-hidden rounded-full transition-transform duration-300 group-hover:scale-110">
@@ -47,7 +47,7 @@ export function BookingRequestCard({ data }: BookingRequestCardProps) {
                 </div>
                 <p className="text-content-muted text-sm">{items}</p>
                 <div className="mt-0.5 flex items-center gap-2">
-                  <span className="font-mono text-xs font-semibold text-accent-fg">{total}</span>
+                  <span className="text-accent-fg font-mono text-xs font-semibold">{total}</span>
                   <span className="text-content-muted text-xs">·</span>
                   <span className="text-content-muted text-xs capitalize">{deliveryType}</span>
                   <span className="text-content-muted text-xs">· {timeAgo} ago</span>
@@ -61,7 +61,7 @@ export function BookingRequestCard({ data }: BookingRequestCardProps) {
               </Button>
               <Button
                 onClick={onAccept}
-                className="text-ink border-line rounded-full border bg-lime font-semibold hover:bg-lime/85"
+                className="text-ink bg-lime hover:bg-lime/85 rounded-full border border-lime-300 font-semibold"
               >
                 Accept <ArrowRight className="ml-1 size-4" />
               </Button>

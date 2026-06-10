@@ -25,6 +25,9 @@ import { bookingRequests, earningsSummary, foodProducts, vendorStats } from '@/m
 import Link from 'next/link';
 import EarningsSummaryCard from './(components)/EarningsSummaryCard';
 import { getDashboardProfile } from '@/components/layouts/dashboard-profile';
+import { RevenueChart } from './(components)/RevenueChart';
+import { mockData } from '@/mock/chart';
+import EarningsChart from './(components)/EarningChart';
 
 export const metadata: Metadata = { title: 'Vendor dashboard' };
 
@@ -45,13 +48,21 @@ export default async function Page() {
         </h2>
         <div className="">
           <div className="flex items-center gap-3">
-            {verified && (
+            {verified ? (
               <Badge
                 variant="accent"
                 className="border-line flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
               >
                 <Dot size={20} />
                 Verified Vendor
+              </Badge>
+            ) : (
+              <Badge
+                variant="accent"
+                className="border-line flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
+              >
+                <Dot size={20} />
+                Verify your store
               </Badge>
             )}
             <Avatar className="size-10">
@@ -69,7 +80,7 @@ export default async function Page() {
       {/* New section for stats */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         {vendorStats.map(({ label, value, sub, icon: Icon }) => (
-          <Card key={label} className="border-line border bg-transparent">
+          <Card key={label} className="border-line/10 bg-transparent shadow-2xl">
             <CardHeader>
               <CardTitle className="text-content-muted font-mono tracking-wide">{label}</CardTitle>
             </CardHeader>
@@ -111,7 +122,7 @@ export default async function Page() {
 
           {/* STATISTICS CHART */}
           <div className="flex-1">
-            <Card className="border-line mb-4 h-full border bg-transparent">
+            <Card className="border-cream-deep mb-4 h-full border bg-transparent">
               <CardHeader>
                 <CardTitle className="text-content-muted flex items-center justify-between font-mono tracking-wide">
                   <p>REVENUE . LAST 12 WEEKS</p>
@@ -132,12 +143,13 @@ export default async function Page() {
           </div>
         </div>
       </section>
+
       <section className="flex items-start gap-4 lg:gap-8">
-        <div>
+        <div className="flex-1">
           <h1 className="text-content-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
-            MY PRODUCTS
+            BEST SELLING FOOD
           </h1>
-          <ProductsCard products={foodProducts} />
+          <EarningsChart />
         </div>
         <div>
           {/* EARNINGS SUMMARY */}
@@ -146,6 +158,12 @@ export default async function Page() {
           </h1>
           <EarningsSummaryCard data={earningsSummary[0]} />
         </div>
+      </section>
+      <section>
+        <h1 className="text-content-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
+          MY PRODUCTS
+        </h1>
+        <ProductsCard products={foodProducts} />
       </section>
     </section>
   );
