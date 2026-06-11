@@ -15,11 +15,6 @@ interface EarningsChartProps {
 export default function EarningsChart({ data = mockData }: EarningsChartProps) {
   const [chartPeriod, setChartPeriod] = useState<ChartPeriod>('1Y');
 
-  //   const mappedChartData: RevenueDataPoint[] = data.bestSellingFood.slice(0, 3).map((food) => ({
-  //     label: food.name,
-  //     revenue: food.totalRevenue,
-  //   }));
-
   const mappedChartData: RevenueDataPoint[] = data.bestSellingFood.slice(0, 3).map((food) => ({
     label: food.name, // ← just the first word e.g. "Jollof", "Egusi", "Suya", "Akara"
     revenue: food.totalRevenue,
@@ -27,8 +22,6 @@ export default function EarningsChart({ data = mockData }: EarningsChartProps) {
 
   return (
     <>
-      {/* Charts Row */}
-      {/* <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_360px]"> */}
       <RevenueChart
         title="Best Selling Food"
         data={mappedChartData}
@@ -38,7 +31,6 @@ export default function EarningsChart({ data = mockData }: EarningsChartProps) {
         onPeriodChange={setChartPeriod}
         height={230}
       />
-      {/* </div> */}
     </>
   );
 }

@@ -97,7 +97,7 @@ export const FOOD_BADGES = [
 
 export type FoodBadge = (typeof FOOD_BADGES)[number] | null;
 
-export type bestSellingFood = {
+export type BestSellingFood = {
   id: string;
   name: string;
   category: string;
@@ -108,7 +108,6 @@ export type bestSellingFood = {
   badge: FoodBadge;
   imageUrl: string;
 };
-
 export type EarningsData = {
   availableBalance: number;
   pendingBalance: number;
@@ -123,6 +122,6 @@ export type EarningsData = {
   monthlyRevenue: RevenueDataPoint[];
   weeklyRevenue: RevenueDataPoint[];
   topProducts: TopProduct[];
-  bestSellingFood: bestSellingFood[];
+  bestSellingFood: BestSellingFood[];
   transactions: Transaction[];
 };

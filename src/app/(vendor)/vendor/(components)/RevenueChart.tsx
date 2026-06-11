@@ -71,6 +71,10 @@ export function RevenueChart({
 }: RevenueChartProps) {
   const [period, setPeriod] = useState<ChartPeriod>(activePeriod);
 
+  React.useEffect(() => {
+    setPeriod(activePeriod);
+  }, [activePeriod]);
+
   const handlePeriod = (p: ChartPeriod) => {
     setPeriod(p);
     onPeriodChange?.(p);
