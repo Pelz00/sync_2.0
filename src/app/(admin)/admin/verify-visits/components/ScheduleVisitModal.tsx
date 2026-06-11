@@ -1,7 +1,9 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { X, Plus, CheckCircle } from "lucide-react";
-import { Input, Textarea } from "@/components/ui";
+import { Input, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Button } from "@/components/ui";
+import { cn } from "@/lib/utils";
 
 interface ScheduleVisitModalProps {
   open: boolean;
@@ -17,14 +19,14 @@ export interface NewVisitForm {
   location: string;
   inspector: string;
   notes: string;
-  category:  string;
+  category: string;
 }
 
 const INITIAL: NewVisitForm = {
   vendor: "", vendorId: "", date: "", time: "", location: "", inspector: "", notes: "", category: "",
 };
 
-const INSPECTORS = ["Inspector John Doe", "Inspector Jane Smith", "Inspector Mike Johnson"];
+const INSPECTORS = ["Inspector Adegbite Pelumi", "Inspector Gaf Muiz", "Inspector Pop Loner"];
 const CATEGORIES = ["Food & Grocery", "Food & Canteen", "Convenience Store", "Pharmacy", "Electronics", "Clothing"];
 
 export function ScheduleVisitModal({ open, onClose, onSave }: ScheduleVisitModalProps) {
@@ -32,6 +34,7 @@ export function ScheduleVisitModal({ open, onClose, onSave }: ScheduleVisitModal
   const [isVisible, setIsVisible] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  // Animation layout phase entry tracking hooks
   useEffect(() => {
     if (open) {
       const id = requestAnimationFrame(() => setIsVisible(true));
@@ -41,7 +44,11 @@ export function ScheduleVisitModal({ open, onClose, onSave }: ScheduleVisitModal
 
   function handleClose() {
     setIsVisible(false);
-    setTimeout(() => { setForm(INITIAL); setSubmitted(false); onClose(); }, 300);
+    setTimeout(() => { 
+      setForm(INITIAL); 
+      setSubmitted(false); 
+      onClose(); 
+    }, 200);
   }
 
   useEffect(() => {
@@ -53,15 +60,12 @@ export function ScheduleVisitModal({ open, onClose, onSave }: ScheduleVisitModal
   function handleSave() {
     if (!form.vendor || !form.inspector || !form.location) return;
 
-    //live date + time at click
     const now = new Date();
     const liveDate = now.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
     const liveTime = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 
-    // Pass data to parent — swap this for await api.post(...) when backend is ready
     onSave({ ...form, date: liveDate, time: liveTime });
 
-    // Show confirmation state, then close
     setSubmitted(true);
     setTimeout(() => handleClose(), 1500);
   }
@@ -76,88 +80,106 @@ export function ScheduleVisitModal({ open, onClose, onSave }: ScheduleVisitModal
 
   return (
     <div
-      className={[
-        "fixed inset-0 z-50 flex items-center justify-center p-4",
-        "transition-all duration-300 ease-in-out",
-        isVisible ? "bg-black/50 backdrop-blur-sm" : "bg-black/0 backdrop-blur-none",
-      ].join(" ")}
+      className={cn(
+        "fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-200 ease-out",
+        isVisible ? "bg-black/60 backdrop-blur-xs" : "bg-black/0 backdrop-blur-none",
+      )}
       onClick={e => { if (e.target === e.currentTarget) handleClose(); }} >
+      
+      {/* Modal Layout Frame */}
       <div
-        className={[
-          "bg-white rounded-3xl shadow-2xl w-full max-w-md flex flex-col max-h-[92vh] overflow-hidden",
-          "transition-all duration-300 ease-out",
-          isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-6",
-        ].join(" ")}>
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
+        className={cn(
+          "bg-panel border border-line/15 rounded-xl shadow-pop w-full max-w-md flex flex-col max-h-[85vh] overflow-hidden origin-center",
+          "transition-all duration-200 ease-out",
+          isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-98 translate-y-2",
+        )}>
+        
+        {/* Header Block */}
+        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-line/15 shrink-0">
           <div>
-            <h2 className="text-lg font-black text-gray-900">Schedule New Visit</h2>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <h2 className="text-base font-display font-semibold text-content tracking-tight">Schedule New Visit</h2>
+            <p className="text-xs text-content-muted/80 mt-0.5">
               Fill in the details to schedule a vendor verification
             </p>
           </div>
-          <button onClick={handleClose} className="p-1.5 rounded-xl text-gray-400 hover:bg-gray-100 transition-colors">
-            <X size={18} />
+          <button 
+            type="button"
+            onClick={handleClose} 
+            className="p-1.5 rounded-lg text-content-muted/60 hover:text-content hover:bg-surface-deep border border-line/15 transition-colors cursor-pointer" >
+            <X size={15} />
           </button>
         </div>
 
         {/* Success state */}
         {submitted ? (
-          <div className="flex-1 flex flex-col items-center justify-center gap-3 px-6 py-12">
-            <div className="w-14 h-14 rounded-full bg-green-50 flex items-center justify-center">
-              <CheckCircle size={28} className="text-[#7abf00]" />
+          <div className="flex-1 flex flex-col items-center justify-center gap-3 px-6 py-12 bg-panel">
+            <div className="w-14 h-14 rounded-full bg-surface-deep border border-line/15 flex items-center justify-center animate-bounce">
+              <CheckCircle size={28} className="text-lime" />
             </div>
-            <p className="text-base font-black text-gray-900">Visit scheduled</p>
-            <p className="text-sm text-gray-400 text-center">
+            <p className="text-sm font-semibold text-content">Visit scheduled</p>
+            <p className="text-xs text-content-muted/80 text-center max-w-xs">
               Added to the visits list. Connect your backend to persist this.
             </p>
           </div>
         ) : (
           <>
-            {/* Body */}
-            <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4">
-              <Field label="Vendor Name *">
+            {/* Input Fields Wrapper */}
+            <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5 CustomScrollbar bg-panel">
+              <Field label="Vendor Name">
                 <Input
+                  type="text"
                   value={form.vendor}
                   onChange={e => field("vendor", e.target.value)}
                   placeholder="e.g. Fresh Foods Market"
-                  className={`outline-none! ring-0! ${inputCls}`} />
+                  className="w-full bg-surface-deep/40 border-line/15 text-xs text-content placeholder:text-content-muted/50 h-9 transition-colors focus:border-line/40 focus:bg-surface-deep/70" />
               </Field>
 
               <Field label="Vendor ID">
                 <Input
+                  type="text"
                   value={form.vendorId}
                   onChange={e => field("vendorId", e.target.value)}
                   placeholder="e.g. VEN-2843"
-                  className={`outline-none! ring-0! ${inputCls}`} />
+                  className="w-full bg-surface-deep/40 border-line/15 text-xs text-content placeholder:text-content-muted/50 h-9 transition-colors focus:border-line/40 focus:bg-surface-deep/70" />
               </Field>
 
               <Field label="Category">
-                <select
-                  value={form.category}
-                  onChange={e => field("category", e.target.value)}
-                  className={`outline-none! ring-0! ${inputCls}`} >
-                  <option value="">Select category</option>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
+                <Select value={form.category} onValueChange={val => field("category", val)}>
+                  <SelectTrigger className="w-full h-9 bg-surface-deep/40 border-line/15 text-xs focus:border-line/40 focus:bg-surface-deep/70 focus:ring-0">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent className="w-[--radix-select-trigger-width]">
+                    {CATEGORIES.map(c => (
+                      <SelectItem key={c} value={c} className="text-xs">
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
 
-              <Field label="Location *">
+              <Field label="Location">
                 <Input
+                  type="text"
                   value={form.location}
                   onChange={e => field("location", e.target.value)}
                   placeholder="e.g. 12 Marina Street, Lagos"
-                  className={`outline-none! ring-0! ${inputCls}`} />
+                  className="w-full bg-surface-deep/40 border-line/15 text-xs text-content placeholder:text-content-muted/50 h-9 transition-colors focus:border-line/40 focus:bg-surface-deep/70" />
               </Field>
 
-              <Field label="Assigned Inspector *">
-                <select
-                  value={form.inspector}
-                  onChange={e => field("inspector", e.target.value)}
-                  className={`outline-none! ring-0! ${inputCls}`} >
-                  <option value="">Select inspector</option>
-                  {INSPECTORS.map(i => <option key={i} value={i}>{i}</option>)}
-                </select>
+              <Field label="Assigned Inspector">
+                <Select value={form.inspector} onValueChange={val => field("inspector", val)}>
+                  <SelectTrigger className="w-full h-9 bg-surface-deep/40 border-line/15 text-xs focus:border-line/40 focus:bg-surface-deep/70 focus:ring-0">
+                    <SelectValue placeholder="Select inspector" />
+                  </SelectTrigger>
+                  <SelectContent className="w-[--radix-select-trigger-width]">
+                    {INSPECTORS.map(i => (
+                      <SelectItem key={i} value={i} className="text-xs">
+                        {i}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </Field>
 
               <Field label="Notes">
@@ -166,38 +188,41 @@ export function ScheduleVisitModal({ open, onClose, onSave }: ScheduleVisitModal
                   onChange={e => field("notes", e.target.value)}
                   placeholder="Add any relevant notes..."
                   rows={3}
-                  className={`outline-none! ring-0! ${inputCls} resize-none`} />
+                  className="w-full bg-surface-deep/40 border-line/15 rounded-md px-3 py-2 text-xs text-content placeholder:text-content-muted/50 resize-none transition-colors outline-none! ring-0!" />
               </Field>
             </div>
 
-            {/* Footer */}
-            <div className="px-6 py-4 border-t border-gray-100 flex gap-2">
-              <button
+            {/* Form Control Strip */}
+            <div className="px-6 py-4 border-t border-line/15 flex items-center gap-2 shrink-0 bg-surface-deep/10">
+              <Button
+                type="button"
+                size="sm"
                 onClick={handleSave}
                 disabled={!isValid}
-                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-[#7abf00] to-[#90d505] hover:from-[#6aaf00] disabled:opacity-50 text-white text-sm font-bold py-2.5 rounded-xl transition-all active:scale-95 shadow-sm" >
+                className="flex-1 bg-lime text-ink font-semibold hover:opacity-90 transition-opacity h-9 shadow-sm gap-2 disabled:opacity-40 disabled:cursor-not-allowed" >
                 <Plus size={15} />
                 Schedule Visit
-              </button>
-              <button
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
                 onClick={handleClose}
-                className="px-5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors" >
+                className="bg-panel border-line/15 text-content hover:bg-surface-deep px-4 h-9 cursor-pointer" >
                 Cancel
-              </button>
+              </Button>
             </div>
           </>
         )}
       </div>
     </div>
-  );
+  ); 
 }
-
-const inputCls = "w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 outline-none focus:border-[#90d505] focus:ring-2 focus:ring-[#90d505]/20 bg-white transition-all placeholder:text-gray-400";
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div>
-      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">
+    <div className="space-y-1.5">
+      <label className="block text-[10px] uppercase tracking-widest font-bold text-content-muted/90">
         {label}
       </label>
       {children}

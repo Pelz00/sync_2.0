@@ -5,60 +5,49 @@ import { X, Upload } from "lucide-react";
 import { ARTICLE_CATEGORIES } from "../admin-editorialConstants";
 import type { Article, ArticleStatus } from "../admin-editorialTypes";
 import Image from "next/image";
-import { Input } from "@/components/ui";
-import { Textarea } from "@/components/ui";
+import { Input, Button, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox } from "@/components/ui";
+import { cn } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface EditArticleFormValues {
-  title:          string;
-  category:       Article["category"] | "";
-  excerpt:        string;
-  content:        string;
-  featuredImage:  File | null;
-  existingImage:  string | undefined;
+  title: string;
+  category: Article["category"] | "";
+  excerpt: string;
+  content: string;
+  featuredImage: File | null;
+  existingImage: string | undefined;
   markAsFeatured: boolean;
-  status:         ArticleStatus;
+  status: ArticleStatus;
 }
 
 interface EditArticleModalProps {
   article: Article | null;
   onClose: () => void;
-  onSave:  (id: string, values: EditArticleFormValues) => void;
+  onSave: (id: string, values: EditArticleFormValues) => void;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const STATUS_OPTIONS: ArticleStatus[] = ["Published", "Draft", "Scheduled"];
 
-/**
- * EditArticleModal
- *
- * Pre-populated form for editing an existing article.
- * All fields from the article are loaded on open.
- * Actions: Save Changes | Save as Draft | Cancel.
- *
- * Transition: panel slides in from the right on open (drawer feel),
- * slides back out on close. Backdrop fades independently.
- */
 export function EditArticleModal({ article, onClose, onSave }: EditArticleModalProps) {
-  const [form,      setForm]      = useState<EditArticleFormValues | null>(null);
+  const [form, setForm] = useState<EditArticleFormValues | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // ── Populate form when article loads ──────────────────────────────────────
   useEffect(() => {
     if (article) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: seed the form from the article prop on open
       setForm({
-        title:          article.title,
-        category:       article.category,
-        excerpt:        article.excerpt,
-        content:        article.content ?? "",
-        featuredImage:  null,
-        existingImage:  article.image,
+        title: article.title,
+        category: article.category,
+        excerpt: article.excerpt,
+        content: article.content ?? "",
+        featuredImage: null,
+        existingImage: article.image,
         markAsFeatured: article.featured,
-        status:         article.status,
+        status: article.status,
       });
     }
   }, [article]);
@@ -74,7 +63,7 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
   // ── Exit: animate out, then call onClose ──────────────────────────────────
   function handleClose() {
     setIsVisible(false);
-    setTimeout(onClose, 320);
+    setTimeout(onClose, 200);
   }
 
   // ── Escape key ────────────────────────────────────────────────────────────
@@ -84,13 +73,6 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
     }
     if (article) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [article]);
-
-  // ── Body scroll lock ──────────────────────────────────────────────────────
-  useEffect(() => {
-    if (article) document.body.style.overflow = "hidden";
-    else         document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
   }, [article]);
 
   if (!article || !form) return null;
@@ -122,42 +104,42 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
 
   return (
     <div
-      className={[
-        "fixed inset-0 z-50 flex items-center justify-center p-4",
-        "transition-all duration-300 ease-in-out",
-        isVisible ? "bg-black/50 backdrop-blur-sm" : "bg-black/0 backdrop-blur-none",
-      ].join(" ")}
+      className={cn(
+        "fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-200 ease-out",
+        isVisible ? "bg-black/60 backdrop-blur-xs" : "bg-black/0 backdrop-blur-none",
+      )}
       onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }} >
-      {/* Modal panel — slides up from below + fades in */}
+      
+      {/* Modal Layout Frame */}
       <div
-        className={[
-          "bg-white rounded-md shadow-2xl w-full max-w-xl flex flex-col max-h-[92vh]",
-          "transition-all duration-300 ease-out",
-          isVisible
-            ? "opacity-100 translate-y-0 scale-100"
-            : "opacity-0 translate-y-8 scale-[0.97]",
-        ].join(" ")} >
-        {/* ── Header ── */}
-        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-gray-100 shrink-0">
+        className={cn(
+          "bg-panel border border-line/15 rounded-xl shadow-pop w-full max-w-xl flex flex-col max-h-[85vh] origin-center",
+          "transition-all duration-200 ease-out",
+          isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-98 translate-y-2"
+        )} >
+        
+        {/* Header Block */}
+        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-line/15 shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Edit Article</h2>
-            <p className="text-sm text-gray-500 mt-0.5 line-clamp-1 max-w-xs">
+            <h2 className="text-xl font-display font-semibold text-content tracking-tight">Edit Article</h2>
+            <p className="text-sm text-content-muted/80 mt-0.5 line-clamp-1 max-w-xs">
               {article.title}
             </p>
           </div>
           <button
+            type="button"
             onClick={handleClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors" >
-            <X size={18} />
+            className="p-1.5 rounded-lg text-content-muted/60 hover:text-content hover:bg-surface-deep border border-line/15 transition-colors cursor-pointer" >
+            <X size={15} />
           </button>
         </div>
 
-        {/* ── Scrollable body ── */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5">
+        {/* Input Fields Wrapper */}
+        <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5 CustomScrollbar">
 
           {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <div className="space-y-1.5">
+            <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
               Article Title
             </label>
             <Input
@@ -165,54 +147,55 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
               value={form.title}
               onChange={(e) => updateField("title", e.target.value)}
               placeholder="Enter article title..."
-              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none! ring-0! transition" />
+              className="w-full bg-surface-deep/40 border-line/15 text-sm text-content placeholder:text-content-muted/50 h-9 transition-colors focus:border-line/40 focus:bg-surface-deep/70" />
           </div>
 
-          {/* Category + Status side by side */}
+          {/* Category + Status Side by Side (Radix UI Select Architecture) */}
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <div className="space-y-1.5">
+              <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
                 Category
               </label>
-              <div className="relative">
-                <select
-                  value={form.category}
-                  onChange={(e) => updateField("category", e.target.value as EditArticleFormValues["category"])}
-                  className="w-full appearance-none border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 outline-none! ring-0! bg-white transition cursor-pointer" >
-                  <option value="">Select category</option>
+              <Select
+                value={form.category}
+                onValueChange={(val) => updateField("category", val as EditArticleFormValues["category"])} >
+                <SelectTrigger className="w-full h-9 bg-surface-deep/40 border-line/15 text-sm focus:border-line/40 focus:bg-surface-deep/70 focus:ring-0">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent className="w-[--radix-select-trigger-width]">
                   {ARTICLE_CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <SelectItem key={cat} value={cat} className="text-sm">
+                      {cat}
+                    </SelectItem>
                   ))}
-                </select>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <div className="space-y-1.5">
+              <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
                 Status
               </label>
-              <div className="relative">
-                <select
-                  value={form.status}
-                  onChange={(e) => updateField("status", e.target.value as ArticleStatus)}
-                  className="w-full appearance-none border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 outline-none! ring-0! bg-white transition cursor-pointer" >
+              <Select
+                value={form.status}
+                onValueChange={(val) => updateField("status", val as ArticleStatus)} >
+                <SelectTrigger className="w-full h-9 bg-surface-deep/40 border-line/15 text-sm focus:border-line/40 focus:bg-surface-deep/70 focus:ring-0">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent className="w-[--radix-select-trigger-width]">
                   {STATUS_OPTIONS.map((s) => (
-                    <option key={s} value={s}>{s}</option>
+                    <SelectItem key={s} value={s} className="text-sm">
+                      {s}
+                    </SelectItem>
                   ))}
-                </select>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  <path d="m6 9 6 6 6-6" />
-                </svg>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           {/* Excerpt */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <div className="space-y-1.5">
+            <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
               Excerpt
             </label>
             <Textarea
@@ -220,12 +203,12 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
               onChange={(e) => updateField("excerpt", e.target.value)}
               placeholder="Brief summary of the article..."
               rows={2}
-              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none! ring-0! resize-none transition" />
+              className="w-full bg-surface-deep/40 border-line/15 rounded-md px-3 py-2 text-sm text-content placeholder:text-content-muted/50 resize-none transition-colors focus:border-line/40 focus:bg-surface-deep/70 outline-none! ring-0!" />
           </div>
 
           {/* Content */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <div className="space-y-1.5">
+            <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
               Content
             </label>
             <Textarea
@@ -233,26 +216,26 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
               onChange={(e) => updateField("content", e.target.value)}
               placeholder="Write your article content here..."
               rows={6}
-              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none! ring-0! resize-none transition" />
+              className="w-full bg-surface-deep/40 border-line/15 rounded-md px-3 py-2 text-sm text-content placeholder:text-content-muted/50 resize-none transition-colors focus:border-line/40 focus:bg-surface-deep/70 outline-none! ring-0! font-sans leading-relaxed" />
           </div>
 
-          {/* Featured Image */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Media Attachments Layer */}
+          <div className="space-y-1.5 pt-1">
+            <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
               Featured Image
             </label>
 
             {/* Existing image preview */}
             {form.existingImage && !form.featuredImage && (
-              <div className="relative w-full h-36 rounded-md overflow-hidden mb-2 bg-gray-100">
+              <div className="relative w-full h-36 rounded-lg overflow-hidden mb-2 bg-surface-deep/20 border border-line/10">
                 <Image
                   src={form.existingImage}
                   alt="Current featured"
                   className="w-full h-full object-cover"
                   width={200}
                   height={200} />
-                <div className="absolute inset-0 bg-black/20 flex items-end p-2">
-                  <span className="text-xs text-white bg-black/50 rounded px-2 py-0.5">
+                <div className="absolute inset-0 bg-black/30 flex items-end p-2">
+                  <span className="text-[12px] uppercase tracking-wider font-bold text-white bg-black/60 rounded-lg px-2 py-0.5">
                     Current image
                   </span>
                 </div>
@@ -261,35 +244,44 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
 
             {/* New file preview */}
             {form.featuredImage && (
-              <div className="relative w-full h-36 rounded-md overflow-hidden mb-2 bg-gray-100">
+              <div className="relative w-full h-36 rounded-lg overflow-hidden mb-2 bg-surface-deep/20 border border-line/10">
                 <Image
                   src={URL.createObjectURL(form.featuredImage)}
                   alt="New featured"
                   className="w-full h-full object-cover"
                   width={200}
                   height={200} />
-                <div className="absolute inset-0 bg-black/20 flex items-end p-2">
-                  <span className="text-xs text-white bg-black/50 rounded px-2 py-0.5">
+                <div className="absolute inset-0 bg-black/30 flex items-end p-2">
+                  <span className="text-[12px] uppercase tracking-wider font-bold text-white bg-black/60 rounded-lg px-2 py-0.5">
                     New image
                   </span>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => fileRef.current?.click()}
-                className="flex items-center gap-2 border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors" >
-                <Upload size={14} />
-                {form.featuredImage ? "Change image" : "Replace image"}
-              </button>
-              {form.featuredImage && (
-                <button
-                  onClick={() => updateField("featuredImage", null)}
-                  className="text-sm text-red-500 hover:text-red-700 transition-colors" >
-                  Remove
-                </button>
-              )}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 bg-surface-deep/20 border border-line/10 p-3 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileRef.current?.click()}
+                  className="bg-panel text-sm border-line/15 gap-2 hover:bg-surface-deep" >
+                  <Upload size={13} className="text-content-muted/80" />
+                  <span className="max-w-[140px] truncate">
+                    {form.featuredImage ? form.featuredImage.name : form.existingImage ? "Change image" : "Choose File"}
+                  </span>
+                </Button>
+                {form.featuredImage && (
+                  <button
+                    type="button"
+                    onClick={() => updateField("featuredImage", null)}
+                    className="text-sm font-semibold text-coral hover:underline transition-colors cursor-pointer" >
+                    Remove
+                  </button>
+                )}
+              </div>
+              
               <Input
                 ref={fileRef}
                 type="file"
@@ -297,38 +289,48 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
                 className="hidden"
                 onChange={(e) => updateField("featuredImage", e.target.files?.[0] ?? null)} />
 
-              {/* Mark as featured */}
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer ml-auto">
-                <Input
-                  type="checkbox"
+              {/* Checkbox */}
+              <label className="flex items-center gap-2 text-sm text-content-muted/80 cursor-pointer sm:ml-auto select-none group">
+                <Checkbox
+                  id="markAsFeatured"
                   checked={form.markAsFeatured}
-                  onChange={(e) => updateField("markAsFeatured", e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 accent-transparent cursor-pointer" />
-                Mark as featured
+                  onCheckedChange={(checked) => updateField("markAsFeatured", !!checked)}
+                  className="h-3.5 w-3.5 border-line/20 bg-surface-deep transition-colors focus:ring-0" />
+                <span className="group-hover:text-content transition-colors">
+                  Mark as featured asset
+                </span>
               </label>
             </div>
           </div>
         </div>
 
-        {/* ── Footer actions ── */}
-        <div className="flex items-center gap-2 px-6 py-4 border-t border-gray-100 shrink-0">
-          <button
+        {/* Form Control Strip */}
+        <div className="flex items-center gap-2 px-2 md:px-6 py-4 border-t border-line/15 shrink-0 bg-surface-deep/10">
+          <Button
+            type="button"
+            size="sm"
             onClick={handleSave}
             disabled={!form.title || !form.category}
-            className="bg-[#90d505] text-white text-sm font-semibold px-5 py-2.5 rounded-md hover:bg-[#90d505e2] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors" >
+            className="bg-lime text-ink font-semibold hover:opacity-90 transition-opacity text-xs md:text-sm md:px-4 h-9 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed" >
             Save Changes
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={handleSaveDraft}
             disabled={!form.title || !form.category}
-            className="border border-gray-200 text-gray-700 text-sm font-medium px-5 py-2.5 rounded-md cursor-pointer hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" >
+            className="bg-panel border-line/15 text-content hover:bg-surface-deep text-xs md:text-sm md:px-4 h-9 disabled:opacity-40 disabled:cursor-not-allowed" >
             Save as Draft
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={handleClose}
-            className="ml-auto text-sm text-gray-500 hover:text-gray-700 cursor-pointer transition-colors" >
+            className="bg-panel border-line/15 text-content hover:bg-surface-deep md:px-4 text-xs md:text-sm h-9" >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     </div>

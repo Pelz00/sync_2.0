@@ -1,10 +1,10 @@
 "use client";
 
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 import { FilterDropdown } from "./FilterDropdown";
 import { ArticleRow } from "./ArticleRow";
-import { STATUS_FILTER_OPTIONS, CATEGORY_FILTER_OPTIONS, } from "../admin-editorialConstants";
-import type {  Article, StatusFilterOption, CategoryFilterOption, } from "../admin-editorialTypes";
+import { STATUS_FILTER_OPTIONS, CATEGORY_FILTER_OPTIONS } from "../admin-editorialConstants";
+import type { Article, StatusFilterOption, CategoryFilterOption } from "../admin-editorialTypes";
 import { Input } from "@/components/ui";
 
 interface ArticleListProps {
@@ -20,33 +20,29 @@ interface ArticleListProps {
   onDelete: (article: Article) => void;
 }
 
-/**
- * ArticleList
- *
- * Search bar + filter dropdowns header, then the list of ArticleRow items.
- */
 export function ArticleList({
   articles, searchQuery, statusFilter, categoryFilter, onSearchChange, onStatusChange, onCategoryChange, onView, onEdit, onDelete,
 }: ArticleListProps) {
   return (
-    <div className="bg-white border border-gray-200 rounded-md">
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 px-5 py-6 border-b border-gray-100">
-        {/* Search */}
-        <div className="relative flex-1">
+    <div className="bg-panel border border-line/15 rounded-xl  transition-all duration-300">
+      {/* Filters & Actions Control Bar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 px-5 py-4 border-b border-line/15">
+        
+        {/* Search Input Box */}
+        <div className="relative flex-1 flex items-center bg-panel border border-line/15 rounded-lg px-3 focus-within:border-accent/60 transition-all h-10">
           <Search
             size={15}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            className="text-content-muted/50 shrink-0" />
           <Input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search articles by title, content, or ID..."
-            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-sm transition placeholder:text-gray-400 outline-none! ring-0!" />
+            className="w-full bg-transparent border-none! outline-none! ring-0! text-sm text-content placeholder:text-content-muted/40 py-1 pl-2" />
         </div>
 
-        {/* Filters */}
+        {/* Modular Filter System Layouts */}
         <div className="flex items-center gap-2 shrink-0">
-
           <FilterDropdown<StatusFilterOption>
             value={statusFilter}
             options={STATUS_FILTER_OPTIONS}
@@ -57,26 +53,31 @@ export function ArticleList({
             value={categoryFilter}
             options={CATEGORY_FILTER_OPTIONS}
             onChange={onCategoryChange}
-            width="w-52" />
+            width="w-40"  />
         </div>
       </div>
 
-      {/* ── Article rows ── */}
+      {/* ── Content Render */}
       {articles.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-gray-400">
-          <Search size={32} className="mb-3 opacity-40" />
-          <p className="text-sm font-medium">No articles found</p>
-          <p className="text-xs mt-1">Try adjusting your search or filters</p>
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="w-10 h-10 rounded-lg bg-surface-deep border border-line/15 flex items-center justify-center mb-3 shadow-card">
+            <Search size={18} className="text-content-muted/60" />
+          </div>
+          <h3 className="text-sm font-bold text-content">No articles found</h3>
+          <p className="text-xs text-content-muted mt-1 max-w-xs">
+            Try adjusting your query parameters or reset selected options.
+          </p>
         </div>
       ) : (
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-line/10">
           {articles.map((article) => (
             <ArticleRow
               key={article.id}
               article={article}
               onView={onView}
               onEdit={onEdit}
-              onDelete={onDelete} />
+              onDelete={onDelete} 
+            />
           ))}
         </div>
       )}

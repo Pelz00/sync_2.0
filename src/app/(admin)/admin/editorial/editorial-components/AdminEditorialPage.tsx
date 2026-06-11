@@ -9,27 +9,17 @@ import { ArticleViewModal } from "./ArticleViewModal";
 import { EditArticleModal } from "./EditArticleModal";
 import type { EditArticleFormValues } from "./EditArticleModal";
 import { ARTICLES, EDITORIAL_STATS } from "../admin-editorialConstants";
-import type { Article, NewArticleFormValues, StatusFilterOption,CategoryFilterOption, } from "../admin-editorialTypes";
+import type { Article, NewArticleFormValues, StatusFilterOption, CategoryFilterOption } from "../admin-editorialTypes";
+import { Button } from "@/components/ui";
 
-/**
- * AdminEditorialPage
- *
- * Full admin editorial management page.
- * - Stats row (Total / Published / Drafts / Views)
- * - Article list with search + status + category filters
- * - New Article modal (Publish / Draft / Schedule)
- * - Article View slide-over (click card or "View" in menu)
- * - Edit Article modal (pre-populated form)
- * - Three-dot row menu (View / Edit / Delete)
- */
 export function AdminEditorialPage() {
   const [articles, setArticles] = useState<Article[]>(ARTICLES);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilterOption>("All Status");
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilterOption>("All Categories");
-  const [newModalOpen,    setNewModalOpen]    = useState(false);
-  const [viewingArticle,  setViewingArticle]  = useState<Article | null>(null);
-  const [editingArticle,  setEditingArticle]  = useState<Article | null>(null);
+  const [newModalOpen, setNewModalOpen] = useState(false);
+  const [viewingArticle, setViewingArticle] = useState<Article | null>(null);
+  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
 
   // ── Filtered articles ──
   const filtered = useMemo(() => {
@@ -39,7 +29,7 @@ export function AdminEditorialPage() {
         a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         a.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
         a.id.includes(searchQuery);
-      const matchesStatus = statusFilter === "All Status" || a.status   === statusFilter;
+      const matchesStatus = statusFilter === "All Status" || a.status === statusFilter;
       const matchesCategory = categoryFilter === "All Categories" || a.category === categoryFilter;
       return matchesSearch && matchesStatus && matchesCategory;
     });
@@ -65,48 +55,43 @@ export function AdminEditorialPage() {
 
   // ── Edit save handler ──
   function handleSaveEdit(id: string, values: EditArticleFormValues) {
+    const updatedFields = {
+      title: values.title,
+      excerpt: values.excerpt,
+      content: values.content,
+      category: values.category as Article["category"],
+      status: values.status,
+      featured: values.markAsFeatured,
+    };
+
     setArticles((prev) =>
-      prev.map((a) =>
-        a.id !== id
-          ? a
-          : {
-              ...a,
-              title: values.title,
-              excerpt: values.excerpt,
-              content: values.content,
-              category: values.category as Article["category"],
-              status: values.status,
-              featured: values.markAsFeatured,
-              // Keep existing image if no new file chosen
-              image: values.featuredImage
-                ? URL.createObjectURL(values.featuredImage)
-                : values.existingImage,
-            }
-      )
+      prev.map((a) => {
+        if (a.id !== id) return a;
+        return {
+          ...a,
+          ...updatedFields,
+          image: values.featuredImage
+            ? URL.createObjectURL(values.featuredImage)
+            : values.existingImage,
+        };
+      })
     );
-    // Update viewingArticle too so the view panel reflects edits immediately
-    setViewingArticle((prev) =>
-      prev?.id === id
-        ? {
-            ...prev,
-            title: values.title,
-            excerpt: values.excerpt,
-            content: values.content,
-            category: values.category as Article["category"],
-            status: values.status,
-            featured: values.markAsFeatured,
-            image: values.featuredImage
-              ? URL.createObjectURL(values.featuredImage)
-              : values.existingImage,
-          }
-        : prev
-    );
+
+    setViewingArticle((prev) => {
+      if (prev?.id !== id) return prev;
+      return {
+        ...prev,
+        ...updatedFields,
+        image: values.featuredImage
+          ? URL.createObjectURL(values.featuredImage)
+          : values.existingImage,
+      };
+    });
   }
 
   // ── View → Edit transition ──
   function handleEditFromView(article: Article) {
     setViewingArticle(null);
-    // Small delay so view panel closes before edit modal opens
     setTimeout(() => setEditingArticle(article), 150);
   }
 
@@ -125,26 +110,30 @@ export function AdminEditorialPage() {
   };
 
   return (
-    <div className="p-0 max-w-6xl mx-auto w-full md:p-6">
-      <div className="flex items-start justify-between mb-6">
+    <div className="w-full mx-auto p-1 transition-colors duration-300">
+      {/* Page Header Section */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
-          <p className="text-xs font-medium text-gray-400 uppercase tracking-widest mb-1">
-            Admin
-          </p>
-          <h1 className="text-2xl font-bold text-gray-900">Editorial</h1>
-          <p className="text-sm text-gray-500 mt-0.5">
-            Create and manage blog posts, articles, and content.
+          <p className="eyebrow text-content-muted">ADMIN</p>
+          <h1 className="text-2xl font-display font-semibold tracking-tight text-content md:text-3xl mt-1">Editorial</h1>
+          <p className=" text-content-muted/80 mt-1">
+            Create and manage blog posts, articles, and content layouts.
           </p>
         </div>
-        <button
+        <Button
+          type="button"
+          size="sm"
           onClick={() => setNewModalOpen(true)}
-          className="flex items-center min-w-30 gap-1 px-2 py-1.5 bg-[#9AE600] hover:bg-[#90d505] text-black cursor-pointer text-sm font-semibold rounded-sm transition-colors shadow-sm md:gap-2  md:px-4 md:py-2.5" >
-          <Plus size={15} />
+          className="bg-lime text-ink cursor-pointer font-semibold hover:opacity-90 transition-opacity h-10 px-4 shadow-sm gap-2 whitespace-nowrap" >
+          <Plus size={16} />
           New Article
-        </button>
+        </Button>
       </div>
+      
+      {/* Analytics Aggregators */}
       <EditorialStatsRow stats={liveStats} />
 
+      {/* Main Interactive Table & Filter Layer */}
       <ArticleList
         articles={filtered}
         searchQuery={searchQuery}
@@ -157,12 +146,13 @@ export function AdminEditorialPage() {
         onEdit={setEditingArticle}
         onDelete={handleDelete} />
 
+      {/* Composition Overlays */}
       <NewArticleModal
         open={newModalOpen}
         onClose={() => setNewModalOpen(false)}
-        onPublish={(v)   => createArticle(v, "Published")}
+        onPublish={(v) => createArticle(v, "Published")}
         onSaveDraft={(v) => createArticle(v, "Draft")}
-        onSchedule={(v)  => createArticle(v, "Scheduled")} />
+        onSchedule={(v) => createArticle(v, "Scheduled")} />
 
       <ArticleViewModal
         article={viewingArticle}

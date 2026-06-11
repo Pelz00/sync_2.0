@@ -2,10 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check } from "lucide-react";
-
-function cn(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(" ");
-}
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui";
 
 interface FilterDropdownProps<T extends string> {
   value: T;
@@ -14,17 +12,16 @@ interface FilterDropdownProps<T extends string> {
   width?: string;
 }
 
-/**
- * FilterDropdown
- *
- * Generic dropdown used for both "All Status" and "All Categories" filters.
- * Shows a checkmark next to the active option.
- */
-export function FilterDropdown<T extends string>(props: FilterDropdownProps<T>) {
-  const { value, options, onChange } = props;
+export function FilterDropdown<T extends string>({
+  value,
+  options,
+  onChange,
+  width = "w-48"
+}: FilterDropdownProps<T>) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
+  // Handle click boundary escape conditions smoothly
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -36,25 +33,51 @@ export function FilterDropdown<T extends string>(props: FilterDropdownProps<T>) 
   }, [open]);
 
   return (
-    <div ref={ref} className="relative">
-      <button
+    <div ref={ref} className="relative inline-block text-left">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 bg-white hover:border-gray-300 hover:bg-gray-50 transition-colors" >
+        className="bg-panel font-sans text-xs font-semibold gap-2 border-line/15 text-content shadow-card hover:bg-surface-deep/40" >
         <span>{value}</span>
-        <ChevronDown size={14} className={cn("text-gray-400 transition-transform", open && "rotate-180")} />
-      </button>
+        <ChevronDown 
+          size={13} 
+          className={cn(
+            "text-content-muted/60 transition-transform duration-200", 
+            open && "rotate-180"
+          )} />
+      </Button>
 
       {open && (
-        <div className={cn("absolute left-0 right-0 top-10 z-50 bg-white border border-gray-200 rounded-lg shadow-lg py-1 w-48 md:left-auto")}>
-          {options.map((option) => (
-            <button
-              key={option}
-              onClick={() => { onChange(option); setOpen(false); }}
-              className="flex items-center justify-between w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors" >
-              <span>{option}</span>
-              {value === option && <Check size={13} className="text-[#90D505]" />}
-            </button>
-          ))}
+        <div 
+          className={cn(
+            "absolute top-10 z-50 bg-panel border border-line/15 rounded-md shadow-pop p-1 origin-top-right",
+            "animate-in fade-in slide-in-from-top-1 duration-150",
+            width
+          )} >
+          {options.map((option) => {
+            const isSelected = value === option;
+            
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => { 
+                  onChange(option); 
+                  setOpen(false); 
+                }}
+                className={cn(
+                  "flex items-center justify-between w-full px-3 h-8 rounded-sm text-xs transition-colors cursor-pointer text-left",
+                  isSelected 
+                    ? "bg-surface-deep text-content font-bold" 
+                    : "text-content-muted hover:text-content hover:bg-surface-deep/50"
+                )} >
+                <span>{option}</span>
+                {isSelected && <Check size={13} className="text-lime shrink-0" />}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

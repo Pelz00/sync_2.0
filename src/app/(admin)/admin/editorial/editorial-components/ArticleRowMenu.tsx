@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Trash2, Eye, MoreVertical } from "lucide-react";
+import { Trash2, Eye, Edit, MoreVertical } from "lucide-react";
 import type { Article } from "../admin-editorialTypes";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } 
+from "@/components/ui/dropdown-menu"; 
 
 interface ArticleRowMenuProps {
   article: Article;
@@ -11,53 +12,41 @@ interface ArticleRowMenuProps {
   onDelete: (article: Article) => void;
 }
 
-/**
- * ArticleRowMenu
- *
- * Three-dot (⋮) dropdown menu on each article row.
- * Options: View, Edit, Delete.
- */
-export function ArticleRowMenu({ 
-  article, onView, onDelete } : ArticleRowMenuProps) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  // Close on outside click
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    if (open) document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open]);
-
+export function ArticleRowMenu({ article, onView, onEdit, onDelete }: ArticleRowMenuProps) {
   return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="p-1.5 rounded-md text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-        aria-label="Article options" >
-        <MoreVertical size={16} />
-      </button>
-          
-          {open && (
-        <div className="absolute right-0 bottom-0 z-50 w-36 bg-white border border-gray-200 rounded-lg shadow-lg py-1">
-          <button
-            onClick={() => { onView(article); setOpen(false); }}
-            className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors" >
-            <Eye size={14} /> View
-          </button>
-          <div className="border-t border-gray-100 my-1" />
-          <button
-            onClick={() => { onDelete(article); setOpen(false); }}
-            className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors" >
-            <Trash2 size={14} /> Delete
-          </button>
-        </div>
-      )}
-     
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          onClick={(e) => e.stopPropagation()}
+          className="p-1.5 rounded-lg text-content-muted hover:text-content hover:bg-surface-deep transition-colors cursor-pointer focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent/50"
+          aria-label="Article options" >
+          <MoreVertical size={16} />
+        </button>
+      </DropdownMenuTrigger>
+
+      {/* Your premium min-w-[13rem] token will perfectly frame this slate */}
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem 
+          onClick={(e) => { e.stopPropagation(); onView(article); }} >
+          <Eye size={14} className="text-content-muted/70" />
+          <span>View</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem 
+          onClick={(e) => { e.stopPropagation(); onEdit(article); }}>
+          <Edit size={14} className="text-content-muted/70" />
+          <span>Edit</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem 
+          onClick={(e) => { e.stopPropagation(); onDelete(article); }}
+          className="text-coral data-[highlighted]:bg-coral/10 focus:text-coral font-medium" >
+          <Trash2 size={14} className="shrink-0" />
+          <span>Delete</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

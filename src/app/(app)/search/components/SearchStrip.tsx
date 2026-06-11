@@ -1,6 +1,7 @@
 "use client";
+
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { Input } from "@/components/ui";
+import { Input, Button } from "@/components/ui";
 
 export interface SearchQuery {
   area: string;
@@ -18,7 +19,14 @@ interface SearchStripProps {
   onMobileFilterOpen: () => void;
 }
 
-export default function SearchStrip({ query, onQueryChange, onSearch, activeFilters, onRemoveFilter, onClearAll, onMobileFilterOpen,
+export default function SearchStrip({
+  query,
+  onQueryChange,
+  onSearch,
+  activeFilters,
+  onRemoveFilter,
+  onClearAll,
+  onMobileFilterOpen,
 }: SearchStripProps) {
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -26,15 +34,15 @@ export default function SearchStrip({ query, onQueryChange, onSearch, activeFilt
   }
 
   return (
-    <div className="md:sticky top-0 z-30 bg-[#f7f4ec]/95 backdrop-blur-md border-b border-[#e8e4d8]">
-      <div className="max-w-275 mx-auto px-4 sm:px-6 pt-3 pb-2">
+    <div className="md:sticky top-0 z-30 bg-surface/95 backdrop-blur-md border-b border-line/15 transition-colors duration-300">
+      <div className="w-full mx-auto px-4 sm:px-6 pt-3.5 pb-2.5">
 
-        {/* ── Search pill ── */}
-        <div className="flex flex-col md:flex-row items-stretch bg-white border border-[#73d764] rounded-xl overflow-hidden shadow-sm">
+        {/* ── Search Bar Composite Strip Container ── */}
+        <div className="flex flex-col md:flex-row items-stretch bg-panel border border-line/20 focus-within:border-lime/40 rounded-xl overflow-hidden shadow-sm transition-all">
 
-          {/* Area */}
-          <div className="flex flex-col justify-center px-4 py-2.5 flex-1 border-r border-[#f0ede4] min-w-0">
-            <label className="text-[0.55rem] tracking-widest uppercase text-[#9a9a8a] mb-0.5 select-none">
+          {/* Area Input Frame Area */}
+          <div className="flex flex-col justify-center px-4 py-2 flex-1 border-b md:border-b-0 md:border-r border-line/15 min-w-0">
+            <label className="text-[11px] uppercase tracking-widest font-bold text-content-muted/80 mb-0.5 select-none">
               Area / Campus
             </label>
             <Input
@@ -43,12 +51,12 @@ export default function SearchStrip({ query, onQueryChange, onSearch, activeFilt
               onChange={e => onQueryChange({ ...query, area: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder="e.g. UNILORIN PS"
-              className="text-sm font-semibold text-[#1a1a1a] bg-transparent outline-none! ring-0! placeholder:text-[#c8c4b4] w-full" />
+              className="text-sm font-semibold text-content bg-transparent border-none! h-6 p-0 placeholder:text-content-muted/30 w-full transition-none" />
           </div>
 
-          {/* Budget */}
-          <div className="flex flex-col justify-center px-4 md:py-2.5 flex-1 border-r border-[#f0ede4]">
-            <label className="text-[0.55rem] tracking-widest uppercase text-[#9a9a8a] mb-0.5 select-none">
+          {/* Budget Input Frame Area */}
+          <div className="flex flex-col justify-center px-4 py-2 flex-1 border-b md:border-b-0 md:border-r border-line/15 min-w-0">
+            <label className="text-[11px] uppercase tracking-widest font-bold text-content-muted/80 mb-0.5 select-none">
               Budget
             </label>
             <Input
@@ -57,12 +65,12 @@ export default function SearchStrip({ query, onQueryChange, onSearch, activeFilt
               onChange={e => onQueryChange({ ...query, budget: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder="e.g. ₦100k–₦250k"
-              className="text-sm font-semibold text-[#1a1a1a] bg-transparent outline-none! ring-0! placeholder:text-[#c8c4b4] w-full" />
+              className="text-sm font-semibold text-content bg-transparent border-none! h-6 p-0 placeholder:text-content-muted/30 w-full transition-none" />
           </div>
 
-          {/* Room type */}
-          <div className="flex flex-col justify-center px-4 py-2.5 flex-1">
-            <label className="text-[0.55rem] tracking-widest uppercase text-[#9a9a8a] mb-0.5 select-none">
+          {/* Room type Input Frame Area */}
+          <div className="flex flex-col justify-center px-4 py-2 flex-1 min-w-0">
+            <label className="text-[11px] uppercase tracking-widest font-bold text-content-muted/80 mb-0.5 select-none">
               Room Type
             </label>
             <Input
@@ -71,44 +79,47 @@ export default function SearchStrip({ query, onQueryChange, onSearch, activeFilt
               onChange={e => onQueryChange({ ...query, roomType: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder="e.g. Self-contain"
-              className="text-sm font-semibold text-[#1a1a1a] bg-transparent outline-none! ring-0! placeholder:text-[#c8c4b4] w-full" />
+              className="text-sm font-semibold text-content bg-transparent border-none! h-6 p-0 placeholder:text-content-muted/30 w-full transition-none" />
           </div>
 
-          {/* Mobile: open filter drawer */}
-
-          {/* Search button */}
-          <button
-            onClick={onSearch}
-            className="flex items-center justify-center text-[16px] gap-2 bg-[#6abf3f] hover:bg-[#5aaf2f] active:scale-95 transition-all text-white font-bold md:text-sm w-[90%] md:w-fit m-auto mb-2 px-5 py-2.5 md:py-4 h-fit self-end cursor-pointer sm:px-8 md:m-1.5 rounded-lg whitespace-nowrap" >
-            <Search size={14} className="hidden sm:block" />
-            Search
-          </button>
+          {/* Commit Search Execution Button Group */}
+          <div className="flex items-center p-2 bg-panel shrink-0">
+            <Button
+              type="button"
+              onClick={onSearch}
+              className="bg-lime text-ink font-semibold hover:opacity-90 transition-opacity h-9 w-full md:w-auto px-6 shadow-sm gap-2 whitespace-nowrap" >
+              <Search size={13} className="hidden md:inline" />
+              Search
+            </Button>
+          </div>
         </div>
 
-        {/* ── Active filter chips ── */}
+        {/* ── Active Filters Applied State Chips Meta Matrix ── */}
         {activeFilters.length > 0 && (
-          <div className="flex items-center gap-1.5 mt-2.5 pb-1 flex-wrap">
-            <span className="text-[0.6rem] tracking-widest uppercase text-[#9a9a8a] mr-0.5">
+          <div className="flex items-center gap-1.5 mt-3 pb-0.5 flex-wrap">
+            <span className="text-[11px] uppercase tracking-widest font-bold text-content-muted/80 mr-1 select-none">
               Active:
             </span>
 
             {activeFilters.map(chip => (
               <span
                 key={chip}
-                className="flex items-center gap-1.5 text-xs font-semibold bg-[#1a1a1a] text-white rounded-full pl-3 pr-1.5 py-1" >
+                className="inline-flex items-center gap-1.5 text-sm font-medium bg-surface-deep text-content border border-line/15 rounded-md pl-2.5 pr-1 py-1 shadow-xs" >
                 {chip}
                 <button
+                  type="button"
                   onClick={() => onRemoveFilter(chip)}
-                  className="w-4 h-4 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+                  className="w-4 h-4 flex items-center justify-center rounded-md hover:bg-content/10 text-content-muted transition-colors cursor-pointer"
                   aria-label={`Remove ${chip}`} >
-                  <X size={10} />
+                  <X size={11} />
                 </button>
               </span>
             ))}
 
             <button
+              type="button"
               onClick={onClearAll}
-              className="text-xs text-[#6abf3f] font-semibold hover:underline underline-offset-2 transition ml-1" >
+              className="text-[10px] font-bold uppercase tracking-widest text-content underline hover:opacity-80 transition-opacity ml-1.5 cursor-pointer" >
               Clear all
             </button>
           </div>
