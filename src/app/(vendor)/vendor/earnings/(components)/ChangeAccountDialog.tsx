@@ -40,10 +40,21 @@ export function ChangeAccountDialog({ open, onClose, onSave, current }: ChangeAc
   }, [open, current.bankName, current.accountNumber, current.holderName]);
 
   function handleSave() {
+    if (!bank?.trim()) {
+      // Show error: "Please select a bank"
+      return;
+    }
+    if (!acct?.trim() || acct.length !== 10) {
+      // Show error: "Account number must be 10 digits"
+      return;
+    }
+    if (!name?.trim()) {
+      // Show error: "Please enter account holder name"
+      return;
+    }
     onSave({ bankName: bank, accountNumber: acct, holderName: name });
     onClose();
   }
-
   return (
     <Modal
       open={open}
@@ -105,10 +116,14 @@ export function ChangeAccountDialog({ open, onClose, onSave, current }: ChangeAc
           </label>
           <Input
             value={acct}
-            onChange={(e) => setAcct(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, '');
+              setAcct(value);
+            }}
             placeholder="0123456789"
             maxLength={10}
-          />
+            inputMode="numeric"
+          />{' '}
         </div>
 
         <div>
