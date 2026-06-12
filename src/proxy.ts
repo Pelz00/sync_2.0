@@ -34,8 +34,8 @@ const PROTECTED_PREFIXES: { prefix: string; roles: Role[] }[] = [
   // /around is the public "home of the full Sync app" per the wireframe -
   // signed-out users land here, so it's deliberately not in the gate list.
   { prefix: '/hostels', roles: ALL },
-  // { prefix: '/events', roles: ALL },
-  { prefix: '/food', roles: ALL },
+  { prefix: '/events', roles: ALL },
+  // { prefix: '/food', roles: ALL },
   { prefix: '/beauty', roles: ALL },
   { prefix: '/workmanship', roles: ALL },
   { prefix: '/laundry', roles: ALL },
