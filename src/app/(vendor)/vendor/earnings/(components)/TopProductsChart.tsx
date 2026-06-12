@@ -8,26 +8,28 @@ interface TopProductsChartProps {
 export function TopProductsChart({ data }: TopProductsChartProps) {
   const max = Math.max(...data.map((d) => d.revenue));
   return (
-    <div className="bg-panel shadow-card rounded-xl border border-line/10 p-5 w-full">
-      <span className="font-display text-base font-medium text-content">Top Products</span>
+    <div className="bg-panel shadow-card border-line/10 w-full rounded-xl border p-3">
+      <span className="font-display text-content text-base font-medium">Top Products</span>
       <div className="mt-4 space-y-3">
         {data.map((product) => (
           <div key={product.name} className="flex items-center gap-3">
-            <span className="w-24 shrink-0 text-right text-xs text-content-muted truncate">{product.name}</span>
-            <div className="flex-1 h-6 rounded-full bg-surface-deep overflow-hidden">
+            <span className="text-content-muted w-24 shrink-0 truncate text-right text-xs">
+              {product.name}
+            </span>
+            <div className="bg-surface-deep h-6 flex-1 overflow-hidden rounded-full">
               <div
-                className="h-full rounded-full bg-emerald-500 transition-all"
+                className="h-full rounded-full bg-lime-500 transition-all"
                 style={{ width: `${(product.revenue / max) * 100}%` }}
               />
             </div>
-            <span className="w-16 text-right font-mono text-[11px] text-content-muted">
+            <span className="text-content-muted w-16 text-right font-mono text-[11px]">
               ₦{(product.revenue / 1000).toFixed(0)}k
             </span>
           </div>
         ))}
       </div>
       {/* X-axis labels */}
-      <div className="mt-2 flex justify-between px-[6.5rem] font-mono text-[10px] text-content-muted">
+      <div className="text-content-muted mt-2 flex justify-between gap-4 px-26 font-mono text-[10px]">
         <span>₦0k</span>
         <span>₦20k</span>
         <span>₦40k</span>

@@ -17,6 +17,17 @@ import { RevenueChart } from './RevenueChart';
 import { TopProductsChart } from './TopProductsChart';
 import { ChangeAccountDialog } from './ChangeAccountDialog';
 import { WithdrawDialog } from './WithdrawDialog';
+import { Button } from '@/components/ui';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { DateRangePicker, DateRange } from '@/components/shared/date-range-picker';
+import { Modal } from '@/components/shared/custom-modal';
 
 type ChartPeriod = '3M' | '6M' | '1Y';
 
@@ -96,7 +107,7 @@ const mockData: EarningsData = {
     },
     {
       id: 'TXN-1018',
-      description: 'Order #ORD-5819',
+      description: 'Order #ORD-5818',
       type: 'order',
       customer: 'Muiz Oladele',
       date: '31 May 2026',
@@ -131,7 +142,7 @@ const mockData: EarningsData = {
     },
     {
       id: 'TXN-1014',
-      description: 'Order #ORD-5815',
+      description: 'Order #ORD-5814',
       type: 'order',
       customer: 'Femi Adeleke',
       date: '23 May 2026',
@@ -140,7 +151,7 @@ const mockData: EarningsData = {
     },
     {
       id: 'TXN-1013',
-      description: 'Order #ORD-5814',
+      description: 'Order #ORD-5813',
       type: 'order',
       customer: 'Sola Balogun',
       date: '22 May 2026',
@@ -158,6 +169,8 @@ const mockData: EarningsData = {
     },
   ],
 };
+
+// ─── Helpers ───────────────────────────────────────────────────────────────────
 
 function TxnStatusBadge({ status }: { status: Transaction['status'] }) {
   const map: Record<Transaction['status'], string> = {
@@ -181,16 +194,94 @@ function TxnDot({ type }: { type: Transaction['type'] }) {
   return <span className={`inline-block h-2 w-2 shrink-0 rounded-full ${color}`} />;
 }
 
-function exportStatement(data: EarningsData) {
-  const rows = [
+// ─── Transaction Detail Modal ──────────────────────────────────────────────────
+
+function TransactionDetailModal({
+  txn,
+  onClose,
+}: {
+  txn: Transaction | null;
+  onClose: () => void;
+}) {
+  if (!txn) return null;
+
+  const rows: { label: string; value: React.ReactNode }[] = [
+    { label: 'Transaction ID', value: <span className="font-mono text-violet-600">{txn.id}</span> },
+    {
+      label: 'Type',
+      value: (
+        <div className="flex items-center gap-2">
+          <TxnDot type={txn.type} />
+          <span className="capitalize">{txn.type}</span>
+        </div>
+      ),
+    },
+    { label: 'Description', value: txn.description },
+    ...(txn.customer ? [{ label: 'Customer', value: txn.customer }] : []),
+    { label: 'Date', value: txn.date },
+    {
+      label: 'Amount',
+      value: (
+        <span
+          className={`font-display font-semibold ${txn.amount > 0 ? 'text-emerald-600' : 'text-red-500'}`}
+        >
+          {txn.amount > 0 ? '+' : ''}₦{Math.abs(txn.amount).toLocaleString()}
+        </span>
+      ),
+    },
+    { label: 'Status', value: <TxnStatusBadge status={txn.status} /> },
+  ];
+
+  return (
+    <Modal
+      open={!!txn}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+      title="Transaction Details"
+      description={txn.id}
+      className="max-w-sm"
+    >
+      <div className="divide-line/10 divide-y">
+        {rows.map(({ label, value }) => (
+          <div
+            key={label}
+            className="flex items-center justify-between gap-4 py-3 first:pt-0 last:pb-0"
+          >
+            <span className="text-content-muted shrink-0 font-mono text-[10px] tracking-widest uppercase">
+              {label}
+            </span>
+            <span className="text-content text-right text-sm">{value}</span>
+          </div>
+        ))}
+      </div>
+    </Modal>
+  );
+}
+
+// ─── CSV helpers (unchanged) ───────────────────────────────────────────────────
+
+function buildCsvRows(data: EarningsData, transactions: Transaction[], range?: DateRange) {
+  return [
     ['Sync Vendor Account Statement'],
     [
-      `Generated: ${new Date().toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' })}`,
+      `Generated: ${new Date().toLocaleDateString('en-NG', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })}`,
     ],
     [`Account: ${data.bankName} — ${data.accountNumber} (${data.accountHolderName})`],
+    range?.from
+      ? [
+          `Period: ${range.from.toLocaleDateString('en-NG')}${
+            range.to ? ' – ' + range.to.toLocaleDateString('en-NG') : ''
+          }`,
+        ]
+      : ['Period: All time'],
     [''],
     ['TRANSACTION ID', 'DESCRIPTION', 'DATE', 'AMOUNT (₦)', 'STATUS'],
-    ...data.transactions.map((t) => [
+    ...transactions.map((t) => [
       t.id,
       t.customer ? `${t.description} – ${t.customer}` : t.description,
       t.date,
@@ -204,16 +295,30 @@ function exportStatement(data: EarningsData) {
     ['Lifetime Earnings', `₦${data.lifetimeEarnings.toLocaleString()}`],
     ['Total Withdrawn', `₦${data.totalWithdrawn.toLocaleString()}`],
   ];
+}
 
-  const csv = rows.map((r) => r.join(',')).join('');
+function downloadCsv(rows: string[][], filename: string) {
+  const csv = rows.map((r) => r.join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `sync-statement-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
 }
+
+function filterByRange(transactions: Transaction[], range: DateRange) {
+  if (!range.from) return transactions;
+  const from = range.from;
+  const to = range.to ?? range.from;
+  return transactions.filter((t) => {
+    const d = new Date(t.date);
+    return d >= from && d <= to;
+  });
+}
+
+// ─── Page ──────────────────────────────────────────────────────────────────────
 
 interface EarningsPageProps {
   data?: EarningsData;
@@ -223,6 +328,14 @@ export default function EarningsPage({ data = mockData }: EarningsPageProps) {
   const [changeAccountOpen, setChangeAccountOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [chartPeriod, setChartPeriod] = useState<ChartPeriod>('1Y');
+  const [dateRange, setDateRange] = useState<DateRange>({ from: null, to: null });
+  const [selectedTxn, setSelectedTxn] = useState<Transaction | null>(null); // 👈 new
+  // Add this state near the top of EarningsPage
+  const [accountDetails, setAccountDetails] = useState({
+    bankName: data.bankName,
+    accountNumber: data.accountNumber,
+    accountHolderName: data.accountHolderName,
+  });
 
   const handleWithdrawClick = () => setWithdrawOpen(true);
 
@@ -233,15 +346,35 @@ export default function EarningsPage({ data = mockData }: EarningsPageProps) {
         ? data.monthlyRevenue.slice(-6)
         : data.monthlyRevenue;
 
+  const filteredTransactions = filterByRange(data.transactions, dateRange);
+
+  function handleExportAll() {
+    const rows = buildCsvRows(data, data.transactions);
+    downloadCsv(rows, `sync-statement-all-${new Date().toISOString().slice(0, 10)}.csv`);
+  }
+
+  function handleExportFiltered() {
+    const rows = buildCsvRows(data, filteredTransactions, dateRange);
+    downloadCsv(rows, `sync-statement-filtered-${new Date().toISOString().slice(0, 10)}.csv`);
+  }
+
   return (
     <>
+      {/* Update the ChangeAccountDialog usage */}
       <ChangeAccountDialog
         open={changeAccountOpen}
         onClose={() => setChangeAccountOpen(false)}
+        onSave={(updated) =>
+          setAccountDetails({
+            bankName: updated.bankName,
+            accountNumber: updated.accountNumber,
+            accountHolderName: updated.holderName,
+          })
+        }
         current={{
-          bankName: data.bankName,
-          accountNumber: data.accountNumber,
-          holderName: data.accountHolderName,
+          bankName: accountDetails.bankName,
+          accountNumber: accountDetails.accountNumber,
+          holderName: accountDetails.accountHolderName,
         }}
       />
       <WithdrawDialog
@@ -249,7 +382,10 @@ export default function EarningsPage({ data = mockData }: EarningsPageProps) {
         onClose={() => setWithdrawOpen(false)}
         availableBalance={data.availableBalance}
       />
-
+      <TransactionDetailModal // 👈 new
+        txn={selectedTxn}
+        onClose={() => setSelectedTxn(null)}
+      />
       <div className="bg-cream-deep min-h-screen space-y-6 px-6 py-6">
         {/* Header */}
         <div className="flex items-start justify-between">
@@ -257,13 +393,13 @@ export default function EarningsPage({ data = mockData }: EarningsPageProps) {
             <h1 className="font-display text-content text-2xl font-bold">Earnings</h1>
             <p className="text-content-muted mt-0.5 text-sm">Financial overview &amp; payouts</p>
           </div>
-          <button
+          <Button
             onClick={handleWithdrawClick}
-            className="font-display flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-600 active:scale-95"
+            className="font-display flex items-center gap-2 rounded-xl bg-lime-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-lime-600 active:scale-95"
           >
             <Receipt className="h-4 w-4" />
             Withdraw Funds
-          </button>
+          </Button>
         </div>
 
         {/* Stat Cards */}
@@ -284,7 +420,7 @@ export default function EarningsPage({ data = mockData }: EarningsPageProps) {
             iconBg="bg-orange-400"
           />
           <StatCard
-            label="Lifetime Earnings"
+            label="Total Earnings"
             value={`₦${data.lifetimeEarnings.toLocaleString()}`}
             subtext={`+${data.lifetimeGrowthPct}% vs last yr`}
             subtextPositive
@@ -318,95 +454,119 @@ export default function EarningsPage({ data = mockData }: EarningsPageProps) {
         <div className="bg-panel shadow-card border-line/10 flex items-center justify-between gap-4 rounded-xl border px-5 py-4">
           <div className="flex items-center gap-3">
             <div className="font-display flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-sm font-bold text-white">
-              {data.bankName.slice(0, 2).toUpperCase()}
+              {accountDetails.bankName.slice(0, 2).toUpperCase()}
             </div>
             <div>
               <p className="font-display text-content text-sm font-semibold">
-                {data.bankName} — {data.accountNumber}
+                {accountDetails.bankName} — {accountDetails.accountNumber}
               </p>
               <p className="text-content-muted text-xs">
-                {data.accountHolderName} · Next payout: {data.nextPayoutDate}
+                {accountDetails.accountHolderName} · Next payout: {data.nextPayoutDate}
               </p>
             </div>
           </div>
-          <button
+          <Button
             onClick={() => setChangeAccountOpen(true)}
-            className="border-line/20 text-content hover:bg-surface-deep flex items-center gap-1.5 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
+            className="border-line/20 text-content hover:bg-surface-deep flex items-center gap-1.5 rounded-lg border bg-transparent px-4 py-2 text-sm font-medium transition-colors"
           >
             Change Account
             <ChevronRight className="text-content-muted h-3.5 w-3.5" />
-          </button>
+          </Button>
         </div>
 
         {/* Transaction History Table */}
         <div className="bg-panel shadow-card border-line/10 overflow-hidden rounded-xl border">
-          <div className="border-line/5 flex items-center justify-between border-b px-5 py-4">
+          {/* Table Header */}
+          <div className="border-line/5 flex items-center justify-between gap-3 border-b px-5 py-4">
             <span className="font-display text-content text-base font-semibold">
               Transaction History
             </span>
-            <button
-              onClick={() => exportStatement(data)}
-              className="border-line/20 text-content hover:bg-surface-deep flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors"
-            >
-              <Download className="h-3.5 w-3.5" />
-              Export
-            </button>
+            <div className="flex items-center gap-2">
+              <DateRangePicker value={dateRange} onChange={setDateRange} />
+              {dateRange.from && (
+                <Button
+                  onClick={handleExportFiltered}
+                  className="flex items-center gap-1.5 rounded-lg bg-transparent px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-lime-600"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Export Filtered
+                </Button>
+              )}
+              <Button
+                onClick={handleExportAll}
+                className="border-line/20 flex items-center gap-1.5 rounded-lg border-none bg-lime-500 px-3 py-1.5 text-sm text-white transition-colors hover:bg-lime-600"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Export All
+              </Button>
+            </div>
           </div>
 
-          <div className="w-full overflow-x-auto">
-            <table className="w-full caption-bottom text-sm">
-              <thead>
-                <tr className="border-line/5 border-b">
-                  <th className="text-content-muted h-11 px-5 text-left font-mono text-[10px] tracking-widest uppercase">
-                    Transaction ID
-                  </th>
-                  <th className="text-content-muted h-11 px-4 text-left font-mono text-[10px] tracking-widest uppercase">
-                    Description
-                  </th>
-                  <th className="text-content-muted h-11 px-4 text-left font-mono text-[10px] tracking-widest uppercase">
-                    Date
-                  </th>
-                  <th className="text-content-muted h-11 px-4 text-right font-mono text-[10px] tracking-widest uppercase">
-                    Amount
-                  </th>
-                  <th className="text-content-muted h-11 px-5 text-right font-mono text-[10px] tracking-widest uppercase">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.transactions.map((txn) => (
-                  <tr
+          {/* Table */}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="px-5 font-mono text-[10px] tracking-widest uppercase">
+                  Transaction ID
+                </TableHead>
+                <TableHead className="font-mono text-[10px] tracking-widest uppercase">
+                  Description
+                </TableHead>
+                <TableHead className="font-mono text-[10px] tracking-widest uppercase">
+                  Date
+                </TableHead>
+                <TableHead className="text-right font-mono text-[10px] tracking-widest uppercase">
+                  Amount
+                </TableHead>
+                <TableHead className="px-5 text-right font-mono text-[10px] tracking-widest uppercase">
+                  Status
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {filteredTransactions.length ? (
+                filteredTransactions.map((txn) => (
+                  <TableRow
                     key={txn.id}
-                    className="border-line/5 hover:bg-surface-deep/40 border-b transition-colors"
+                    onClick={() => setSelectedTxn(txn)} // 👈 new
+                    className="hover:bg-surface-deep/40 cursor-pointer"
                   >
-                    <td className="px-5 py-3.5">
+                    <TableCell className="px-5 py-3.5">
                       <span className="font-mono text-xs font-medium text-violet-600">
                         {txn.id}
                       </span>
-                    </td>
-                    <td className="px-4 py-3.5">
+                    </TableCell>
+                    <TableCell className="py-3.5">
                       <div className="flex items-center gap-2">
                         <TxnDot type={txn.type} />
                         <span className="text-content text-sm">
                           {txn.customer ? `${txn.description} – ${txn.customer}` : txn.description}
                         </span>
                       </div>
-                    </td>
-                    <td className="text-content-muted px-4 py-3.5 text-sm">{txn.date}</td>
-                    <td
-                      className={`font-display px-4 py-3.5 text-right text-sm font-semibold ${txn.amount > 0 ? 'text-emerald-600' : 'text-red-500'}`}
+                    </TableCell>
+                    <TableCell className="text-content-muted py-3.5 text-sm">{txn.date}</TableCell>
+                    <TableCell
+                      className={`font-display py-3.5 text-right text-sm font-semibold ${
+                        txn.amount > 0 ? 'text-emerald-600' : 'text-red-500'
+                      }`}
                     >
                       {txn.amount > 0 ? '+' : ''}₦{Math.abs(txn.amount).toLocaleString()}
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
+                    </TableCell>
+                    <TableCell className="px-5 py-3.5 text-right">
                       <TxnStatusBadge status={txn.status} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-content-muted h-24 text-center text-sm">
+                    No transactions found for this date range.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </>
