@@ -1,13 +1,11 @@
 "use client";
 
-import { StatCards }        from "./overview-components/StatCards";
-import { RevenueChart }     from "./overview-components/RevenueChart";
-import { GrowthChart }      from "./overview-components/GrowthChart";
+import { StatCards } from "./overview-components/StatCards";
+import { RevenueChart } from "./overview-components/RevenueChart";
+import { GrowthChart } from "./overview-components/GrowthChart";
 import { RecentActivities } from "./overview-components/RecentActivities";
-import { VendorStatus }     from "./overview-components/VendorStatus";
-import {
-  STAT_CARDS, REVENUE_DATA, GROWTH_DATA, ACTIVITIES, VENDOR_STATUS,
-} from "./overview-components/data";
+import { VendorStatus } from "./overview-components/VendorStatus";
+import { STAT_CARDS, REVENUE_DATA, GROWTH_DATA, ACTIVITIES, VENDOR_STATUS,} from "./overview-components/data";
 
 export default function AdminOverviewPage() {
   return (
@@ -39,7 +37,7 @@ export default function AdminOverviewPage() {
         {/* ── Secondary Information Feed: real-time operational streams ── */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
           <RecentActivities initial={ACTIVITIES} />
-          <VendorStatus     data={VENDOR_STATUS}  />
+          <VendorStatus data={VENDOR_STATUS}  />
         </div>
 
       </div>
