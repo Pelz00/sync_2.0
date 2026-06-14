@@ -49,7 +49,7 @@ export function DocumentsPanel() {
                   <p className="text-content-muted mt-1 text-xs">{doc.description}</p>
                   {doc.uploadedAt && (
                     <p className="text-content-muted mt-2 font-mono text-[11px] tracking-wide">
-                      UPLOADED {doc.uploadedAt.toUpperCase()}
+                      UPLOAD {doc.uploadedAt.toUpperCase()}
                     </p>
                   )}
                   {doc.actionMessage && (
