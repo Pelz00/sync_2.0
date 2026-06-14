@@ -39,7 +39,7 @@ export function TopProductsList({ products }: { products: TopProduct[] }) {
             {/* Name + orders */}
             <div className="flex-1 min-w-0">
               <p className={`text-sm font-semibold truncate transition-colors ${
-                hovered === i ? "text-[#5a9e00]" : "text-gray-800"
+                hovered === i ? "text-[#5a9e00]" : "text-content-muted"
               }`}>
                 {p.name}
               </p>

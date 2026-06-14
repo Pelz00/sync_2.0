@@ -88,7 +88,7 @@ export function CategoryPieChart({ data }: { data: CategorySlice[] }) {
           {slices.map(s => (
             <div key={s.label}
               className={`flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-all ${
-                hovered === s.label ? "bg-gray-50 scale-[1.01]" : "hover:bg-gray-50/60"
+                hovered === s.label ? "bg-surface scale-[1.01]" : "hover:bg-gray-50/60"
               }`}
               onMouseEnter={() => setHovered(s.label)}
               onMouseLeave={() => setHovered(null)} >
