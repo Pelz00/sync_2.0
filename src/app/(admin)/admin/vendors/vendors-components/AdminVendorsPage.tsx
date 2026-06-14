@@ -69,7 +69,7 @@ export function AdminVendorsPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search vendors by name, email, or ID..."
-              className="text-sm font-semibold text-content bg-transparent border-none! h-full p-0 placeholder:text-content-muted/30 w-full transition-none"/>
+              className="text-sm font-semibold text-content bg-transparent border-none! h-full p-0 placeholder:text-content-muted/30 w-full transition-none outline-none! ring-0!"/>
           </div>
 
           {/* Dropdown Control Frame Context */}
