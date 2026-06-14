@@ -27,7 +27,7 @@ const EarningsSummaryCard = ({ data }: EarningsSummaryCardProps) => {
   ];
 
   return (
-    <Card className="border-line/30 w-96 max-w-7xl border bg-transparent">
+    <Card className="border-line/10 w-96 max-w-7xl bg-transparent">
       <CardContent className="flex-col gap-4 p-4 shadow-none">
         {summaries
           .sort((a, b) => {
