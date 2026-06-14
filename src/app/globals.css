@@ -373,7 +373,7 @@ input:-webkit-autofill:focus {
 }
 
 /* Accessible focus ring - visible against cream and white. */
-:where(a, button, [role='button'], input, select, textarea, [tabindex]):focus-visible {
+:where(a, button, [role='button'], select, textarea, [tabindex]):focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
   border-radius: var(--radius-lg);

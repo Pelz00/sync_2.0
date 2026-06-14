@@ -1,9 +1,11 @@
 "use client";
+
 import { useState, useRef, useEffect } from "react";
-import { X, Upload, ChevronDown } from "lucide-react";
+import { X, Upload } from "lucide-react";
 import { ARTICLE_CATEGORIES } from "../admin-editorialConstants";
 import type { NewArticleFormValues } from "../admin-editorialTypes";
-import { Input } from "@/components/ui";
+import { Input, Button, Textarea, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Checkbox } from "@/components/ui";
+import { cn } from "@/lib/utils";
 
 interface NewArticleModalProps {
   open: boolean;
@@ -22,22 +24,13 @@ const INITIAL_FORM: NewArticleFormValues = {
   markAsFeatured: false,
 };
 
-/**
- * NewArticleModal
- *
- * Full-screen dialog for creating a new article.
- * Fields: Title, Category (dropdown), Excerpt, Content,
- * Featured Image (file picker), Mark as featured checkbox.
- * Actions: Publish Now | Save as Draft | Schedule.
- */
-export function NewArticleModal({
-  open, onClose, onPublish, onSaveDraft, onSchedule,
+export function NewArticleModal({ open, onClose, onPublish, onSaveDraft, onSchedule,
 }: NewArticleModalProps) {
   const [form, setForm] = useState<NewArticleFormValues>(INITIAL_FORM);
   const [isVisible, setIsVisible] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // animation 
+  // Smooth entrance interpolation
   useEffect(() => {
     if (open) {
       const id = requestAnimationFrame(() => setIsVisible(true));
@@ -45,16 +38,15 @@ export function NewArticleModal({
     }
   }, [open]);
 
-  // Play exit animation first, then reset form and call onClose
   function handleClose() {
     setIsVisible(false);
     setTimeout(() => {
       setForm(INITIAL_FORM);
       onClose();
-    }, 300);
+    }, 200);
   }
 
-  // Escape key
+  // Keyboard shortcut layout trap closure
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") handleClose();
@@ -74,39 +66,43 @@ export function NewArticleModal({
 
   return (
     <div
-      className={[
-        "fixed inset-0 z-50 flex items-center justify-center p-4",
-        "transition-all duration-300 ease-in-out",
-        isVisible ? "bg-black/40 backdrop-blur-sm" : "bg-black/0 backdrop-blur-none",
-      ].join(" ")}
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }} >
-      {/* Modal panel */}
+      className={cn(
+        "fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-200 ease-out",
+        isVisible ? "bg-black/60 backdrop-blur-xs" : "bg-black/0 backdrop-blur-none",
+      )}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) handleClose();
+      }} >
+      {/* Modal Layout Frame */}
       <div
-        className={[
-          "bg-white rounded-2xl shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh]",
-          "transition-all duration-300 ease-in-out",
-          isVisible
-            ? "opacity-100 scale-100 translate-y-0"
-            : "opacity-0 scale-95 translate-y-4" ].join(" ")} >
-        {/* Header */}
-        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-gray-100">
+        className={cn(
+          "bg-panel border border-line/15 rounded-xl shadow-pop w-full max-w-xl flex flex-col max-h-[85vh] origin-center",
+          "transition-all duration-200 ease-out",
+          isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-98 translate-y-2"
+        )} >
+        {/* Header Block */}
+        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-line/15 shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-[#90d505]">Create New Article</h2>
-            <p className="text-sm text-gray-400 mt-0.5">
-              Write and publish content for your platform.
+            <h2 className="text-base text-xl font-display font-semibold text-content tracking-tight">
+              Create New Article
+            </h2>
+            <p className=" text-content-muted/80 mt-0.5">
+              Write and configuration manage platform editorial parameters.
             </p>
           </div>
           <button
+            type="button"
             onClick={handleClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors" >
-            <X size={18} />
+            className="p-1.5 rounded-lg text-content-muted/60 hover:text-content hover:bg-surface-deep border border-line/15 transition-colors cursor-pointer" >
+            <X size={15} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-4">
+        {/* Input Fields Wrapper */}
+        <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5 CustomScrollbar">
           {/* Article Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <div className="space-y-1.5">
+            <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
               Article Title
             </label>
             <Input
@@ -114,108 +110,129 @@ export function NewArticleModal({
               value={form.title}
               onChange={(e) => updateField("title", e.target.value)}
               placeholder="Enter article title..."
-              className="w-full border border-gray-200 focus:outline-none rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none! transition ring-0!" />
+              className="w-full bg-surface-deep/40 border-line/15  text-content placeholder:text-content-muted/50 h-9 transition-colors focus:border-line/40 focus:bg-surface-deep/70" />
           </div>
 
           {/* Category */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <div className="space-y-1.5">
+            <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
               Category
             </label>
-            <div className="relative">
-              <select
-                value={form.category}
-                onChange={(e) => updateField("category", e.target.value as NewArticleFormValues["category"])}
-                className="w-full appearance-none border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 outline-none! ring-0! bg-white transition cursor-pointer" >
-                <option value="">Select category</option>
+            <Select
+              value={form.category}
+              onValueChange={(val) => updateField("category", val as NewArticleFormValues["category"])} >
+              <SelectTrigger className="w-full h-9 bg-surface-deep/40 border-line/15  focus:border-line/40 focus:bg-surface-deep/70 focus:ring-0">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent className="w-[--radix-select-trigger-width]">
                 {ARTICLE_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <SelectItem key={cat} value={cat} className="">
+                    {cat}
+                  </SelectItem>
                 ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            </div>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Excerpt */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          <div className="space-y-1.5">
+            <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
               Excerpt
             </label>
-            <textarea
+            <Textarea
               value={form.excerpt}
               onChange={(e) => updateField("excerpt", e.target.value)}
               placeholder="Brief summary of the article..."
               rows={2}
-              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none! ring-0! resize-none transition" />
+              className="w-full bg-surface-deep/40 border border-line/15 outline-none! ring-0! rounded-md px-3 py-2  text-content placeholder:text-content-muted/50 resize-none transition-colors focus:border-line/40 focus:bg-surface-deep/70 outline-none" />
           </div>
 
-          {/* Content */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          {/* Content Body */}
+          <div className="space-y-1.5">
+            <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
               Content
             </label>
-            <textarea
+            <Textarea
               value={form.content}
               onChange={(e) => updateField("content", e.target.value)}
               placeholder="Write your article content here..."
-              rows={4}
-              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none! ring-0! resize-none transition" />
+              rows={6}
+              className="w-full bg-surface-deep/40 border border-line/15 outline-none! ring-0! rounded-md px-3 py-2  text-content placeholder:text-content-muted/50 resize-none transition-colors focus:border-line/40 focus:bg-surface-deep/70 font-sans leading-relaxed" />
           </div>
 
-          {/* Featured Image */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+          {/* file Attachments */}
+          <div className="space-y-1.5 pt-1">
+            <label className="block text-[12px] uppercase tracking-widest font-bold text-content-muted/90">
               Featured Image
             </label>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => fileRef.current?.click()}
-                className="flex items-center gap-2 border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 transition-colors" >
-                <Upload size={14} />
-                {form.featuredImage ? form.featuredImage.name : "Choose File"}
-              </button>
-              {!form.featuredImage && (
-                <span className="text-sm text-gray-400">No file chosen</span>
-              )}
-              <input
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 bg-surface-deep/20 border border-line/10 p-3 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileRef.current?.click()}
+                  className="bg-panel  border-line/15 gap-2 hover:bg-surface-deep" >
+                  <Upload size={13} className="text-content-muted/80" />
+                  <span className="max-w-[140px] truncate">
+                    {form.featuredImage ? form.featuredImage.name : "Choose File"}
+                  </span>
+                </Button>
+                {!form.featuredImage && (
+                  <span className=" text-content-muted/50 font-medium text-[12px] md:text-sm">
+                    No image file selected
+                  </span>
+                )}
+              </div>
+
+              <Input
                 ref={fileRef}
                 type="file"
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => updateField("featuredImage", e.target.files?.[0] ?? null)} />
-              {/* Mark as featured checkbox */}
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer ml-auto">
-                <input
-                  type="checkbox"
+
+              {/* Checkbox */}
+              <label className="flex items-center gap-2  text-content-muted/80 cursor-pointer sm:ml-auto select-none group">
+                <Checkbox
+                  id="markAsFeatured"
                   checked={form.markAsFeatured}
-                  onChange={(e) => updateField("markAsFeatured", e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-300 accent-transparent cursor-pointer" />
-                Mark as featured
+                  onCheckedChange={(checked) => updateField("markAsFeatured", !!checked)}
+                  className="h-3.5 w-3.5  border-line/20 bg-surface-deep transition-colors focus:ring-0" />
+                <span className="group-hover:text-content transition-colors">
+                  Mark as featured asset
+                </span>
               </label>
             </div>
           </div>
-
         </div>
 
-        {/* Footer actions */}
-        <div className="flex items-center gap-2 px-6 py-4 border-t border-gray-100">
-          <button
-            onClick={() => { onPublish(form); handleClose(); }}
-            className="text-white text-xs md:text-sm font-semibold px-5 py-2.5 rounded-md bg-[#9AE600] hover:bg-[#90d505] cursor-pointer transition-colors" >
+        {/* Form Control Strip */}
+        <div className="flex items-center justify-start gap-2 px-2 md:px-6 py-4 border-t border-line/15 shrink-0 bg-surface-deep/10">
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => onPublish(form)}
+            className="bg-lime text-ink font-semibold text-xs hover:opacity-90 transition-opacity md:px-4 h-9 shadow-sm cursor-pointer" >
             Publish Now
-          </button>
-          <button
-            onClick={() => { onSaveDraft(form); handleClose(); }}
-            className="border border-gray-200 text-gray-700 text-xs md:text-sm font-medium px-3 md:px-5 py-2.5 rounded-md hover:bg-gray-50 cursor-pointer transition-colors" >
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onSaveDraft(form)}
+            className="bg-panel border-line/15 text-content text-xs hover:bg-surface-deep md:px-4 h-9 cursor-pointer" >
             Save as Draft
-          </button>
-          <button
-            onClick={() => { onSchedule(form); handleClose(); }}
-            className="border border-gray-200 text-gray-700 text-sm font-medium px-5 py-3.5 md:py-2.5 rounded-md cursor-pointer hover:bg-gray-50 transition-colors" >
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => onSchedule(form)}
+            className="bg-panel border-line/15 text-content text-xs hover:bg-surface-deep md:px-4 h-9 cursor-pointer" >
             Schedule
-          </button>
+          </Button>
         </div>
-
       </div>
     </div>
   );

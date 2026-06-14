@@ -5,9 +5,6 @@ export const metadata: Metadata = {
   title: "Editorial",
 };
 
-/**
- * Server component shell — all interactivity is inside AdminEditorialPage (client).
- */
 export default function EditorialPage() {
   return (
     <div className="min-h-screen">

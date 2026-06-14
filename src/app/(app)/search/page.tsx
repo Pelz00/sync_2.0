@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useMemo } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import SearchStrip, { type SearchQuery } from "./components/SearchStrip";
@@ -8,6 +9,8 @@ import ListingCard from "./components/ListingCard";
 import { ALL_LISTINGS, DEFAULT_FILTERS, EMPTY_FILTERS,
   type SearchFilters, type SortOption, type ViewMode, type RoomType, type Amenity,
 } from "./data";
+import { Button } from "@/components/ui";
+import { cn } from "@/lib/utils";
 
 const DEFAULT_QUERY: SearchQuery = {
   area: "UNILORIN PS",
@@ -103,7 +106,7 @@ export default function SearchPage() {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#f7f4ec]">
+    <div className="min-h-screen bg-surface transition-colors duration-300">
       <SearchStrip
         query={query}
         onQueryChange={setQuery}
@@ -111,23 +114,24 @@ export default function SearchPage() {
         activeFilters={activeChips}
         onRemoveFilter={handleRemoveFilter}
         onClearAll={handleClearAll}
-        onMobileFilterOpen={() => setMobile(true)}/>
+        onMobileFilterOpen={() => setMobile(true)} />
 
-      <div className="max-w-275 mx-auto px-4 sm:px-6 pb-16">
-        <div className="flex gap-6">
+      <div className="w-full mx-auto px-4 sm:px-6 pb-5 mt-4">
+        <div className="flex gap-6 items-start">
           <FilterSidebar
             filters={filters}
             onChange={setFilters}
             mobileOpen={mobileOpen}
             onMobileClose={() => setMobile(false)} />
 
-          <div className="flex-1 min-w-0">
-            {/* Mobile filter toggle */}
-            <div className="flex lg:hidden items-center pt-4 pb-1">
+          <div className="flex-1 min-w-0 flex flex-col gap-3">
+            {/* Mobile filter toggle drawer action trigger */}
+            <div className="flex lg:hidden items-center pt-2">
               <button
+                type="button"
                 onClick={() => setMobile(true)}
-                className="flex items-center gap-2 text-sm font-semibold border-2 border-[#e0ddd4] bg-white rounded-xl px-4 py-2 hover:border-[#6abf3f] transition-colors" >
-                <SlidersHorizontal size={15} className="text-[#6abf3f]" />
+                className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest border border-line/15 bg-panel rounded-md px-3 h-9 transition-colors hover:bg-surface-deep/60" >
+                <SlidersHorizontal size={13} className="text-lime" />
                 Filters
               </button>
             </div>
@@ -142,14 +146,15 @@ export default function SearchPage() {
               onSortChange={setSort}
               onViewChange={setView} />
 
+            {/* Render results dynamically mapped layouts context */}
             {results.length === 0 ? (
               <EmptyState onReset={handleClearAll} />
             ) : view === "List" ? (
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3.5">
                 {results.map(l => <ListingCard key={l.id} listing={l} view="List" />)}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {results.map(l => <ListingCard key={l.id} listing={l} view="Grid" />)}
               </div>
             )}
@@ -160,19 +165,25 @@ export default function SearchPage() {
   );
 }
 
+// ─── Empty State Frame UI Component ──────────────────────────────────────────
+
 function EmptyState({ onReset }: { onReset: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-[#f0ede4] flex items-center justify-center mb-4 text-3xl">🏠</div>
-      <h3 className="text-lg font-bold text-[#1a1a1a] mb-1">No hostels match your filters</h3>
-      <p className="text-sm text-[#9a9a8a] mb-5 max-w-xs">
+    <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-line/20 rounded-xl bg-panel/30">
+      <div className="w-14 h-14 rounded-md bg-surface-deep border border-line/15 flex items-center justify-center mb-4 shadow-sm text-xl">
+        🏠
+      </div>
+      <h3 className="text-sm font-semibold text-content mb-1">No hostels match your filters</h3>
+      <p className="text-xs text-content-muted/80 mb-5 max-w-xs leading-relaxed">
         Try adjusting your price range, room type, or amenities to see more options.
       </p>
-      <button
+      <Button
+        type="button"
+        size="sm"
         onClick={onReset}
-        className="bg-[#6abf3f] hover:bg-[#5aaf2f] text-white font-bold text-sm px-6 py-2.5 rounded-xl transition-all active:scale-95" >
+        className="bg-lime text-ink font-semibold hover:opacity-90 transition-opacity h-9 px-5 shadow-sm" >
         Reset filters
-      </button>
+      </Button>
     </div>
   );
 }

@@ -6,6 +6,8 @@ import { X, Calendar, Eye, User, Pencil, ArrowLeft } from "lucide-react";
 import { ArticleStatusBadge } from "./ArticleStatusBadge";
 import { ArticleCategoryBadge } from "./ArticleCategoryBadge";
 import type { Article } from "../admin-editorialTypes";
+import { Button } from "@/components/ui";
+import { cn } from "@/lib/utils";
 
 interface ArticleViewModalProps {
   article: Article | null;
@@ -13,16 +15,10 @@ interface ArticleViewModalProps {
   onEdit: (article: Article) => void;
 }
 
-/**
- * ArticleViewModal
- *
- * Full-screen slide-over that shows the complete article:
- * hero image, featured badge, title, all meta (author / date / views / status),
- * excerpt, and full content body.
- */
 export function ArticleViewModal({ article, onClose, onEdit }: ArticleViewModalProps) {
   // ── Transition state ────────────────────────────────────────────────────────
   const [isVisible, setIsVisible] = useState(false);
+  
   useEffect(() => {
     if (article) {
       const id = requestAnimationFrame(() => setIsVisible(true));
@@ -32,7 +28,7 @@ export function ArticleViewModal({ article, onClose, onEdit }: ArticleViewModalP
 
   function handleClose() {
     setIsVisible(false);
-    setTimeout(onClose, 350); // matches duration-300 + small buffer
+    setTimeout(onClose, 200);
   }
 
   // ── Escape key ──────────────────────────────────────────────────────────────
@@ -44,63 +40,68 @@ export function ArticleViewModal({ article, onClose, onEdit }: ArticleViewModalP
     return () => document.removeEventListener("keydown", onKey);
   }, [article]);
 
-  // ── Body scroll lock ────────────────────────────────────────────────────────
-  useEffect(() => {
-    if (article) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
-  }, [article]);
-
   if (!article) return null;
 
   return (
-    <div className={[ "fixed inset-0 z-50 w-screen transition-all duration-300 ease-in-out",
-        isVisible ? "backdrop-blur-sm bg-black/20" : "backdrop-blur-none bg-black/0",
-      ].join(" ")}
+    <div 
+      className={cn(
+        "fixed inset-0 z-50 w-screen transition-all duration-200 ease-out flex items-center justify-center p-0 md:p-4",
+        isVisible ? "bg-black/60 backdrop-blur-xs" : "bg-black/0 backdrop-blur-none"
+      )}
       onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }} >
-      <div className={[ "relative h-full w-screen m-auto bg-white shadow-2xl flex flex-col overflow-hidden",
-          "transition-all duration-300 ease-in-out",
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6" ].join(" ")} >
-        {/* ── Sticky top bar ── */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
+      
+      {/* Modal Layout Frame */}
+      <div 
+        className={cn(
+          "bg-panel border border-line/15 rounded-none md:rounded-xl shadow-pop w-full h-full md:h-auto md:max-h-[85vh] max-w-4xl flex flex-col overflow-hidden origin-center",
+          "transition-all duration-200 ease-out",
+          isVisible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-98 translate-y-2"
+        )} >
+        
+        {/* Header Block / Sticky top bar */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line/15 shrink-0 bg-panel">
           <button
+            type="button"
             onClick={handleClose}
-            className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer hover:text-gray-900 transition-colors" >
-            <ArrowLeft size={15} />
+            className="flex items-center gap-2 text-xs font-medium text-content-muted/80 hover:text-content transition-colors cursor-pointer" >
+            <ArrowLeft size={14} />
             Back to Editorial
           </button>
 
           <div className="flex items-center gap-2">
-            <button
+            <Button
+              type="button"
+              size="sm"
               onClick={() => onEdit(article)}
-              className="flex items-center gap-2 bg-[#90d505] hover:bg-[#90d505e2] text-white text-sm font-semibold px-4 py-2 rounded-md transition-colors cursor-pointer" >
+              className="bg-lime text-ink font-semibold hover:opacity-90 transition-opacity px-4 h-9 shadow-sm gap-2" >
               <Pencil size={13} />
               Edit Article
-            </button>
+            </Button>
             <button
+              type="button"
               onClick={handleClose}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-700 cursor-pointer bg-gray-100 transition-colors" >
-              <X size={18} />
+              className="p-1.5 rounded-md text-content-muted/60 hover:text-content hover:bg-surface-deep border border-line/15 transition-colors cursor-pointer" >
+              <X size={15} />
             </button>
           </div>
         </div>
 
-        {/* ── Scrollable content ── */}
-        <div className="flex-1 overflow-y-auto">
-
-          {/* Hero image */}
+        {/* Input Fields / Details Wrapper */}
+        <div className="flex-1 overflow-y-auto CustomScrollbar bg-panel">
+          {/* Hero image preview banner frame */}
           {article.image && (
-            <div className="relative w-full bg-gray-100">
+            <div className="relative w-full bg-surface-deep/20 border-b border-line/10 flex justify-center h-[240px] md:h-[360px]">
               <Image
                 src={article.image}
                 alt={article.title}
-                sizes="(max-width: 768px) 100vw, 672px"
-                className="object-cover m-auto w-screen md:w-[80vw] md:h-120"
-                width={300}
-                height={200} />
+                sizes="(max-width: 768px) 100vw, 80vw"
+                className="object-cover w-full h-full"
+                width={800}
+                height={360}
+                priority />
               {article.featured && (
-                <div className="absolute top-4 left-4">
-                  <span className="inline-flex items-center text-xs font-semibold uppercase tracking-wide text-yellow-800 bg-yellow-400 px-3 py-1 rounded-full shadow">
+                <div className="absolute top-4 left-6">
+                  <span className="inline-flex items-center text-[10px] uppercase tracking-widest font-bold text-coral bg-coral/10 border border-coral/20 px-2.5 py-1 rounded-md shadow-sm backdrop-blur-xs">
                     Featured
                   </span>
                 </div>
@@ -108,68 +109,57 @@ export function ArticleViewModal({ article, onClose, onEdit }: ArticleViewModalP
             </div>
           )}
 
-          {/* Content area */}
-          <div className="py-7 w-[90vw] md:w-[80vw] m-auto">
+          {/* Core Content Layout Area */}
+          <div className="px-6 py-6 md:py-8 max-w-3xl mx-auto space-y-5">
 
-            {/* Category + Status row */}
-            <div className="flex flex-wrap items-center gap-2 mb-4">
+            {/* Category + Status Pipeline Badge Row */}
+            <div className="flex flex-wrap items-center gap-2">
               <ArticleCategoryBadge category={article.category} />
               <ArticleStatusBadge status={article.status} />
               {article.featured && !article.image && (
-                <span className="inline-flex items-center text-xs font-semibold uppercase tracking-wide text-yellow-700 bg-yellow-100 px-2.5 py-0.5 rounded-full">
+                <span className="inline-flex items-center text-[10px] uppercase tracking-widest font-bold text-coral bg-coral/10 border border-coral/20 px-2 py-0.5 rounded-md">
                   Featured
                 </span>
               )}
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl font-bold text-gray-900 leading-snug mb-4">
+            <h1 className="text-xl font-display font-semibold text-content leading-snug tracking-tight md:text-2xl">
               {article.title}
             </h1>
 
-            {/* Meta row */}
-            <div className="flex flex-wrap items-center gap-5 text-sm text-gray-500 pb-5 mb-6 border-b border-gray-100">
+            {/* Meta Row Meta Array Data Strip */}
+            <div className="flex flex-wrap items-center gap-4 text-xs text-content-muted/80 pb-4 border-b border-line/15">
               <span className="flex items-center gap-1.5">
-                <User size={13} className="text-gray-400" />
+                <User size={13} className="text-content-muted/50" />
                 {article.author}
               </span>
               <span className="flex items-center gap-1.5">
-                <Calendar size={13} className="text-gray-400" />
+                <Calendar size={13} className="text-content-muted/50" />
                 {article.date}
               </span>
-              <span className="flex items-center gap-1.5">
-                <Eye size={13} className="text-gray-400" />
+              <span className="flex items-center gap-1.5 font-mono">
+                <Eye size={13} className="text-content-muted/50" />
                 {article.views.toLocaleString()} views
               </span>
             </div>
 
-            {/* Excerpt */}
-            {article.excerpt && (
-              <div className="bg-gray-50 border-l-4 border-[#90d505] rounded-r-md px-5 py-4 mb-6">
-                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">
-                  Excerpt
-                </p>
-                <p className="text-base text-gray-700 leading-relaxed">
-                  {article.excerpt}
-                </p>
-              </div>
-            )}
-
-            {/* Content body */}
-            <div>
-              <p className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
+            {/* Main Content Body Container */}
+            <div className="space-y-2">
+              <p className="block text-[10px] uppercase tracking-widest font-bold text-content-muted/90">
                 Content
               </p>
               {article.content ? (
-                <div className="prose prose-sm max-w-none text-gray-800 leading-relaxed whitespace-pre-wrap">
+                <div className="prose prose-sm max-w-none text-content/85 font-sans leading-relaxed whitespace-pre-wrap antialiased">
                   {article.content}
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-12 bg-gray-50 rounded-md border border-dashed border-gray-200">
-                  <p className="text-sm text-gray-400 font-medium">No content written yet</p>
+                <div className="flex flex-col items-center justify-center py-12 bg-surface-deep/20 rounded-xl border border-dashed border-line/15">
+                  <p className="text-xs text-content-muted/80 font-medium">No content written yet</p>
                   <button
+                    type="button"
                     onClick={() => onEdit(article)}
-                    className="mt-3 text-sm text-[#90D505] hover:underline font-medium" >
+                    className="mt-2 text-xs text-lime font-bold uppercase tracking-widest hover:opacity-80 transition-opacity cursor-pointer" >
                     Add content
                   </button>
                 </div>

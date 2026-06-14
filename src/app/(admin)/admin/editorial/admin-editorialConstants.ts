@@ -1,5 +1,9 @@
 import type { Article, EditorialStats, StatusFilterOption, CategoryFilterOption, ArticleCategory } from "./admin-editorialTypes"; 
 
+const cn = (...classes: Array<string | boolean | null | undefined>) =>
+  classes.filter(Boolean).join(" ");
+
+export default cn;
 // ─── Stats ────────────────────────────────────────────────────────────────────
 
 export const EDITORIAL_STATS: EditorialStats = {
