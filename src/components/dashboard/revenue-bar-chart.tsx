@@ -1,23 +1,29 @@
 'use client';
 
+/**
+ * RevenueBarChart - the single revenue chart used by every dashboard variant
+ * (vendor, landlord, …). One design; the role only supplies the `data`. This
+ * replaces the old per-role copies (VendorChartComponent, LandlordChartComponent)
+ * that had drifted apart.
+ *
+ * The last bar is highlighted as the "current week" (lime); everything before is
+ * a "past week" (foreground). Pass `currentLabel` to highlight a different bar.
+ */
 import { BarChart, Bar, XAxis, YAxis, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
-const data = [
-  { week: 'Feb W1', revenue: 3200 },
-  { week: 'Feb W2', revenue: 4100 },
-  { week: 'Feb W3', revenue: 3700 },
-  { week: 'Mar W1', revenue: 5200 },
-  { week: 'Mar W2', revenue: 4600 },
-  { week: 'Mar W3', revenue: 5600 },
-  { week: 'Mar W4', revenue: 5100 },
-  { week: 'Apr W1', revenue: 6300 },
-  { week: 'Apr W2', revenue: 6000 },
-  { week: 'Apr W3', revenue: 6800 },
-  { week: 'Apr W4', revenue: 6500 },
-  { week: 'May W1', revenue: 7800 },
-];
+export interface RevenueDatum {
+  /** Bucket label, e.g. "May W1". The month prefix (before the space) is shown on the axis. */
+  week: string;
+  revenue: number;
+}
 
-type RevenueDatum = { week: string; revenue: number };
+interface RevenueBarChartProps {
+  data: RevenueDatum[];
+  /** Which bar counts as "current" (lime). Defaults to the last datum. */
+  currentLabel?: string;
+  height?: number;
+}
+
 type BarShapeProps = { x?: number; y?: number; width?: number; height?: number; fill?: string };
 
 const RoundedBar = ({ x = 0, y = 0, width = 0, height = 0, fill }: BarShapeProps) => {
@@ -32,52 +38,48 @@ const RoundedBar = ({ x = 0, y = 0, width = 0, height = 0, fill }: BarShapeProps
 
 type TooltipPayload = { active?: boolean; payload?: { payload: RevenueDatum }[] };
 
-const CustomTooltip = ({ active, payload }: TooltipPayload) => {
+function ChartTooltip({ active, payload, currentLabel }: TooltipPayload & { currentLabel: string }) {
   if (!active || !payload?.length) return null;
   const { week, revenue } = payload[0].payload;
-  const isLatest = week === 'May W1';
+  const isCurrent = week === currentLabel;
   return (
-    <div className="border-line/10 rounded-lg border bg-panel px-3 py-2 shadow-lg">
+    <div className="border-line/10 bg-panel rounded-lg border px-3 py-2 shadow-lg">
       <p className="text-content-muted mb-1 font-mono text-[11px] tracking-wide uppercase">{week}</p>
       <p
         className="font-display text-base font-semibold"
-        style={{ color: isLatest ? 'var(--color-accent-fg)' : 'var(--color-content)' }}
+        style={{ color: isCurrent ? 'var(--color-accent-fg)' : 'var(--color-content)' }}
       >
         ₦{revenue.toLocaleString()}
       </p>
     </div>
   );
-};
+}
 
-export function VendorChartComponent() {
+export function RevenueBarChart({ data, currentLabel, height = 220 }: RevenueBarChartProps) {
+  const current = currentLabel ?? data[data.length - 1]?.week ?? '';
   const total = data.reduce((sum, d) => sum + d.revenue, 0);
 
   return (
-    <div className="border-line/10 shadow-card w-full rounded-xl border bg-panel p-5">
-      {/* Legend + Summary */}
+    <div className="border-line/10 shadow-card bg-panel w-full rounded-xl border p-5">
+      {/* Legend + summary */}
       <div className="mb-4 flex items-center justify-between">
         <p className="text-content-muted font-mono text-[11px] tracking-wide">
           TOTAL · ₦{total.toLocaleString()}
         </p>
         <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-xs text-content">
-            <span className="inline-block size-2.5 rounded-sm bg-foreground" />
+          <span className="text-content flex items-center gap-1.5 text-xs">
+            <span className="bg-foreground inline-block size-2.5 rounded-sm" />
             Past weeks
           </span>
-          <span className="flex items-center gap-1.5 text-xs text-accent-fg">
-            <span className="inline-block size-2.5 rounded-sm bg-lime" />
+          <span className="text-accent-fg flex items-center gap-1.5 text-xs">
+            <span className="bg-lime inline-block size-2.5 rounded-sm" />
             Current week
           </span>
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={220}>
-        <BarChart
-          data={data}
-          barCategoryGap="30%"
-          margin={{ top: 0, right: 0, left: -10, bottom: 0 }}
-        >
-          {/* Y-axis with ₦ labels */}
+      <ResponsiveContainer width="100%" height={height}>
+        <BarChart data={data} barCategoryGap="30%" margin={{ top: 0, right: 0, left: -10, bottom: 0 }}>
           <YAxis
             axisLine={false}
             tickLine={false}
@@ -91,8 +93,7 @@ export function VendorChartComponent() {
             tickLine={false}
             tick={({ x, y, payload }) => {
               const month = payload.value.split(' ')[0];
-              const isFirst =
-                ['Feb', 'Mar', 'Apr', 'May'].includes(month) && payload.value.endsWith('W1');
+              const isFirst = payload.value.endsWith('W1');
               return isFirst ? (
                 <text
                   x={Number(x)}
@@ -109,10 +110,10 @@ export function VendorChartComponent() {
             }}
             interval={0}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} />
+          <Tooltip content={<ChartTooltip currentLabel={current} />} cursor={{ fill: 'transparent' }} />
           <Bar dataKey="revenue" shape={<RoundedBar />} isAnimationActive={false}>
-            {data.map((_, i) => (
-              <Cell key={i} fill={i === data.length - 1 ? 'var(--color-lime)' : 'var(--color-content)'} />
+            {data.map((d, i) => (
+              <Cell key={i} fill={d.week === current ? 'var(--color-lime)' : 'var(--color-content)'} />
             ))}
           </Bar>
         </BarChart>

@@ -16,6 +16,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { adminRoleForEmail } from '@/lib/admin-emails';
+import { resolveHandle } from '@/lib/handle';
 import {
   email as emailRule,
   loginSchema,
@@ -30,6 +31,23 @@ import type { AuthResult, Role, SignUpResult, VerifyResult } from './types';
 /** First zod issue message, or a sensible fallback. */
 function firstIssue(error: { issues: { message: string }[] }, fallback: string): string {
   return error.issues[0]?.message ?? fallback;
+}
+
+/**
+ * The signed-in user's personalised dashboard handle, derived from the SAME
+ * inputs the proxy uses (business/full name + email) so login lands them on
+ * `/<handle>` and the proxy rewrites it to the right per-type dashboard
+ * (vendor vs landlord). Returns undefined when no handle can be formed.
+ */
+function handleFor(user: { email?: string; user_metadata?: Record<string, unknown> } | null): string | undefined {
+  const meta = user?.user_metadata ?? {};
+  const handle = resolveHandle({
+    role: meta.role as string | undefined,
+    full_name: meta.full_name as string | undefined,
+    business_name: meta.business_name as string | undefined,
+    email: user?.email,
+  });
+  return handle ?? undefined;
 }
 
 /**
@@ -147,7 +165,7 @@ export async function signIn(input: LoginInput): Promise<VerifyResult> {
     // profiles table not migrated yet - fall back to the metadata role.
   }
 
-  return { ok: true, role };
+  return { ok: true, role, handle: handleFor(data.user) };
 }
 
 /** Which input the login form should show for an email: admins/super_admins are
@@ -235,7 +253,7 @@ export async function verifyLoginOtp(input: VerifyOtpInput): Promise<VerifyResul
   } catch {
     // profiles table not migrated yet.
   }
-  return { ok: true, role };
+  return { ok: true, role, handle: handleFor(data.user) };
 }
 
 /** Sign out the current user. Clears the session cookies. */

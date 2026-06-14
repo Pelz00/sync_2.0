@@ -18,5 +18,10 @@ export type SignUpResult =
   | { ok: false; error: string; alreadyRegistered?: boolean };
 
 /** Verify result also carries the role so the client can route to the right
- *  landing (vendors → /onboarding, students → the app). */
-export type VerifyResult = { ok: true; role: Role } | { ok: false; error: string };
+ *  landing (vendors → /onboarding, students → the app). `handle` is the user's
+ *  personalised dashboard slug (vendors), so the client can land them on their
+ *  own handle root (/<handle>) and let the proxy resolve the per-type dashboard
+ *  (vendor vs landlord) instead of hardcoding /vendor. */
+export type VerifyResult =
+  | { ok: true; role: Role; handle?: string }
+  | { ok: false; error: string };

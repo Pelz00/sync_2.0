@@ -26,9 +26,12 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Matches Supabase's default OTP resend window, so resends never hit its limit.
 const RESEND_COOLDOWN = 60;
 
-function destFor(role: string | undefined, next?: string) {
+function destFor(role: string | undefined, handle?: string, next?: string) {
   if (next) return next;
-  if (role === 'vendor') return '/vendor';
+  // Vendors land on their personalised handle root (/<business-name>); the proxy
+  // rewrites it to the right per-type dashboard - generic /vendor or /landlord -
+  // so we never hardcode the wrong one. Falls back to /vendor if no handle.
+  if (role === 'vendor') return handle ? `/${handle}` : '/vendor';
   if (role === 'admin' || role === 'super_admin') return '/admin';
   return '/around';
 }
@@ -90,7 +93,7 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
       toast(res.error);
       return;
     }
-    router.push(destFor(res.role, next));
+    router.push(destFor(res.role, res.handle, next));
     router.refresh();
   }
 
@@ -121,7 +124,7 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
       toast(res.error);
       return;
     }
-    router.push(destFor(res.role, next));
+    router.push(destFor(res.role, res.handle, next));
     router.refresh();
   }
 

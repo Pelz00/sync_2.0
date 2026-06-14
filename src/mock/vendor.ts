@@ -172,6 +172,22 @@ export const foodProducts: Product[] = [
   },
 ];
 
+/** Weekly revenue for the dashboard chart (last 12 weeks). */
+export const revenueWeekly: { week: string; revenue: number }[] = [
+  { week: 'Feb W1', revenue: 3200 },
+  { week: 'Feb W2', revenue: 4100 },
+  { week: 'Feb W3', revenue: 3700 },
+  { week: 'Mar W1', revenue: 5200 },
+  { week: 'Mar W2', revenue: 4600 },
+  { week: 'Mar W3', revenue: 5600 },
+  { week: 'Mar W4', revenue: 5100 },
+  { week: 'Apr W1', revenue: 6300 },
+  { week: 'Apr W2', revenue: 6000 },
+  { week: 'Apr W3', revenue: 6800 },
+  { week: 'Apr W4', revenue: 6500 },
+  { week: 'May W1', revenue: 7800 },
+];
+
 export interface EarningsSummary {
   thisWeek: number;
   lastWeek: number;
