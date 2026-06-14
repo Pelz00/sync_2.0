@@ -33,11 +33,14 @@ export function DisputeDetailModal({
     return () => { document.body.style.overflow = ""; };
   }, [dispute]);
 
-  // Form input cleanup logic triggered upon tracking identifier changes
-  useEffect(() => {
+  // Reset the form when a different dispute is shown - render-time (tracking the
+  // previous id) rather than setState-in-effect.
+  const [prevId, setPrevId] = useState(dispute?.id);
+  if (dispute?.id !== prevId) {
+    setPrevId(dispute?.id);
     setResolution("");
     setShowResolveForm(false);
-  }, [dispute?.id]);
+  }
 
   if (!dispute) return null;
 

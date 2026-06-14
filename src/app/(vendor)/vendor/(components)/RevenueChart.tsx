@@ -1,7 +1,7 @@
 'use client';
 
 import { RevenueDataPoint } from '@/modules/vendor/types';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   AreaChart,
   Area,
@@ -71,9 +71,14 @@ export function RevenueChart({
 }: RevenueChartProps) {
   const [period, setPeriod] = useState<ChartPeriod>(activePeriod);
 
-  React.useEffect(() => {
+  // Re-sync when the controlled `activePeriod` prop changes, the render-time way
+  // (React's "adjusting state when a prop changes" pattern) so we don't setState
+  // inside an effect.
+  const [prevActive, setPrevActive] = useState<ChartPeriod>(activePeriod);
+  if (activePeriod !== prevActive) {
+    setPrevActive(activePeriod);
     setPeriod(activePeriod);
-  }, [activePeriod]);
+  }
 
   const handlePeriod = (p: ChartPeriod) => {
     setPeriod(p);

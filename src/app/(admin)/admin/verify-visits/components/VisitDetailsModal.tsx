@@ -62,9 +62,15 @@ export function VisitDetailsModal({ visit, onClose, onUpdateStatus }: VisitDetai
   const [notes, setNotes] = useState("");
   const [updating, setUpdating] = useState(false);
 
+  // Reset notes when a different visit opens - render-time, not setState-in-effect.
+  const [prevVisit, setPrevVisit] = useState<typeof visit | undefined>(undefined);
+  if (visit !== prevVisit) {
+    setPrevVisit(visit);
+    if (visit) setNotes(visit.notes ?? "");
+  }
+
   useEffect(() => {
     if (visit) {
-      setNotes(visit.notes ?? "");
       const id = requestAnimationFrame(() => setIsVisible(true));
       return () => cancelAnimationFrame(id);
     }

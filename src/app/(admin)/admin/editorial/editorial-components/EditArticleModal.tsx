@@ -36,8 +36,11 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
   const [isVisible, setIsVisible] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  // ── Populate form when article loads ──────────────────────────────────────
-  useEffect(() => {
+  // ── Populate form when the article changes ────────────────────────────────
+  // Render-time (tracking the previous article ref) instead of setState-in-effect.
+  const [prevArticle, setPrevArticle] = useState<typeof article | undefined>(undefined);
+  if (article !== prevArticle) {
+    setPrevArticle(article);
     if (article) {
       setForm({
         title: article.title,
@@ -50,7 +53,7 @@ export function EditArticleModal({ article, onClose, onSave }: EditArticleModalP
         status: article.status,
       });
     }
-  }, [article]);
+  }
 
   // ── Enter animation — fires after article + form are ready ───────────────
   useEffect(() => {

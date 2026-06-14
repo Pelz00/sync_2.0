@@ -21,7 +21,7 @@ export default function AdminOverviewPage() {
             Admin overview
           </h1>
           <p className="text-xs sm:text-sm text-content-muted mt-1">
-            Welcome back! Here's what's happening with your platform.
+            Welcome back! Here&apos;s what&apos;s happening with your platform.
           </p>
         </div>
 

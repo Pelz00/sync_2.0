@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { X, Ticket, MapPin, Clock, Calendar } from "lucide-react"
 import { TbCurrencyNaira } from "react-icons/tb"
 
@@ -45,8 +45,9 @@ export default function InvoiceModal({
   const totalTickets = selectedEntries.reduce((acc, [, qty]) => acc + qty, 0)
   const total = subtotal + syncFee
 
-  // Generate a random invoice number once per open
-  const invoiceNo = `SYN-${Math.floor(100000 + Math.random() * 900000)}`
+  // Invoice number generated once via a useState initializer - the supported way
+  // to seed state with a random value, since Math.random() can't run during render.
+  const [invoiceNo] = useState(() => `SYN-${Math.floor(100000 + Math.random() * 900000)}`)
 
   // Lock body scroll when modal is open
   useEffect(() => {

@@ -32,15 +32,15 @@ export function VendorStatus({ data }: VendorStatusProps) {
 
   const cx = 80; const cy = 80; const r = 58; const strokeW = 18;
 
-  // Build segments
-  let cursor = -90; // start from top
-  const arcs = SEGMENTS.map(seg => {
-    const pct = values[seg.key] / total;
-    const sweep = pct * 360;
-    const start = cursor;
-    const end = cursor + sweep - 2; // 2deg gap
-    cursor = cursor + sweep;
-    return { ...seg, start, end, value: values[seg.key], pct };
+  // Build segments. Compute each arc's start as the cumulative sweep of the ones
+  // before it (no mutable cursor) so this stays a pure render computation.
+  const START = -90; // start from top
+  const sweeps = SEGMENTS.map(seg => (values[seg.key] / total) * 360);
+  const arcs = SEGMENTS.map((seg, i) => {
+    const sweep = sweeps[i];
+    const start = START + sweeps.slice(0, i).reduce((a, b) => a + b, 0);
+    const end = start + sweep - 2; // 2deg gap
+    return { ...seg, start, end, value: values[seg.key], pct: sweep / 360 };
   });
 
   const hovered = arcs.find(a => a.key === hoveredKey);

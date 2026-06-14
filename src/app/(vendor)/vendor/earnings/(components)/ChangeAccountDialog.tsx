@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { Button, Input } from '@/components/ui';
 import { Modal } from '@/components/shared/custom-modal';
@@ -30,14 +30,17 @@ export function ChangeAccountDialog({ open, onClose, onSave, current }: ChangeAc
   const [name, setName] = useState(current.holderName);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Sync state whenever the modal re-opens with fresh current values
-  useEffect(() => {
+  // Reset the form to the current values each time the modal opens - done the
+  // render-time way (tracking the previous `open`) instead of setState-in-effect.
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
     if (open) {
       setBank(current.bankName);
       setAcct(current.accountNumber);
       setName(current.holderName);
     }
-  }, [open, current.bankName, current.accountNumber, current.holderName]);
+  }
 
   function handleSave() {
     if (!bank?.trim()) {

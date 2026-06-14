@@ -54,7 +54,7 @@ export function PlanChangeModal({
             {isUpgrade ? 'Upgrade Plan' : 'Downgrade Plan'}
           </DialogTitle>
           <DialogDescription>
-            You're switching from <strong>{from.name}</strong> to <strong>{to.name}</strong>.
+            You&apos;re switching from <strong>{from.name}</strong> to <strong>{to.name}</strong>.
           </DialogDescription>
         </DialogHeader>
 
@@ -121,7 +121,7 @@ export function PlanChangeModal({
           <div className="flex gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <p>
-              You'll lose access to <strong>{from.name}</strong> features at the end of your current
+              You&apos;ll lose access to <strong>{from.name}</strong> features at the end of your current
               billing period.
             </p>
           </div>
@@ -150,7 +150,7 @@ export function PlanChangeModal({
         {isUpgrade && (
           <div>
             <p className="text-content-muted mb-2 font-mono text-[10px] tracking-widest uppercase">
-              What you'll get
+              What you&apos;ll get
             </p>
             <ul className="space-y-1.5">
               {to.features.map((f) => (

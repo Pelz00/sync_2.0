@@ -100,7 +100,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
           <DialogHeader>
             <DialogTitle>Remove payment method?</DialogTitle>
             <DialogDescription>
-              Your card ending in <strong>{existing?.last4}</strong> will be removed. You won't be
+              Your card ending in <strong>{existing?.last4}</strong> will be removed. You won&apos;t be
               able to renew your plan until you add a new card.
             </DialogDescription>
           </DialogHeader>
