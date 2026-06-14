@@ -36,9 +36,13 @@ function AreaTooltipContent({ active, payload }: AreaTooltipPayload) {
   if (!active || !payload?.length) return null;
   const { label, revenue } = payload[0].payload;
   return (
-    <div className="rounded-lg border border-line/10 bg-panel px-3 py-2 shadow-lg">
-      <p className="mb-1 font-mono text-[11px] uppercase tracking-wide text-content-muted">{label}</p>
-      <p className="font-display text-base font-semibold text-content">₦{revenue.toLocaleString()}</p>
+    <div className="border-line/10 bg-panel rounded-lg border px-3 py-2 shadow-lg">
+      <p className="text-content-muted mb-1 font-mono text-[11px] tracking-wide uppercase">
+        {label}
+      </p>
+      <p className="font-display text-content text-base font-semibold">
+        ₦{revenue.toLocaleString()}
+      </p>
     </div>
   );
 }
@@ -73,19 +77,17 @@ export function RevenueChart({
   };
 
   return (
-    <div className="bg-panel shadow-card rounded-xl border border-line/10 p-5 w-full">
+    <div className="bg-panel shadow-card border-line/10 w-full rounded-xl border p-5">
       <div className="mb-4 flex items-center justify-between">
-        <span className="font-display text-base font-medium text-content">{title}</span>
+        <span className="font-display text-content text-base font-medium">{title}</span>
         {showPeriodSelector && (
-          <div className="flex items-center gap-1 rounded-lg bg-surface-deep p-1">
+          <div className="bg-surface-deep flex items-center gap-1 rounded-lg p-1">
             {(['3M', '6M', '1Y'] as ChartPeriod[]).map((p) => (
               <button
                 key={p}
                 onClick={() => handlePeriod(p)}
-                className={`rounded-md px-3 py-1 font-mono text-[11px] uppercase tracking-wide transition-colors ${
-                  period === p
-                    ? 'bg-violet-600 text-white'
-                    : 'text-content-muted hover:text-content'
+                className={`rounded-md px-3 py-1 font-mono text-[11px] tracking-wide uppercase transition-colors ${
+                  period === p ? 'bg-lime-600 text-white' : 'text-content-muted hover:text-content'
                 }`}
               >
                 {p}
@@ -104,7 +106,12 @@ export function RevenueChart({
                 <stop offset="100%" stopColor="rgb(139,92,246)" stopOpacity={0.01} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--color-line, #e5e5e5)" strokeOpacity={0.4} vertical={false} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--color-line, #e5e5e5)"
+              strokeOpacity={0.4}
+              vertical={false}
+            />
             <XAxis
               dataKey="label"
               axisLine={false}
@@ -119,7 +126,10 @@ export function RevenueChart({
               tickFormatter={(v) => `₦${(v / 1000).toFixed(0)}k`}
               width={48}
             />
-            <Tooltip content={<AreaTooltipContent />} cursor={{ stroke: 'rgb(139,92,246)', strokeWidth: 1, strokeDasharray: '4 4' }} />
+            <Tooltip
+              content={<AreaTooltipContent />}
+              cursor={{ stroke: 'rgb(139,92,246)', strokeWidth: 1, strokeDasharray: '4 4' }}
+            />
             <Area
               type="monotone"
               dataKey="revenue"
@@ -132,7 +142,11 @@ export function RevenueChart({
             />
           </AreaChart>
         ) : (
-          <BarChart data={data} barCategoryGap="30%" margin={{ top: 4, right: 4, left: -10, bottom: 0 }}>
+          <BarChart
+            data={data}
+            barCategoryGap="30%"
+            margin={{ top: 4, right: 4, left: -10, bottom: 0 }}
+          >
             <YAxis
               axisLine={false}
               tickLine={false}
@@ -148,10 +162,18 @@ export function RevenueChart({
                 const month = payload.value.split(' ')[0];
                 const isFirst = payload.value.endsWith('W1');
                 return isFirst ? (
-                  <text x={Number(x)} y={Number(y) + 12} fill="var(--color-content, #0f0f0f)" fontSize={12} textAnchor="middle">
+                  <text
+                    x={Number(x)}
+                    y={Number(y) + 12}
+                    fill="var(--color-content, #0f0f0f)"
+                    fontSize={12}
+                    textAnchor="middle"
+                  >
                     {month}
                   </text>
-                ) : <g />;
+                ) : (
+                  <g />
+                );
               }}
               interval={0}
             />
