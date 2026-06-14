@@ -124,7 +124,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-violet-500" />
+            <CreditCard className="h-5 w-5 text-lime-500" />
             {isNew ? 'Add Payment Method' : 'Update Payment Method'}
           </DialogTitle>
           <DialogDescription>
@@ -144,7 +144,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
               placeholder="1234 5678 9012 3456"
               value={form.cardNumber}
               onChange={(e) => set('cardNumber', formatCardNumber(e.target.value))}
-              className="font-mono tracking-wider"
+              className="font-mono tracking-wider ring-0! outline-none!"
             />
             {errors.cardNumber && <p className="mt-1 text-xs text-red-500">{errors.cardNumber}</p>}
           </div>
@@ -158,6 +158,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
               placeholder="John Doe"
               value={form.cardHolder}
               onChange={(e) => set('cardHolder', e.target.value)}
+              className="ring-0! outline-none!"
             />
             {errors.cardHolder && <p className="mt-1 text-xs text-red-500">{errors.cardHolder}</p>}
           </div>
@@ -173,6 +174,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
                 maxLength={2}
                 value={form.expiryMonth}
                 onChange={(e) => set('expiryMonth', e.target.value.replace(/\D/g, ''))}
+                className="ring-0! outline-none!"
               />
               {errors.expiryMonth && (
                 <p className="mt-1 text-xs text-red-500">{errors.expiryMonth}</p>
@@ -187,6 +189,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
                 maxLength={4}
                 value={form.expiryYear}
                 onChange={(e) => set('expiryYear', e.target.value.replace(/\D/g, ''))}
+                className="ring-0! outline-none!"
               />
               {errors.expiryYear && (
                 <p className="mt-1 text-xs text-red-500">{errors.expiryYear}</p>
@@ -202,6 +205,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
                 type="password"
                 value={form.cvv}
                 onChange={(e) => set('cvv', e.target.value.replace(/\D/g, ''))}
+                className="ring-0! outline-none!"
               />
               {errors.cvv && <p className="mt-1 text-xs text-red-500">{errors.cvv}</p>}
             </div>
@@ -217,6 +221,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
               type="email"
               value={form.billingEmail}
               onChange={(e) => set('billingEmail', e.target.value)}
+              className="ring-0! outline-none!"
             />
             {errors.billingEmail && (
               <p className="mt-1 text-xs text-red-500">{errors.billingEmail}</p>
@@ -246,7 +251,7 @@ export function UpdateCardModal({ open, onOpenChange, existing, onSave, onRemove
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button className="bg-violet-600 text-white hover:bg-violet-700" onClick={handleSave}>
+          <Button className="bg-lime-600 text-white hover:bg-lime-700" onClick={handleSave}>
             {isNew ? 'Add Card' : 'Save Changes'}
           </Button>
         </DialogFooter>
