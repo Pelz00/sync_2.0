@@ -21,9 +21,6 @@ import DesertTwo from '@/assets/images/Food-Pics/Desert/DesertFour.webp'
 import PremiumOne from '@/assets/images/BBQ and cravings.webp'
 import PremiumTwo from '@/assets/images/See lagos.webp'
 import PremiumThree from '@/assets/images/Spicy corner.webp'
-
-
-
 import FoodSection from '@/components/food-comps/food-section'
 import FeaturedCarousel from '@/components/food-comps/food-carousel'
 
@@ -90,6 +87,7 @@ const food = [
     isFree: true,
     deliveryTime: '20–35 min',
     discount: '30% off',
+    status: "open"
   },
   {
     slug: 'arena',
@@ -102,7 +100,8 @@ const food = [
     time: '9am – 9pm',
     category: 'Jollof',
     isFree: false,
-    deliveryTime: '25–40 min', // no discount
+    deliveryTime: '25–40 min',// no discount
+    status: "closed"
   },
   {
     slug: 'spit-africana',
@@ -117,6 +116,7 @@ const food = [
     isFree: true,
     deliveryTime: '15–25 min',
     discount: '15% off',       // has promo
+    status: "delivery-only"
   },
   {
     slug: 'iya-afusa',
@@ -130,6 +130,7 @@ const food = [
     category: 'Swallow',
     isFree: false,
     deliveryTime: '30–45 min', // no discount
+    status: "open"
   },
   {
     slug: 'amala-joint',
@@ -144,6 +145,7 @@ const food = [
     isFree: true,
     deliveryTime: '20–30 min',
     discount: '20% off',       // has promo
+    status: "closed"
   },
   {
     slug: 'krafties-kitchen',
@@ -157,6 +159,7 @@ const food = [
     category: 'Fast Food',
     isFree: false,
     deliveryTime: '25–40 min', // no discount
+    status: "delivery-only"
   },
   {
     slug: 'chop-life',
@@ -170,6 +173,7 @@ const food = [
     category: 'Small Chops',
     isFree: true,
     deliveryTime: '20–35 min', // no discount
+    status: "open"
   },
   {
     slug: 'small-chops-palace',
@@ -184,6 +188,7 @@ const food = [
     isFree: false,
     deliveryTime: '30–45 min',
     discount: '10% off',       // has promo
+    status: "closed"
   },
   {
     slug: 'tasty-munch-drinks',
@@ -197,6 +202,7 @@ const food = [
     category: 'Drinks',
     isFree: true,
     deliveryTime: '15–25 min', // no discount
+    status: "delivery-only"
   },
   {
     slug: 'tasty-munch-drinks-2',
@@ -210,6 +216,7 @@ const food = [
     category: 'Drinks',
     isFree: false,
     deliveryTime: '20–30 min', // no discount
+    status: "open"
   },
   {
     slug: 'tasty-munch-breakfast',
@@ -224,6 +231,7 @@ const food = [
     isFree: true,
     deliveryTime: '20–35 min',
     discount: '25% off',       // morning promo
+    status: "closed"
   },
   {
     slug: 'tasty-munch-breakfast-2',
@@ -237,6 +245,7 @@ const food = [
     category: 'Breakfast',
     isFree: false,
     deliveryTime: '25–40 min', // no discount
+    status: "delivery-only"
   },
   {
     slug: 'tasty-munch-desert',
@@ -250,6 +259,7 @@ const food = [
     category: 'Desert',
     isFree: false,
     deliveryTime: '20–30 min', // no discount
+    status: "open"
   },
   {
     slug: 'tasty-munch-desert-2',
@@ -264,6 +274,7 @@ const food = [
     isFree: true,
     deliveryTime: '15–25 min',
     discount: '10% off',
+    status: "closed"
   },
 ]
 
@@ -272,8 +283,8 @@ export default function Page() {
     <section className="flex flex-col gap-3">
       <p className="eyebrow text-accent-fg">/food</p>
 
-      <h1 className="font-display text-section text-content">
-        What are you <span className="text-[#4A8500] dark:text-[#C5FF4A]">Chopping</span> tonight?
+      <h1 className="text-center text-3xl lg:text-left font-display lg:text-section text-content">
+        What are you <span className="text-[#4A8500] dark:text-lime-deep"> <br className='lg:hidden' />Chopping</span> tonight?
       </h1>
 
       {/* Featured carousel */}

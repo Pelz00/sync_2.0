@@ -144,17 +144,22 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
 
                                 <div className="flex items-center gap-2">
                                     {items.length > 1 && (
-                                        <div className="flex gap-1.5">
+                                        <div className="hidden sm:flex gap-1.5">
                                             <button
                                                 onClick={() => goTo("prev")}
                                                 className="w-8 h-8 rounded-full border border-white/25 flex items-center justify-center text-white hover:bg-white/10 transition cursor-pointer text-sm"
                                                 aria-label="Previous"
-                                            >←</button>
+                                            >
+                                                ←
+                                            </button>
+
                                             <button
                                                 onClick={() => goTo("next")}
                                                 className="w-8 h-8 rounded-full border border-white/25 flex items-center justify-center text-white hover:bg-white/10 transition cursor-pointer text-sm"
                                                 aria-label="Next"
-                                            >→</button>
+                                            >
+                                                →
+                                            </button>
                                         </div>
                                     )}
                                     <Link
