@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "nex t start",
     "lint": "eslint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
