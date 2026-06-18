@@ -44,6 +44,7 @@ async function findUser(email: string) {
 }
 
 async function main() {
+  let failed = false;
   for (const { email, role } of ADMINS) {
     let user = await findUser(email);
     if (!user) {
@@ -62,8 +63,37 @@ async function main() {
     const { error } = await supabase
       .from('profiles')
       .upsert({ id: user.id, role }, { onConflict: 'id' });
-    if (error) console.error(`✗ role ${email}: ${error.message}`);
-    else console.log(`✓ ${email} → ${role}`);
+    if (error) {
+      console.error(`✗ role ${email}: ${error.message}`);
+      failed = true;
+      continue;
+    }
+
+    // The upsert can "succeed" yet leave role unchanged: the profiles
+    // column-guard trigger reverts role for any writer it sees as
+    // authenticated/anon. With the new `sb_secret_` API keys, PostgREST writes
+    // are reverted this way - so the only reliable check is to read it back.
+    const { data: check } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+    if (check?.role === role) {
+      console.log(`✓ ${email} → ${role}`);
+    } else {
+      console.error(
+        `✗ role ${email}: write was reverted (got '${check?.role ?? 'null'}', wanted '${role}'). ` +
+          `The column-guard trigger blocks API-key writes to role. Set it as postgres instead - ` +
+          `run in the Supabase SQL Editor:\n` +
+          `    update public.profiles p set role = '${role}'\n` +
+          `      from auth.users u where u.id = p.id and lower(u.email) = '${email}';`,
+      );
+      failed = true;
+    }
+  }
+  if (failed) {
+    console.error('\nOne or more admins were NOT seeded. See the SQL above.');
+    process.exit(1);
   }
   console.log('Done. Both admins sign in with an email OTP at /login.');
 }
