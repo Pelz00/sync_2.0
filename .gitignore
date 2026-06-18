@@ -44,3 +44,6 @@ next-env.d.ts
 # editor / local history
 .history/
 .idea/
+
+# local detached dev server log
+dev-server.log
