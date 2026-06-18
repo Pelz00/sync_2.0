@@ -1,8 +1,18 @@
 "use client"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
+import Image, { StaticImageData } from "next/image"
 import FoodCards from "./food-card"
-import { StaticImageData } from "next/image"
 import { X, ChevronDown, SlidersHorizontal, Crown, Tag, ArrowUpDown } from "lucide-react"
+import BurgerImage from '@/assets/images/illustrtions/burger-illustration.png'
+import PizzaImage from '@/assets/images/illustrtions/pizza-illustration.png'
+import BreakfastImage from '@/assets/images/illustrtions/breakfast-illustration.png'
+import HealthyImage from '@/assets/images/illustrtions/healthy-illustration.png'
+import SmallchopsImage from '@/assets/images/illustrtions/small-chops-illustration.png'
+import LocalFoodImage from '@/assets/images/illustrtions/local-food-illustration.png'
+import JollofImage from '@/assets/images/illustrtions/jollof-illustration.png'
+import DesertImage from '@/assets/images/illustrtions/deserts-illustration.png'
+import SuyaImage from '@/assets/images/illustrtions/suya-illustration.png'
+import DrinksImage from '@/assets/images/illustrtions/drinks-illustration.png'
 
 interface Food {
     slug: string
@@ -24,7 +34,21 @@ interface Props {
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
-const QUICK_TABS = ["All", "Breakfast", "Jollof", "Swallow", "Fast Food", "Small Chops", "Desert", "Suya", "Drinks"]
+
+// Illustration tabs — image + label, label must match food category values
+const ILLUS_TABS = [
+    { label: "All", image: null },
+    { label: "Breakfast", image: BreakfastImage },
+    { label: "Jollof", image: JollofImage },
+    { label: "Swallow", image: LocalFoodImage },
+    { label: "Fast Food", image: BurgerImage },
+    { label: "Small Chops", image: SmallchopsImage },
+    { label: "Desert", image: DesertImage },
+    { label: "Suya", image: SuyaImage },
+    { label: "Drinks", image: DrinksImage },
+    { label: "Pizza", image: PizzaImage },
+    { label: "Healthy", image: HealthyImage },
+] as { label: string; image: StaticImageData | null }[]
 
 const FOOD_TYPE_CATEGORIES = [
     { label: "Breakfast", emoji: "🍳" },
@@ -48,7 +72,6 @@ const SORT_OPTIONS = [
     { label: "Delivery fee", value: "delivery", icon: "🛵" },
 ]
 
-// ── Small helpers ─────────────────────────────────────────────────────────────
 function Pill({
     label, active, onClick, icon, suffix
 }: { label: string; active?: boolean; onClick: () => void; icon?: React.ReactNode; suffix?: React.ReactNode }) {
@@ -61,79 +84,46 @@ function Pill({
                     : "bg-panel text-content border-content-muted/20 hover:border-content-muted/50"
                 }`}
         >
-            {icon}
-            {label}
-            {suffix}
+            {icon}{label}{suffix}
         </button>
     )
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
 export default function FoodSection({ food }: Props) {
-    // quick tab filter
-    const [activeTab, setActiveTab] = useState("All")
-
-    // filter bar state
+    const [activeTabs, setActiveTabs] = useState<string[]>([])
     const [promotionsOn, setPromotionsOn] = useState(false)
     const [topRatedOn, setTopRatedOn] = useState(false)
     const [sortBy, setSortBy] = useState("recommended")
     const [foodTypes, setFoodTypes] = useState<string[]>([])
-
-    // modals
     const [foodTypeOpen, setFoodTypeOpen] = useState(false)
     const [sortOpen, setSortOpen] = useState(false)
-
-    // temp selections inside modal (only committed on "Show results")
     const [tempFoodTypes, setTempFoodTypes] = useState<string[]>([])
     const [tempSort, setTempSort] = useState("recommended")
-
-    // sticky filter bar ref
     const filterBarRef = useRef<HTMLDivElement>(null)
 
     function openFoodType() { setTempFoodTypes(foodTypes); setFoodTypeOpen(true) }
     function openSort() { setTempSort(sortBy); setSortOpen(true) }
-
     function applyFoodType() { setFoodTypes(tempFoodTypes); setFoodTypeOpen(false) }
     function applySort() { setSortBy(tempSort); setSortOpen(false) }
-
     function toggleTempType(label: string) {
-        setTempFoodTypes(prev =>
-            prev.includes(label) ? prev.filter(t => t !== label) : [...prev, label]
-        )
+        setTempFoodTypes(prev => prev.includes(label) ? prev.filter(t => t !== label) : [...prev, label])
     }
-
     function resetAll() {
-        setPromotionsOn(false)
-        setTopRatedOn(false)
-        setSortBy("recommended")
-        setFoodTypes([])
-        setActiveTab("All")
+        setPromotionsOn(false); setTopRatedOn(false)
+        setSortBy("recommended"); setFoodTypes([]); setActiveTabs([])
     }
 
-    // ── Filtering logic ───────────────────────────────────────────────────
     let filtered = food
-
-    // quick tab
-    if (activeTab !== "All") filtered = filtered.filter(f => f.category === activeTab)
-
-    // food type modal selection
-    if (foodTypes.length > 0) filtered = filtered.filter(f => foodTypes.includes(f.category))
-
-    // promotions = only items with a discount
-    if (promotionsOn) filtered = filtered.filter(f => f.discount)
-
-    // top rated = rating >= 4.6
-    if (topRatedOn) filtered = filtered.filter(f => parseFloat(f.rating) >= 4.6)
-
-    // sort
-    if (sortBy === "rating") {
-        filtered = [...filtered].sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating))
-    } else if (sortBy === "delivery") {
-        filtered = [...filtered].sort((a, b) => (a.isFree ? -1 : 1) - (b.isFree ? -1 : 1))
+    if (activeTabs.length > 0) {
+        filtered = filtered.filter(f => activeTabs.includes(f.category))
     }
+    if (foodTypes.length > 0) filtered = filtered.filter(f => foodTypes.includes(f.category))
+    if (promotionsOn) filtered = filtered.filter(f => f.discount)
+    if (topRatedOn) filtered = filtered.filter(f => parseFloat(f.rating) >= 4.6)
+    if (sortBy === "rating") filtered = [...filtered].sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating))
+    else if (sortBy === "delivery") filtered = [...filtered].sort((a, b) => (a.isFree ? -1 : 1) - (b.isFree ? -1 : 1))
 
     const hasActiveFilters = promotionsOn || topRatedOn || foodTypes.length > 0 || sortBy !== "recommended"
-
 
     return (
         <>
@@ -143,76 +133,91 @@ export default function FoodSection({ food }: Props) {
                 </span>
             </h2>
 
-            {/* ── Quick category tabs ───────────────────────────────────── */}
-            <div className="mt-3 flex flex-row gap-1.5 flex-wrap">
-                {QUICK_TABS.map(tab => (
-                    <div
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`border rounded-full px-3 py-1 lg:px-5 lg:py-2 cursor-pointer text-xs lg:text-sm transition-colors ${activeTab === tab
-                            ? "bg-lime text-ink font-bold border-transparent shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
-                            : "bg-panel text-content border-content-muted/20"
-                            }`}
-                    >
-                        {tab}
-                    </div>
-                ))}
-            </div>
+            {/* ── Illustration category tabs ────────────────────────────── */}
+            <div className="mt-4 flex gap-3 overflow-x-auto scrollbar-none pb-3">
+                {ILLUS_TABS.map(tab => {
+                    const active = activeTabs.includes(tab.label)
 
+                    return (
+                        <button
+                            key={tab.label}
+                            onClick={() =>
+                                setActiveTabs(prev =>
+                                    prev.includes(tab.label)
+                                        ? prev.filter(t => t !== tab.label)
+                                        : [...prev, tab.label]
+                                )
+                            }
+                            className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group"
+                        >
+                            <div
+                                className={`relative w-16 h-16 rounded-full overflow-visible border-2 transition-all
+                    ${active
+                                        ? "bg-lime border-lime shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                                        : "bg-panel border-content-muted/20 group-hover:border-content-muted/50"
+                                    }
+                    ${!tab.image ? "flex items-center justify-center" : ""}
+                    `}
+                            >
+                                {tab.image ? (
+                                    <Image
+                                        src={tab.image}
+                                        alt={tab.label}
+                                        fill
+                                        className="object-cover rounded-full"
+                                    />
+                                ) : (
+                                    <span className="text-2xl">🍽️</span>
+                                )}
+
+                                {active && (
+                                    <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-ink border-2 border-lime flex items-center justify-center shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] z-10">
+                                        <svg
+                                            width="10"
+                                            height="8"
+                                            viewBox="0 0 10 8"
+                                            fill="none"
+                                        >
+                                            <path
+                                                d="M1 4L3.5 6.5L9 1"
+                                                stroke="#C5FF4A"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                            />
+                                        </svg>
+                                    </div>
+                                )}
+                            </div>
+
+                            <span
+                                className={`text-[11px] font-medium text-center leading-tight transition-colors ${active
+                                    ? "text-lime font-bold"
+                                    : "text-content-muted"
+                                    }`}
+                            >
+                                {tab.label}
+                            </span>
+                        </button>
+                    )
+                })}
+            </div>
             {/* ── Sticky filter bar ─────────────────────────────────────── */}
             <div
                 ref={filterBarRef}
                 className="sticky top-16 z-20 py-2 bg-surface/90 backdrop-blur-md border-b border-content-muted/10"
             >
                 <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-
-                    {/* Promotions */}
-                    <Pill
-                        label="Promotions"
-                        active={promotionsOn}
-                        onClick={() => setPromotionsOn(p => !p)}
-                        icon={<Tag size={13} />}
-                        suffix={promotionsOn ? <X size={12} className="ml-0.5" /> : undefined}
-                    />
-
-                    {/* Food type */}
-                    <Pill
-                        label={foodTypes.length > 0 ? `Food type (${foodTypes.length})` : "Food type"}
-                        active={foodTypes.length > 0}
-                        onClick={openFoodType}
-                        icon={<SlidersHorizontal size={13} />}
-                        suffix={<ChevronDown size={13} />}
-                    />
-
-                    {/* Sort by */}
-                    <Pill
-                        label={sortBy !== "recommended" ? `Sort: ${SORT_OPTIONS.find(s => s.value === sortBy)?.label}` : "Sort by"}
-                        active={sortBy !== "recommended"}
-                        onClick={openSort}
-                        icon={<ArrowUpDown size={13} />}
-                        suffix={<ChevronDown size={13} />}
-                    />
-
-
-                    <Pill
-                        label="Top Rated"
-                        active={topRatedOn}
-                        onClick={() => setTopRatedOn(r => !r)}
-                        icon={<Crown size={13} />}
-                        suffix={topRatedOn ? <X size={12} className="ml-0.5" /> : undefined}
-                    />
-
-
+                    <Pill label="Promotions" active={promotionsOn} onClick={() => setPromotionsOn(p => !p)} icon={<Tag size={13} />} suffix={promotionsOn ? <X size={12} className="ml-0.5" /> : undefined} />
+                    <Pill label={foodTypes.length > 0 ? `Food type (${foodTypes.length})` : "Food type"} active={foodTypes.length > 0} onClick={openFoodType} icon={<SlidersHorizontal size={13} />} suffix={<ChevronDown size={13} />} />
+                    <Pill label={sortBy !== "recommended" ? `Sort: ${SORT_OPTIONS.find(s => s.value === sortBy)?.label}` : "Sort by"} active={sortBy !== "recommended"} onClick={openSort} icon={<ArrowUpDown size={13} />} suffix={<ChevronDown size={13} />} />
+                    <Pill label="Top Rated" active={topRatedOn} onClick={() => setTopRatedOn(r => !r)} icon={<Crown size={13} />} suffix={topRatedOn ? <X size={12} className="ml-0.5" /> : undefined} />
                     {hasActiveFilters && (
-                        <button
-                            onClick={resetAll}
-                            className="flex-shrink-0 text-xs text-content-muted underline underline-offset-2 hover:text-content transition ml-1 cursor-pointer"
-                        >
+                        <button onClick={resetAll} className="flex-shrink-0 text-xs text-content-muted underline underline-offset-2 hover:text-content transition ml-1 cursor-pointer">
                             Reset
                         </button>
                     )}
                 </div>
-
 
                 {(foodTypes.length > 0 || promotionsOn || topRatedOn) && (
                     <div className="flex gap-1.5 mt-1.5 flex-wrap">
@@ -235,11 +240,9 @@ export default function FoodSection({ food }: Props) {
                 )}
             </div>
 
-
             <p className="text-xs text-content-muted mt-2 mb-1">
                 {filtered.length} result{filtered.length !== 1 ? "s" : ""}
             </p>
-
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4 mt-1">
                 {filtered.length > 0 ? (
@@ -253,41 +256,23 @@ export default function FoodSection({ food }: Props) {
                 )}
             </div>
 
+            {/* Food type modal */}
             {foodTypeOpen && (
-                <div
-                    className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center"
-                    onClick={e => { if (e.target === e.currentTarget) setFoodTypeOpen(false) }}
-                >
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center" onClick={e => { if (e.target === e.currentTarget) setFoodTypeOpen(false) }}>
                     <div className="bg-panel w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl border border-content-muted/20 shadow-[0_-8px_32px_rgba(0,0,0,0.15)] flex flex-col max-h-[85vh]">
-
-                        {/* Header */}
                         <div className="flex items-center justify-between px-5 py-4 border-b border-content-muted/20 flex-shrink-0">
                             <h3 className="font-bold text-lg text-content">Food type</h3>
-                            <button onClick={() => setFoodTypeOpen(false)} className="w-8 h-8 rounded-full border border-content-muted/30 flex items-center justify-center text-content-muted hover:text-content cursor-pointer">
-                                <X size={16} />
-                            </button>
+                            <button onClick={() => setFoodTypeOpen(false)} className="w-8 h-8 rounded-full border border-content-muted/30 flex items-center justify-center text-content-muted hover:text-content cursor-pointer"><X size={16} /></button>
                         </div>
-
-                        {/* Grid of categories */}
                         <div className="overflow-y-auto flex-1 px-5 py-4">
                             <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                                 {FOOD_TYPE_CATEGORIES.map(({ label, emoji }) => {
                                     const selected = tempFoodTypes.includes(label)
                                     return (
-                                        <button
-                                            key={label}
-                                            onClick={() => toggleTempType(label)}
-                                            className={`relative flex flex-col items-center gap-2 p-3 rounded-2xl border-2 cursor-pointer transition-all ${selected
-                                                ? "border-lime bg-lime/10"
-                                                : "border-content-muted/20 bg-surface-deep hover:border-content-muted/40"
-                                                }`}
-                                        >
-                                            {/* Checkmark */}
+                                        <button key={label} onClick={() => toggleTempType(label)} className={`relative flex flex-col items-center gap-2 p-3 rounded-2xl border-2 cursor-pointer transition-all ${selected ? "border-lime bg-lime/10" : "border-content-muted/20 bg-surface-deep hover:border-content-muted/40"}`}>
                                             {selected && (
                                                 <span className="absolute top-1.5 right-1.5 w-5 h-5 bg-lime rounded-full flex items-center justify-center">
-                                                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                                                        <path d="M1 4l2.5 2.5L9 1" stroke="#0e0e12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                                    </svg>
+                                                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="#0e0e12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                                                 </span>
                                             )}
                                             <span className="text-3xl">{emoji}</span>
@@ -297,19 +282,9 @@ export default function FoodSection({ food }: Props) {
                                 })}
                             </div>
                         </div>
-
-                        {/* Footer */}
                         <div className="px-5 py-4 border-t border-content-muted/20 flex-shrink-0 flex gap-3">
-                            <button
-                                onClick={() => setTempFoodTypes([])}
-                                className="flex-1 border border-content-muted/30 text-content font-medium text-sm py-3 rounded-xl cursor-pointer hover:bg-content-muted/5 transition"
-                            >
-                                Clear
-                            </button>
-                            <button
-                                onClick={applyFoodType}
-                                className="flex-2 flex-grow-[2] bg-lime text-ink font-bold text-sm py-3 rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer"
-                            >
+                            <button onClick={() => setTempFoodTypes([])} className="flex-1 border border-content-muted/30 text-content font-medium text-sm py-3 rounded-xl cursor-pointer hover:bg-content-muted/5 transition">Clear</button>
+                            <button onClick={applyFoodType} className="flex-2 flex-grow-[2] bg-lime text-ink font-bold text-sm py-3 rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer">
                                 Show results {tempFoodTypes.length > 0 && `(${tempFoodTypes.length})`}
                             </button>
                         </div>
@@ -317,50 +292,29 @@ export default function FoodSection({ food }: Props) {
                 </div>
             )}
 
+            {/* Sort modal */}
             {sortOpen && (
-                <div
-                    className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center"
-                    onClick={e => { if (e.target === e.currentTarget) setSortOpen(false) }}
-                >
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center" onClick={e => { if (e.target === e.currentTarget) setSortOpen(false) }}>
                     <div className="bg-panel w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl border border-content-muted/20 shadow-[0_-8px_32px_rgba(0,0,0,0.15)]">
-
-                        {/* Header */}
                         <div className="flex items-center justify-between px-5 py-4 border-b border-content-muted/20">
                             <h3 className="font-bold text-lg text-content">Sort by</h3>
-                            <button onClick={() => setSortOpen(false)} className="w-8 h-8 rounded-full border border-content-muted/30 flex items-center justify-center text-content-muted hover:text-content cursor-pointer">
-                                <X size={16} />
-                            </button>
+                            <button onClick={() => setSortOpen(false)} className="w-8 h-8 rounded-full border border-content-muted/30 flex items-center justify-center text-content-muted hover:text-content cursor-pointer"><X size={16} /></button>
                         </div>
-
-                        {/* Options */}
                         <div className="px-5 py-3 flex flex-col gap-1">
                             {SORT_OPTIONS.map(opt => (
-                                <button
-                                    key={opt.value}
-                                    onClick={() => setTempSort(opt.value)}
-                                    className="flex items-center justify-between w-full px-4 py-3.5 rounded-xl hover:bg-content-muted/5 cursor-pointer transition group"
-                                >
+                                <button key={opt.value} onClick={() => setTempSort(opt.value)} className="flex items-center justify-between w-full px-4 py-3.5 rounded-xl hover:bg-content-muted/5 cursor-pointer transition">
                                     <span className="flex items-center gap-3 text-sm text-content font-medium">
                                         <span className="text-xl">{opt.icon}</span>
                                         {opt.label}
                                     </span>
-                                    {/* Radio */}
-                                    <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition ${tempSort === opt.value ? "border-lime bg-lime" : "border-content-muted/40"
-                                        }`}>
-                                        {tempSort === opt.value && (
-                                            <span className="w-2 h-2 rounded-full bg-ink" />
-                                        )}
+                                    <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition ${tempSort === opt.value ? "border-lime bg-lime" : "border-content-muted/40"}`}>
+                                        {tempSort === opt.value && <span className="w-2 h-2 rounded-full bg-ink" />}
                                     </span>
                                 </button>
                             ))}
                         </div>
-
-                        {/* Footer */}
                         <div className="px-5 py-4 border-t border-content-muted/20">
-                            <button
-                                onClick={applySort}
-                                className="w-full bg-lime text-ink font-bold text-sm py-3 rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer"
-                            >
+                            <button onClick={applySort} className="w-full bg-lime text-ink font-bold text-sm py-3 rounded-xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer">
                                 Show results
                             </button>
                         </div>
