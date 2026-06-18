@@ -4,6 +4,7 @@
  */
 import { Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Input } from '../ui';
 
 interface SearchBarProps {
   /** Initial query value (controlled by URL). */
@@ -32,12 +33,12 @@ export function SearchBar({
       )}
     >
       <Search className="text-content-muted h-4 w-4 shrink-0" aria-hidden="true" />
-      <input
+      <Input
         type="search"
         name="q"
         defaultValue={defaultValue}
         placeholder={placeholder}
-        className="placeholder:text-content-muted h-full w-full border-0 bg-transparent text-sm outline-none"
+        className="placeholder:text-content-muted h-full w-full border-0 bg-transparent text-sm outline-none! ring-0!"
         aria-label="Search Sync"
       />
     </form>
