@@ -236,7 +236,13 @@ export default function MyReviewsPage() {
             <div className="grid grid-cols-1 gap-4">
               {/* Refactored loop cleanly applying the system's official <ReviewCard /> composite component */}
               {postedReviews.map((review) => (
-                <ReviewCard key={review.id} {...review} />
+                <ReviewCard
+                  key={review.id}
+                  author={{ name: review.title }}
+                  rating={review.rating}
+                  body={review.content}
+                  createdAt={review.date}
+                />
               ))}
             </div>
           )
