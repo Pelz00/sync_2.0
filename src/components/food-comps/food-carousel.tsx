@@ -29,7 +29,9 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
 
     // 👇 SWIPE refs
     const startX = useRef<number | null>(null)
+    const startY = useRef<number | null>(null)
     const endX = useRef<number | null>(null)
+    const isHorizontalSwipe = useRef<boolean | null>(null)
     const minSwipeDistance = 50
 
     function startTimer() {
@@ -68,42 +70,69 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
         startTimer()
     }
 
-    // 👇 SWIPE HANDLERS
+    // 👇 SWIPE HANDLERS — now on the whole card, not just the image
     function onTouchStart(e: React.TouchEvent) {
         startX.current = e.touches[0].clientX
+        startY.current = e.touches[0].clientY
+        endX.current = e.touches[0].clientX
+        isHorizontalSwipe.current = null
     }
 
     function onTouchMove(e: React.TouchEvent) {
+        if (startX.current === null || startY.current === null) return
+
         endX.current = e.touches[0].clientX
+        const dx = e.touches[0].clientX - startX.current
+        const dy = e.touches[0].clientY - startY.current
+
+        // Decide swipe direction once, after a small threshold, so a single
+        // diagonal-ish touch doesn't fight between scrolling and swiping.
+        if (isHorizontalSwipe.current === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+            isHorizontalSwipe.current = Math.abs(dx) > Math.abs(dy)
+        }
+
+        // Once we know it's a horizontal swipe, stop the page from
+        // scrolling vertically so the gesture isn't hijacked mid-swipe.
+        if (isHorizontalSwipe.current) {
+            e.preventDefault()
+        }
     }
 
     function onTouchEnd() {
-        if (startX.current === null || endX.current === null) return
+        if (startX.current === null || endX.current === null || !isHorizontalSwipe.current) {
+            startX.current = null
+            startY.current = null
+            endX.current = null
+            isHorizontalSwipe.current = null
+            return
+        }
 
         const distance = startX.current - endX.current
 
-        if (Math.abs(distance) < minSwipeDistance) return
-
-        if (distance > 0) {
-            goTo("next")
-        } else {
-            goTo("prev")
+        if (Math.abs(distance) >= minSwipeDistance) {
+            if (distance > 0) {
+                goTo("next")
+            } else {
+                goTo("prev")
+            }
         }
 
         startX.current = null
+        startY.current = null
         endX.current = null
+        isHorizontalSwipe.current = null
     }
 
     return (
-        <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#111111] shadow-[3px_3px_0px_0px_rgba(197,255,74,0.25)]">
+        <div
+            className="rounded-2xl overflow-hidden border border-white/10 bg-[#111111] shadow-[3px_3px_0px_0px_rgba(197,255,74,0.25)] touch-pan-y"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+        >
 
             {/* IMAGE TRACK */}
-            <div
-                className="relative w-full h-56 sm:h-64 md:h-72 overflow-hidden"
-                onTouchStart={onTouchStart}
-                onTouchMove={onTouchMove}
-                onTouchEnd={onTouchEnd}
-            >
+            <div className="relative w-full h-56 sm:h-64 md:h-72 overflow-hidden">
                 <div
                     className="flex h-full transition-transform duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
                     style={{ transform: `translateX(-${current * 100}%)` }}
@@ -140,11 +169,10 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
                             <button
                                 key={i}
                                 onClick={() => goTo(i)}
-                                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                                    i === current
+                                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${i === current
                                         ? "bg-lime w-5"
                                         : "bg-white/40 w-2 hover:bg-white/70"
-                                }`}
+                                    }`}
                                 aria-label={`Go to slide ${i + 1}`}
                             />
                         ))}

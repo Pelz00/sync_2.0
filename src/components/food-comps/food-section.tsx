@@ -150,34 +150,33 @@ export default function FoodSection({ food }: Props) {
                             }
                             className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group"
                         >
-                            <div
-                                className={`relative w-16 h-16 rounded-full overflow-visible border-2 transition-all
-                    ${active
-                                        ? "bg-lime border-lime shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
-                                        : "bg-panel border-content-muted/20 group-hover:border-content-muted/50"
-                                    }
-                    ${!tab.image ? "flex items-center justify-center" : ""}
-                    `}
-                            >
-                                {tab.image ? (
-                                    <Image
-                                        src={tab.image}
-                                        alt={tab.label}
-                                        fill
-                                        className="object-cover rounded-full"
-                                    />
-                                ) : (
-                                    <span className="text-2xl">🍽️</span>
-                                )}
+                            <div className="relative w-16 h-16">
+                                {/* Solid-fill circle background — lime when active, soft neutral otherwise */}
+                                <div
+                                    className={`w-16 h-16 rounded-full flex items-center justify-center overflow-hidden transition-all
+                                        ${active
+                                            ? "bg-lime"
+                                            : "bg-content-muted/10 group-hover:bg-content-muted/15"
+                                        }
+                                    `}
+                                >
+                                    {tab.image ? (
+                                        <Image
+                                            src={tab.image}
+                                            alt={tab.label}
+                                            width={50}
+                                            height={50}
+                                            className="object-contain w-14 h-14"
+                                        />
+                                    ) : (
+                                        <span className="text-2xl">🍽️</span>
+                                    )}
+                                </div>
 
+                                {/* Checkmark badge — sits at the corner, overlapping the circle */}
                                 {active && (
-                                    <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-ink border-2 border-lime flex items-center justify-center shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] z-10">
-                                        <svg
-                                            width="10"
-                                            height="8"
-                                            viewBox="0 0 10 8"
-                                            fill="none"
-                                        >
+                                    <div className="absolute bottom-0 right-0 w-5 h-5 rounded-full bg-ink border-2 border-surface flex items-center justify-center z-10">
+                                        <svg width="9" height="7" viewBox="0 0 10 8" fill="none">
                                             <path
                                                 d="M1 4L3.5 6.5L9 1"
                                                 stroke="#C5FF4A"
@@ -192,7 +191,7 @@ export default function FoodSection({ food }: Props) {
 
                             <span
                                 className={`text-[11px] font-medium text-center leading-tight transition-colors ${active
-                                    ? "text-lime font-bold"
+                                    ? "text-content font-bold"
                                     : "text-content-muted"
                                     }`}
                             >
