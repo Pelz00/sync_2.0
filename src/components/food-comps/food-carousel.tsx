@@ -1,3 +1,4 @@
+// components/FeaturedCarousel.tsx
 "use client"
 import { useState, useEffect, useRef } from "react"
 import Image, { StaticImageData } from "next/image"
@@ -27,7 +28,7 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
     const [sliding, setSliding] = useState(false)
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-    // 👇 SWIPE refs
+    // SWIPE refs
     const startX = useRef<number | null>(null)
     const startY = useRef<number | null>(null)
     const endX = useRef<number | null>(null)
@@ -70,7 +71,7 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
         startTimer()
     }
 
-    // 👇 SWIPE HANDLERS — now on the whole card, not just the image
+    // SWIPE HANDLERS
     function onTouchStart(e: React.TouchEvent) {
         startX.current = e.touches[0].clientX
         startY.current = e.touches[0].clientY
@@ -85,14 +86,10 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
         const dx = e.touches[0].clientX - startX.current
         const dy = e.touches[0].clientY - startY.current
 
-        // Decide swipe direction once, after a small threshold, so a single
-        // diagonal-ish touch doesn't fight between scrolling and swiping.
         if (isHorizontalSwipe.current === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
             isHorizontalSwipe.current = Math.abs(dx) > Math.abs(dy)
         }
 
-        // Once we know it's a horizontal swipe, stop the page from
-        // scrolling vertically so the gesture isn't hijacked mid-swipe.
         if (isHorizontalSwipe.current) {
             e.preventDefault()
         }
@@ -170,8 +167,8 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
                                 key={i}
                                 onClick={() => goTo(i)}
                                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${i === current
-                                        ? "bg-lime w-5"
-                                        : "bg-white/40 w-2 hover:bg-white/70"
+                                    ? "bg-lime w-5"
+                                    : "bg-white/40 w-2 hover:bg-white/70"
                                     }`}
                                 aria-label={`Go to slide ${i + 1}`}
                             />
@@ -186,76 +183,85 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
                     className="flex transition-transform duration-[450ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
                     style={{ transform: `translateX(-${current * 100}%)` }}
                 >
-                    {items.map((item, i) => (
-                        <div key={i} className="min-w-full flex flex-col gap-3 px-4 py-4 sm:px-5 sm:py-5 text-white">
-                            <h2 className="font-mono text-base sm:text-xl font-medium leading-snug">
-                                {item.name}{" "}
-                                <i className="text-lime not-italic">— {item.tagline}</i>
-                            </h2>
+                    {items.map((item, i) => {
+                        // Defensive URL composition checking how slug data string is configured
+                        const targetHref = item.slug.startsWith('/')
+                            ? item.slug
+                            : item.slug.startsWith('food/')
+                                ? `/${item.slug}`
+                                : `/food/${item.slug}`;
 
-                            <p className="flex items-center flex-wrap text-[11px] sm:text-sm text-white/60 gap-0.5">
-                                {item.location}
-                                <LuDot />
-                                {item.distance}
-                                <LuDot />
-                                {item.opens}
-                            </p>
+                        return (
+                            <div key={i} className="min-w-full flex flex-col gap-3 px-4 py-4 sm:px-5 sm:py-5 text-white">
+                                <h2 className="font-mono text-base sm:text-xl font-medium leading-snug">
+                                    {item.name}{" "}
+                                    <i className="text-lime not-italic">— {item.tagline}</i>
+                                </h2>
 
-                            <div className="flex gap-2 flex-wrap">
-                                {item.tags.map((tag) => (
-                                    <span
-                                        key={tag}
-                                        className="border border-white/25 rounded-full px-2.5 py-0.5 text-xs text-white/80"
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
-                                <span className="border border-white/25 rounded-full px-2.5 py-0.5 text-xs text-white/80 flex items-center gap-1">
-                                    ★ {item.rating}
-                                </span>
-                            </div>
+                                <p className="flex items-center flex-wrap text-[11px] sm:text-sm text-white/60 gap-0.5">
+                                    {item.location}
+                                    <LuDot />
+                                    {item.distance}
+                                    <LuDot />
+                                    {item.opens}
+                                </p>
 
-                            <div className="flex items-end justify-between mt-1">
-                                <div className="flex flex-col">
-                                    <span className="text-xs text-white/50">From</span>
-                                    <span className="font-bold text-xl sm:text-2xl flex items-center">
-                                        <TbCurrencyNaira className="text-2xl sm:text-3xl" />
-                                        {item.fromPrice.toLocaleString()}
+                                <div className="flex gap-2 flex-wrap">
+                                    {item.tags.map((tag) => (
+                                        <span
+                                            key={tag}
+                                            className="border border-white/25 rounded-full px-2.5 py-0.5 text-xs text-white/80"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
+                                    <span className="border border-white/25 rounded-full px-2.5 py-0.5 text-xs text-white/80 flex items-center gap-1">
+                                        ★ {item.rating}
                                     </span>
                                 </div>
 
-                                <div className="flex items-center gap-2">
-                                    {items.length > 1 && (
-                                        <div className="hidden sm:flex gap-1.5">
-                                            <button
-                                                onClick={() => goTo("prev")}
-                                                className="w-8 h-8 rounded-full border border-white/25 flex items-center justify-center text-white hover:bg-white/10 transition cursor-pointer text-sm"
-                                                aria-label="Previous"
-                                            >
-                                                ←
-                                            </button>
+                                <div className="flex items-end justify-between mt-1">
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-white/50">From</span>
+                                        <span className="font-bold text-xl sm:text-2xl flex items-center">
+                                            <TbCurrencyNaira className="text-2xl sm:text-3xl" />
+                                            {item.fromPrice.toLocaleString()}
+                                        </span>
+                                    </div>
 
-                                            <button
-                                                onClick={() => goTo("next")}
-                                                className="w-8 h-8 rounded-full border border-white/25 flex items-center justify-center text-white hover:bg-white/10 transition cursor-pointer text-sm"
-                                                aria-label="Next"
-                                            >
-                                                →
-                                            </button>
-                                        </div>
-                                    )}
+                                    <div className="flex items-center gap-2">
+                                        {items.length > 1 && (
+                                            <div className="hidden sm:flex gap-1.5">
+                                                <button
+                                                    onClick={() => goTo("prev")}
+                                                    className="w-8 h-8 rounded-full border border-white/25 flex items-center justify-center text-white hover:bg-white/10 transition cursor-pointer text-sm"
+                                                    aria-label="Previous"
+                                                >
+                                                    ←
+                                                </button>
 
-                                    <Link
-                                        href={`/food/${item.slug}`}
-                                        className="flex items-center gap-2 bg-lime text-ink font-bold font-mono text-sm px-4 py-2 rounded-xl border border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:opacity-90 transition"
-                                    >
-                                        Order now{" "}
-                                        <MoveRight strokeWidth={3} width={14} height={14} />
-                                    </Link>
+                                                <button
+                                                    onClick={() => goTo("next")}
+                                                    className="w-8 h-8 rounded-full border border-white/25 flex items-center justify-center text-white hover:bg-white/10 transition cursor-pointer text-sm"
+                                                    aria-label="Next"
+                                                >
+                                                    →
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        <Link
+                                            href={targetHref}
+                                            className="flex items-center gap-2 bg-lime text-ink font-bold font-mono text-sm px-4 py-2 rounded-xl border border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:opacity-90 transition"
+                                        >
+                                            Order now{" "}
+                                            <MoveRight strokeWidth={3} width={14} height={14} />
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </div>

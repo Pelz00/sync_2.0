@@ -1,12 +1,4 @@
-/**
- * ServicesDock - the persistent module nav across Sync.
- *
- * Desktop (md+): a horizontal pill rail between the header and content, with a
- * location chip on the right.
- * Mobile (<md): a native-app-style fixed bottom tab bar (Home / Browse / role
- * tabs). "Browse" opens a bottom sheet with every module in a grid + the area
- * picker. Account tabs adapt to the signed-in role. Replaces MobileBottomNav.
- */
+// components/ServicesDock.tsx
 'use client';
 
 import { useState } from 'react';
@@ -24,8 +16,11 @@ import {
   LogIn,
   MapPin,
   MessageCircle,
+  Search,
   User,
+  UtensilsCrossed,
 } from 'lucide-react';
+
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { MODULES } from '@/config/modules';
 import { MALETE_AREAS } from '@/mock/around';
@@ -36,12 +31,12 @@ type Role = 'student' | 'vendor' | 'admin';
 
 interface ServicesDockProps {
   location?: string;
-  /** Signed-in role - drives the mobile bottom-bar account tabs. */
   role?: Role;
 }
 
 export function ServicesDock({ location = MALETE_AREAS[0], role }: ServicesDockProps) {
   const pathname = usePathname();
+  const isFood = pathname.startsWith('/food');
   const [open, setOpen] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const shared = useOptionalLocation();
@@ -49,26 +44,53 @@ export function ServicesDock({ location = MALETE_AREAS[0], role }: ServicesDockP
   const selected = shared ? shared.area : localArea;
   const setSelected = shared ? shared.setArea : setLocalArea;
 
-  const isActive = (slug: string) => pathname === `/${slug}` || pathname?.startsWith(`/${slug}/`);
-  const onModule = MODULES.some((m) => m.slug !== 'around' && isActive(m.slug));
+  const isActive = (path: string) => {
+    const target = path.startsWith('/') ? path : `/${path}`;
+    if (target === '/food' || target === '/around') {
+      return pathname === target;
+    }
+    return pathname === target || pathname?.startsWith(`${target}/`);
+  };
 
-  // Account tabs adapt to role (the only access difference between users).
-  const accountTabs: { href: string; label: string; icon: LucideIcon; badge?: number }[] =
-    role === 'vendor'
+  const onModule = MODULES.some((m) => m.slug !== 'around' && m.slug !== 'food' && isActive(m.slug));
+
+  const FOOD_CATEGORIES = [
+    'Jollof',
+    'Swallow',
+    'Fast Food',
+    'Breakfast',
+    'Drinks',
+    'Dessert',
+  ];
+
+  const accountTabs: {
+    href: string;
+    label: string;
+    icon: LucideIcon;
+    badge?: number;
+  }[] =
+    isFood
       ? [
-          { href: '/vendor/orders', label: 'Orders', icon: ClipboardList },
-          { href: '/vendor/inbox', label: 'Inbox', icon: MessageCircle, badge: 2 },
-          { href: '/vendor', label: 'You', icon: LayoutDashboard },
+          { href: '/food/search',    label: 'Search',    icon: Search },
+          { href: '/food/orders',    label: 'Orders',    icon: ClipboardList },
+          { href: '/food/favorites', label: 'Saved',     icon: Heart },
+          { href: '/me',             label: 'You',       icon: User },
         ]
-      : role === 'admin'
-        ? [{ href: '/admin', label: 'Admin', icon: LayoutDashboard }]
-        : role === 'student'
-          ? [
-              { href: '/me/saved', label: 'Saved', icon: Heart },
-              { href: '/me/messages', label: 'Chats', icon: MessageCircle, badge: 3 },
-              { href: '/me', label: 'You', icon: User },
-            ]
-          : [{ href: '/login', label: 'Sign in', icon: LogIn }];
+      : role === 'vendor'
+        ? [
+            { href: '/vendor/orders', label: 'Orders',  icon: ClipboardList },
+            { href: '/vendor/inbox',  label: 'Inbox',   icon: MessageCircle, badge: 2 },
+            { href: '/vendor',        label: 'You',     icon: LayoutDashboard },
+          ]
+        : role === 'admin'
+          ? [{ href: '/admin', label: 'Admin', icon: LayoutDashboard }]
+          : role === 'student'
+            ? [
+                { href: '/me/saved',    label: 'Saved',  icon: Heart },
+                { href: '/me/messages', label: 'Chats',  icon: MessageCircle, badge: 3 },
+                { href: '/me',          label: 'You',    icon: User },
+              ]
+            : [{ href: '/login', label: 'Sign in', icon: LogIn }];
 
   const tabCount = 2 + accountTabs.length;
 
@@ -168,14 +190,23 @@ export function ServicesDock({ location = MALETE_AREAS[0], role }: ServicesDockP
           className="bg-panel border-line/10 fixed inset-x-0 bottom-0 z-40 grid h-16 border-t md:hidden"
           style={{ gridTemplateColumns: `repeat(${tabCount}, minmax(0, 1fr))` }}
         >
-          <TabLink href="/around" label="Home" icon={Compass} active={pathname === '/around'} />
+          {/* Home tab */}
+          <TabLink
+            href={isFood ? '/food' : '/around'}
+            label="Home"
+            icon={isFood ? UtensilsCrossed : Compass}
+            active={isFood ? pathname === '/food' : pathname === '/around'}
+          />
 
-          <SheetTrigger asChild>
-            <button type="button" className={tabClass(onModule)}>
-              <TabIcon icon={LayoutGrid} active={onModule} />
-              <span>Browse</span>
-            </button>
-          </SheetTrigger>
+          {/* Browse sheet trigger — hidden when in food (food has Search instead) */}
+          {!isFood && (
+            <SheetTrigger asChild>
+              <button type="button" className={tabClass(onModule)}>
+                <TabIcon icon={LayoutGrid} active={onModule} />
+                <span>Browse</span>
+              </button>
+            </SheetTrigger>
+          )}
 
           {accountTabs.map((t) => (
             <TabLink
@@ -184,14 +215,17 @@ export function ServicesDock({ location = MALETE_AREAS[0], role }: ServicesDockP
               label={t.label}
               icon={t.icon}
               badge={t.badge}
-              active={isActive(t.href.replace(/^\//, ''))}
+              active={isActive(t.href)}
             />
           ))}
         </nav>
 
+        {/* Browse sheet — only relevant outside food */}
         <SheetContent side="bottom" className="rounded-t-2xl">
           <SheetHeader>
-            <SheetTitle className="font-display text-content text-lg">Browse Sync</SheetTitle>
+            <SheetTitle className="font-display text-content text-lg">
+              Browse Sync
+            </SheetTitle>
           </SheetHeader>
 
           <div className="grid grid-cols-3 gap-3 px-4">
@@ -210,8 +244,8 @@ export function ServicesDock({ location = MALETE_AREAS[0], role }: ServicesDockP
                       : 'border-line/10 text-content hover:bg-ink/5',
                   )}
                 >
-                  <Icon className="h-5 w-5" aria-hidden="true" />
-                  <span className="leading-tight">{label}</span>
+                  <Icon className="h-5 w-5" />
+                  <span>{label}</span>
                 </Link>
               );
             })}
@@ -257,7 +291,7 @@ function tabClass(active: boolean) {
 function TabIcon({ icon: Icon, active, badge }: { icon: LucideIcon; active: boolean; badge?: number }) {
   return (
     <span className="relative">
-      <Icon className={cn('h-5 w-5', active && 'text-lime-deep')} aria-hidden="true" />
+      <Icon className={cn('h-5 w-5', active && 'text-lime-deep dark:text-lime')} aria-hidden="true" />
       {badge ? (
         <span className="bg-lime text-ink absolute -top-1.5 -right-2 inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold">
           {badge > 99 ? '99+' : badge}
