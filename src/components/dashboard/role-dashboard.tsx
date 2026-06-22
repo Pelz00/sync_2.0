@@ -11,29 +11,46 @@
  */
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ChevronDown, Dot } from 'lucide-react';
-import {
-  Avatar,
-  AvatarFallback,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui';
+import { ArrowRight, Dot, Wallet, ShoppingBag, Star, AlertTriangle } from 'lucide-react';
+import { Avatar, AvatarFallback, Badge, Button } from '@/components/ui';
 import type { LucideIcon } from 'lucide-react';
 import { getDashboardProfile } from '@/components/layouts/dashboard-profile';
 import { DASHBOARD_CONTENT, type DashboardVariant } from '@/config/dashboard-content';
-import { RevenueBarChart, type RevenueDatum } from './revenue-bar-chart';
-import { PendingRequestList, type PendingRequestItem } from './pending-request-card';
+
+import { CustomCard } from '../shared/card';
+import { RevenueDatum } from './revenue-bar-chart';
+import { RevenueChartPanel } from './revenue-chart-panel';
+import { PendingRequestItem, PendingRequestList } from './pending-request-card';
 
 export interface DashboardKpi {
   label: string;
   value: string;
   sub: string;
   icon?: LucideIcon;
+  iconBg?: string;
+}
+
+/**
+ * Presentation-only lookup: maps a KPI's label to the icon + badge tint
+ * shown in its CustomCard. Never sourced from the database — the backend
+ * only ever needs to send { label, value, sub }. Add an entry here whenever
+ * a new KPI label is introduced; unmatched labels simply render without a
+ * badge (CustomCard already handles icon/iconBg being undefined).
+ */
+const KPI_STYLE: Record<string, { icon: LucideIcon; iconBg: string }> = {
+  'Total Revenue': { icon: Wallet, iconBg: 'bg-emerald-100' },
+  Orders: { icon: ShoppingBag, iconBg: 'bg-blue-100' },
+  'Store Rating': { icon: Star, iconBg: 'bg-amber-100' },
+  'Stock Alerts': { icon: AlertTriangle, iconBg: 'bg-red-100' },
+};
+
+function withKpiStyle(kpi: DashboardKpi): DashboardKpi {
+  const style = KPI_STYLE[kpi.label];
+  return {
+    ...kpi,
+    icon: kpi.icon ?? style?.icon,
+    iconBg: kpi.iconBg ?? style?.iconBg,
+  };
 }
 
 interface RoleDashboardProps {
@@ -42,6 +59,7 @@ interface RoleDashboardProps {
   count: number;
   kpis: DashboardKpi[];
   pending: PendingRequestItem[];
+  /** Initial chart data, shown for the "weekly" period on first paint. */
   chart: RevenueDatum[];
   /** Role-specific lower sections (e.g. products & earnings, or hostels). */
   children?: ReactNode;
@@ -61,6 +79,7 @@ export async function RoleDashboard({
   const storeName = profile.metaValue;
   const { lead, accent } = content.headline(count);
   const ActionIcon = content.action?.icon;
+  const styledKpis = kpis.map(withKpiStyle);
 
   return (
     <section className="flex flex-col gap-3">
@@ -69,26 +88,26 @@ export async function RoleDashboard({
         {storeName ? ` . ${storeName.toUpperCase()}` : ''}
       </h1>
 
-      <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-section text-content font-display mt-2 font-medium">
-          {lead} <span className="text-lime-deep">{accent}</span>
-        </h2>
-        <div>
-          <div className="flex items-center gap-3">
-            <Badge
-              variant="accent"
-              className="border-line flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
-            >
-              <Dot size={20} />
-              {verified ? profile.eyebrow : content.unverifiedBadge}
-            </Badge>
-            <Avatar className="size-10">
-              <AvatarFallback>{profile.initial}</AvatarFallback>
-            </Avatar>
-          </div>
+      <div className="w-full flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <Badge
+            variant="accent"
+            className="border-line/50 flex items-center self-start border whitespace-normal sm:self-auto sm:whitespace-nowrap"
+          >
+            <span className="relative inline-flex items-center justify-center">
+              <Dot size={20} className="relative z-10" />
+              <Dot size={20} className="absolute animate-ping opacity-75" />
+            </span>
+            {verified ? profile.eyebrow : content.unverifiedBadge}
+          </Badge>
+        </div>
+        <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
+          <h2 className="text-section text-content font-display mt-2 font-medium md:mt-0">
+            {lead} <span className="text-lime-deep">{accent}</span>
+          </h2>
           {content.action && (
             <Link href={content.action.href}>
-              <Button className="mt-4 flex items-center gap-2">
+              <Button className="mt-4 flex items-center justify-end gap-2 md:mt-0 md:justify-start">
                 {ActionIcon && <ActionIcon />}
                 {content.action.label}
               </Button>
@@ -99,21 +118,16 @@ export async function RoleDashboard({
 
       {/* KPI cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
-        {kpis.map(({ label, value, sub, icon: Icon }) => (
-          <Card key={label} className="border-line/10 bg-transparent shadow-2xl">
-            <CardHeader>
-              <CardTitle className="text-content-muted font-mono tracking-wide">{label}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-section font-body text-3xl font-bold">
-              <p>{value}</p>
-              <CardDescription className="mt-3.5 border-transparent">
-                <span className="text-lime-deep font-body flex items-center gap-1 text-sm font-medium">
-                  {Icon && <Icon className="size-3.75" />}
-                  {sub}
-                </span>
-              </CardDescription>
-            </CardContent>
-          </Card>
+        {styledKpis.map(({ label, value, sub, icon: Icon, iconBg }) => (
+          <CustomCard
+            key={label}
+            className="border-line/10 shadow-2xl"
+            label={label}
+            value={value}
+            subtext={sub}
+            icon={Icon && <Icon className="h-5 w-5" />}
+            iconBg={iconBg}
+          />
         ))}
       </div>
 
@@ -140,23 +154,7 @@ export async function RoleDashboard({
           </div>
 
           <div className="flex-1">
-            <Card className="border-cream-deep mb-4 h-full border bg-transparent">
-              <CardHeader>
-                <CardTitle className="text-content-muted flex items-center justify-between font-mono tracking-wide">
-                  <p>REVENUE . LAST 12 WEEKS</p>
-                  <Button
-                    variant="outline"
-                    className="text-content-muted mt-2 flex items-center gap-1 border-transparent font-light"
-                  >
-                    Weekly
-                    <ChevronDown className="size-3.75" />
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <RevenueBarChart data={chart} />
-              </CardContent>
-            </Card>
+            <RevenueChartPanel initialData={chart} initialPeriod="weekly" />
           </div>
         </div>
       </section>
