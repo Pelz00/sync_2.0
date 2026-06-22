@@ -32,6 +32,9 @@ interface Props {
 
 const SYNC_FEE = 150
 const DELIVERY_FEE = 300
+// Height of the sticky header(s) above this component (AppShell's
+// MarketingHeader + ServicesDock + search row). Adjust to match your real
+// stacked header height in px so the tabs sit just below it, not under it.
 const NAV_H = 80
 
 type MobileView = "menu" | "item" | "cart"
@@ -46,7 +49,6 @@ export default function VendorClient({
     const [modalQty, setModalQty] = useState(1)
     const [storeInfoOpen, setStoreInfoOpen] = useState(false)
 
-    // Mobile-only full-screen views
     const [mobileView, setMobileView] = useState<MobileView>("menu")
     const [mobileSelectedItem, setMobileSelectedItem] = useState<MenuItem | null>(null)
     const [mobileItemQty, setMobileItemQty] = useState(1)
@@ -57,14 +59,12 @@ export default function VendorClient({
     const total = cart.length > 0 ? subtotal + DELIVERY_FEE + SYNC_FEE : 0
     const totalItems = cart.reduce((acc, i) => acc + i.qty, 0)
 
-    // Lock body scroll on mobile full-screen views
     useEffect(() => {
         if (mobileView !== "menu") document.body.style.overflow = "hidden"
         else document.body.style.overflow = ""
         return () => { document.body.style.overflow = "" }
     }, [mobileView])
 
-    // ── cart helpers ─────────────────────────────────────────────────────
     function getQty(id: string) { return cart.find(i => i.id === id)?.qty ?? 0 }
 
     function addOne(item: { id: string; name: string; price: number; image: StaticImageData | string }) {
@@ -119,12 +119,13 @@ export default function VendorClient({
         const el = document.getElementById(`sec-${title}`)
         if (!el) return
         isScrollingRef.current = true
-        const top = el.getBoundingClientRect().top + window.scrollY - NAV_H - 16
+        // Offset by NAV_H (sticky header) + the tab bar's own height so the
+        // section title lands just below the sticky tabs, not under them.
+        const top = el.getBoundingClientRect().top + window.scrollY - (NAV_H + 48) - 16
         window.scrollTo({ top, behavior: "smooth" })
         setTimeout(() => { isScrollingRef.current = false }, 900)
     }
 
-    // ── desktop modal ────────────────────────────────────────────────────
     function openDesktopModal(item: MenuItem) { setModalItem(item); setModalQty(1) }
     function closeModal() { setModalItem(null) }
 
@@ -138,7 +139,6 @@ export default function VendorClient({
         closeModal()
     }
 
-    // ── mobile item detail ───────────────────────────────────────────────
     function openMobileItem(item: MenuItem) {
         setMobileSelectedItem(item)
         setMobileItemQty(1)
@@ -155,7 +155,6 @@ export default function VendorClient({
         setMobileView("menu")
     }
 
-    // ── shared vendor header ─────────────────────────────────────────────
     const VendorHeader = () => (
         <>
             <div className="relative w-full h-48 sm:h-60 lg:h-72 rounded-xl overflow-hidden">
@@ -201,7 +200,6 @@ export default function VendorClient({
         </>
     )
 
-    // ── menu sections ────────────────────────────────────────────────────
     const MenuSections = ({ mobile }: { mobile: boolean }) => (
         <div className={`flex flex-col gap-6 ${mobile ? "pb-28" : "pb-8"}`}>
             {menu.map(section => (
@@ -230,7 +228,6 @@ export default function VendorClient({
                                             </div>
                                             <div className="flex justify-end mt-2">
                                                 {mobile ? (
-                                                    /* Mobile: tap + opens full-screen item detail */
                                                     qty === 0 ? (
                                                         <button
                                                             onClick={() => openMobileItem(item)}
@@ -256,7 +253,6 @@ export default function VendorClient({
                                                         </div>
                                                     )
                                                 ) : (
-                                                    /* Desktop: opens modal */
                                                     <button
                                                         onClick={() => openDesktopModal(item)}
                                                         className="w-8 h-8 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition-colors cursor-pointer"
@@ -269,7 +265,6 @@ export default function VendorClient({
                                         </div>
                                     </div>
 
-                                    {/* Mobile inline cart row */}
                                     {mobile && cartItem && (
                                         <div className={`flex items-center justify-between px-3 py-2.5 bg-surface-deep ${!isLast ? "border-b border-content-muted/20" : ""}`}>
                                             <p className="text-xs font-medium text-content truncate flex-1 mr-2">{cartItem.name}</p>
@@ -302,7 +297,6 @@ export default function VendorClient({
         </div>
     )
 
-    // ── MOBILE: full-screen item detail ──────────────────────────────────
     const MobileItemView = () => {
         if (!mobileSelectedItem) return null
         return (
@@ -348,7 +342,6 @@ export default function VendorClient({
                     </div>
                 </div>
 
-                {/* Sticky CTA */}
                 <div className="sticky bottom-0 p-4 bg-panel border-t border-content-muted/20">
                     <button
                         onClick={addToCartFromMobileItem}
@@ -365,10 +358,8 @@ export default function VendorClient({
         )
     }
 
-    // ── MOBILE: full-screen cart page ────────────────────────────────────
     const MobileCartView = () => (
         <div className="fixed inset-0 z-50 bg-panel flex flex-col">
-            {/* Header */}
             <div className="flex items-center gap-3 px-4 py-4 border-b border-content-muted/20 flex-shrink-0">
                 <button
                     onClick={() => setMobileView("menu")}
@@ -387,7 +378,6 @@ export default function VendorClient({
                 )}
             </div>
 
-            {/* Scrollable content */}
             <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
                 {cart.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 gap-4">
@@ -403,7 +393,6 @@ export default function VendorClient({
                             <span className="font-bold text-content">{vendorName}</span>
                         </p>
 
-                        {/* Cart items */}
                         <div className="flex flex-col gap-3">
                             {cart.map(item => (
                                 <div key={item.id} className="flex items-center gap-3 border border-content-muted/20 rounded-xl p-3">
@@ -442,7 +431,6 @@ export default function VendorClient({
                             + Add more items
                         </button>
 
-                        {/* Fee breakdown */}
                         <div className="border border-content-muted/20 rounded-xl overflow-hidden">
                             <div className="flex flex-col divide-y divide-content-muted/10">
                                 {([["Subtotal", subtotal], ["Delivery fee", DELIVERY_FEE], ["Sync fee", SYNC_FEE]] as [string, number][]).map(([label, val]) => (
@@ -461,7 +449,6 @@ export default function VendorClient({
                 )}
             </div>
 
-            {/* Sticky checkout CTA */}
             {cart.length > 0 && (
                 <div className="flex-shrink-0 p-4 bg-panel border-t border-content-muted/20">
                     <button className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5">
@@ -483,8 +470,16 @@ export default function VendorClient({
             <div className="block sm:hidden">
                 <VendorHeader />
 
-                {/* Sticky horizontal tabs */}
-                <div className="sticky top-0 z-20 bg-surface/95 backdrop-blur-sm border-b border-content-muted/20 flex overflow-x-auto scrollbar-none mt-2">
+                {/* Sticky horizontal tabs — offset by NAV_H so it sits just
+                    below AppShell's own sticky header instead of fighting it
+                    for the same `top: 0` spot. Two stacked sticky elements
+                    with `top-0` collide; this one needs to "start" sticking
+                    only once it reaches the bottom edge of the header above
+                    it, which is what `top: NAV_H` achieves. */}
+                <div
+                    className="sticky z-20 bg-surface/95 backdrop-blur-sm border-b border-content-muted/20 flex overflow-x-auto scrollbar-none"
+                    style={{ top: NAV_H }}
+                >
                     {menu.map(s => (
                         <button
                             key={s.title}
@@ -511,7 +506,6 @@ export default function VendorClient({
                 <div className="w-full lg:w-[65%] min-w-0">
                     <VendorHeader />
                     <div className="flex gap-4 mt-4">
-                        {/* Left sticky category nav */}
                         <nav className="flex flex-col gap-1 w-32 flex-shrink-0 self-start" style={{ position: "sticky", top: NAV_H + 16 }}>
                             {menu.map(s => (
                                 <button
@@ -533,7 +527,6 @@ export default function VendorClient({
                     </div>
                 </div>
 
-                {/* Right sticky cart */}
                 <div
                     className="hidden lg:flex flex-col w-[35%] flex-shrink-0 border border-content-muted/20 rounded-lg bg-panel shadow-sm overflow-hidden"
                     style={{ position: "sticky", top: NAV_H + 16, height: `calc(100vh - ${NAV_H + 32}px)` }}
@@ -593,7 +586,6 @@ export default function VendorClient({
                 </div>
             </div>
 
-            {/* Mobile sticky "Go to cart" bar */}
             {cart.length > 0 && mobileView === "menu" && (
                 <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-panel/95 backdrop-blur-sm border-t border-content-muted/20 px-4 py-3">
                     <button
@@ -609,11 +601,9 @@ export default function VendorClient({
                 </div>
             )}
 
-            {/* Mobile full-screen views */}
             {mobileView === "item" && <MobileItemView />}
             {mobileView === "cart" && <MobileCartView />}
 
-            {/* Desktop modal */}
             {modalItem && (
                 <div
                     className="fixed inset-0 z-50 bg-black/60 hidden sm:flex items-center justify-center px-4"
@@ -647,7 +637,6 @@ export default function VendorClient({
                 </div>
             )}
 
-            {/* Store info modal */}
             {storeInfoOpen && (
                 <StoreInfoModal
                     vendorName={vendorName}
