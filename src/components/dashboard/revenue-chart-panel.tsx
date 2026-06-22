@@ -38,6 +38,11 @@ export function RevenueChartPanel({
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const fetchRevenueRef = useRef(fetchRevenue);
+
+  useEffect(() => {
+    fetchRevenueRef.current = fetchRevenue;
+  }, [fetchRevenue]);
 
   // Close the dropdown on outside click.
   useEffect(() => {
@@ -60,7 +65,8 @@ export function RevenueChartPanel({
     }
     let cancelled = false;
     setLoading(true);
-    fetchRevenue(period)
+    fetchRevenueRef
+      .current(period)
       .then((result) => {
         if (!cancelled) setData(result);
       })
@@ -73,7 +79,7 @@ export function RevenueChartPanel({
     return () => {
       cancelled = true;
     };
-  }, [period, fetchRevenue]);
+  }, [period]);
 
   const config = getPeriodConfig(period);
   const currentLabel = REVENUE_PERIODS.find((p) => p.value === period)?.label ?? 'Weekly';

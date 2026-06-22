@@ -55,11 +55,11 @@ export function CustomCard({
             <span className="font-display text-content text-2xl font-semibold">{value}</span>
           )}
           {subtext && (
-            <span className={cn('text-lime-deep flex items-center gap-1 text-xs', textClass)}>
+            <span className={cn('flex items-center gap-1 text-xs', textClass)}>
               {Icon && <Icon className="h-3 w-3" />}
               {subtext}
             </span>
-          )}
+          )}{' '}
           {children}
         </div>
 

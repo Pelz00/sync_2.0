@@ -12,7 +12,7 @@ export const REVENUE_PERIODS = [
   { value: 'monthly', label: 'Monthly', title: 'REVENUE · LAST 12 MONTHS', unit: 'month' },
   { value: '3m', label: '3 Months', title: 'REVENUE · LAST 3 MONTHS', unit: 'week' },
   { value: '6m', label: '6 Months', title: 'REVENUE · LAST 6 MONTHS', unit: 'month' },
-  { value: 'yearly', label: '12 Months', title: 'REVENUE · LAST 12 MONTHS', unit: 'month' },
+  { value: 'yearly', label: '12 Months', title: 'REVENUE · LAST YEAR', unit: 'month' },
   { value: 'all', label: 'All Time', title: 'REVENUE · ALL TIME', unit: 'year' },
 ] as const;
 
