@@ -52,8 +52,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   if (!event) {
     return (
       <section className="flex flex-col gap-3">
-        <p className="text-muted text-sm">Event not found.</p>
-        <Link href="/events" className="flex items-center border-1 w-fit px-2 py-1 rounded-lg bg-[#C5FF4A] text-sm">
+        <p className="text-content-muted text-sm">Event not found.</p>
+        <Link href="/events" className="flex items-center border border-line/15 w-fit px-2 py-1 rounded-lg bg-lime text-ink text-sm">
           <ArrowLeft strokeWidth={1} width={16} /> Back to events
         </Link>
       </section>
@@ -68,10 +68,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   return (
     <section className="flex flex-col gap-3">
-      <p className="eyebrow text-lime-deep">/events/{slug}</p>
+      <p className="eyebrow text-lime-deep dark:text-lime">/events/{slug}</p>
 
       <main>
-        <Link href="/events" className="flex items-center border-1 font-mono font-medium w-fit px-2 py-1 rounded-lg bg-[#C5FF4A] text-sm cursor-pointer shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+        <Link href="/events" className="flex items-center border border-ink/20 font-mono font-medium w-fit px-2 py-1 rounded-lg bg-lime text-ink text-sm cursor-pointer shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
           <ArrowLeft strokeWidth={2} width={15} /> Events
         </Link>
 
@@ -84,34 +84,34 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             </div>
 
             <div className="mt-5 flex items-center gap-2">
-              <div className="flex items-center rounded-xl w-fit px-2 py-[2px] bg-[#C5FF4A] text-[10px]">
+              <div className="flex items-center rounded-xl w-fit px-2 py-[2px] bg-lime text-ink text-[10px]">
                 <GoDotFill className="animate-pulse" /> Tonight <LuDot /> 8:00pm
               </div>
               {event.tags.map(tag => (
-                <div key={tag} className="border-1 rounded-xl px-2 py-[1px] text-[10px]">{tag}</div>
+                <div key={tag} className="border border-line/20 text-content rounded-xl px-2 py-[1px] text-[10px]">{tag}</div>
               ))}
             </div>
 
-            <h1 className="text-2xl mt-[6px] lg:text-[44px]">{event.title}</h1>
+            <h1 className="text-2xl mt-[6px] lg:text-[44px] text-content">{event.title}</h1>
 
-            <p className="flex text-[10px] lg:text-[16px] items-center">
+            <p className="flex text-[10px] lg:text-[16px] items-center text-content-muted">
               {event.location} <LuDot /> doors {event.time}
             </p>
 
-            <div className="border-y-1 mt-3 py-2">
-              <h1 className="font-bold">About</h1>
-              <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque cum nihil facilis sit cupiditate vitae nesciunt reiciendis animi quasi error autem vero tempore fugiat molestiae quos eos, accusamus velit excepturi?
+            <div className="border-y border-line/15 mt-3 py-2">
+              <h1 className="font-bold text-content">About</h1>
+              <p className="text-content-muted">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque cum nihil facilis sit cupiditate vitae nesciunt reiciendis animi quasi error autem vero tempore fugiat molestiae quos eos, accusamus velit excepturi?
                 Enim adipisci fugiat pariatur officiis vitae ratione a consectetur odit dignissimos debitis. Odit a, architecto ipsam vitae sequi veniam. Iste tempora molestias optio. At laborum quasi cumque quaerat nesciunt placeat.</p>
             </div>
 
-            <div className="mt-2 py-2 border-b-1">
-              <h1 className="font-bold">Line Up</h1>
+            <div className="mt-2 py-2 border-b border-line/15">
+              <h1 className="font-bold text-content">Line Up</h1>
               <div className="flex mt-2 flex-col lg:flex-row gap-2">
                 {lineup.map((artist) => (
-                  <div key={artist.name} className="flex w-full lg:w-[30%] rounded-lg p-2 items-center gap-2 shadow-lg bg-white">
+                  <div key={artist.name} className="flex w-full lg:w-[30%] rounded-lg p-2 items-center gap-2 shadow-card bg-panel">
 
                     {/* Circle image — position relative + overflow hidden is the key */}
-                    <div className="relative h-10 w-10 rounded-full overflow-hidden flex-shrink-0 border-1">
+                    <div className="relative h-10 w-10 rounded-full overflow-hidden flex-shrink-0 border border-line/15">
                       <Image
                         src={artist.image}
                         alt={artist.name}
@@ -121,8 +121,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                     </div>
 
                     <div>
-                      <h1 className="font-bold">{artist.name}</h1>
-                      <p className="text-sm text-muted">{artist.role}</p>
+                      <h1 className="font-bold text-content">{artist.name}</h1>
+                      <p className="text-sm text-content-muted">{artist.role}</p>
                     </div>
                   </div>
                 ))}
