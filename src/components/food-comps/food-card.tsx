@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import Image, { StaticImageData } from "next/image"
 import Link from "next/link"
 import { Star, AlarmClock, MapPin, Bike, Dot, Heart } from "lucide-react"
@@ -9,6 +12,7 @@ import {
     CardContent,
     CardFooter,
 } from "@/components/ui/card"
+import { useOptionalFavorites, type FavoriteFood } from "@/app/(app)/food/favorites-context"
 
 type VendorStatus = "open" | "closed" | "delivery-only"
 
@@ -21,6 +25,7 @@ interface FoodCardProps {
     reviewCount?: number
     location: string
     time: string
+    category?: string
     isFree?: boolean
     deliveryTime?: string
     discount?: string
@@ -31,18 +36,15 @@ interface FoodCardProps {
 const statusConfig: Record<VendorStatus, { label: string; className: string }> = {
     open: {
         label: "Open",
-        className:
-            "bg-lime-100 text-lime-deep border border-lime-300 dark:border-line/10",
+        className: "bg-lime-100 text-lime-deep border border-lime-300 dark:border-line/10",
     },
     closed: {
         label: "Closed",
-        className:
-            "bg-red-100 text-red-700 border border-red-300 dark:border-line/10",
+        className: "bg-red-100 text-red-700 border border-red-300 dark:border-line/10",
     },
     "delivery-only": {
         label: "Delivery only",
-        className:
-            "bg-blue-100 text-blue-700 border border-blue-300 dark:border-line/10",
+        className: "bg-blue-100 text-blue-700 border border-blue-300 dark:border-line/10",
     },
 }
 
@@ -55,6 +57,7 @@ export default function FoodCards({
     reviewCount,
     location,
     time,
+    category,
     isFree,
     deliveryTime,
     discount,
@@ -63,8 +66,66 @@ export default function FoodCards({
 }: FoodCardProps) {
     const { label, className } = statusConfig[status]
 
+    // Shared favorites state (persists + powers the Saved page).
+    // Falls back to local-only state if no FavoritesProvider is mounted,
+    // so this component never breaks if used outside /food.
+    const favorites = useOptionalFavorites()
+    const [localFavourited, setLocalFavourited] = useState(false)
+    const isFavourited = favorites ? favorites.isFavorite(slug) : localFavourited
+
+    const [toast, setToast] = useState<"added" | "removed" | null>(null)
+
+    function toggleFavourite() {
+        let next: boolean
+
+        if (favorites) {
+            const item: FavoriteFood = {
+                slug,
+                image,
+                name,
+                tags,
+                rating,
+                reviewCount,
+                location,
+                time,
+                category,
+                isFree,
+                deliveryTime,
+                discount,
+                status,
+            }
+            next = favorites.toggleFavorite(item)
+        } else {
+            next = !localFavourited
+            setLocalFavourited(next)
+        }
+
+        setToast(next ? "added" : "removed")
+        setTimeout(() => setToast(null), 2500)
+    }
+
     return (
-        <Card className="w-full h-fit bg-panel border border-line/10 shadow-card">
+        <Card className="w-full h-fit bg-panel border border-line/10 shadow-card relative">
+
+            {/* Toast notification */}
+            <div
+                className={`absolute top-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold shadow-md border transition-all duration-300 whitespace-nowrap
+                    ${toast
+                        ? "opacity-100 translate-y-0 pointer-events-none"
+                        : "opacity-0 -translate-y-2 pointer-events-none"
+                    }
+                    ${toast === "added"
+                        ? "bg-lime text-ink border-lime/40"
+                        : "bg-panel text-content-muted border-line/20"
+                    }`}
+            >
+                <Heart
+                    size={11}
+                    className={toast === "added" ? "fill-ink text-ink" : "text-content-muted"}
+                />
+                {toast === "added" ? "Added to favourites" : "Removed from favourites"}
+            </div>
+
             {/* Image */}
             <div className="relative w-full h-48">
                 {discount && (
@@ -75,9 +136,19 @@ export default function FoodCards({
 
                 <button
                     type="button"
-                    className="absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 cursor-pointer rounded-full bg-white shadow-md hover:scale-105 transition-transform"
+                    onClick={toggleFavourite}
+                    aria-label={isFavourited ? "Remove from favourites" : "Add to favourites"}
+                    aria-pressed={isFavourited}
+                    className="absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 cursor-pointer rounded-full bg-white shadow-md hover:scale-110 active:scale-95 transition-transform"
                 >
-                    <Heart size={18} className="text-green-700" strokeWidth={2} />
+                    <Heart
+                        size={18}
+                        strokeWidth={2}
+                        className={`transition-colors duration-200 ${isFavourited
+                            ? "fill-lime-deep text-lime-deep"
+                            : "text-green-700"
+                            }`}
+                    />
                 </button>
 
                 <Image src={image} alt={name} fill className="object-cover" />
@@ -87,12 +158,10 @@ export default function FoodCards({
             <CardHeader className="px-5 py-2">
                 <CardTitle className="flex items-center gap-3 text-xl text-content">
                     {name}
-
                     <span className={`${className} px-2 py-[0px] text-xs rounded-lg font-semibold whitespace-nowrap`}>
                         {label}
                     </span>
                 </CardTitle>
-
                 <CardDescription className="text-xs text-content-muted">
                     {tags.join(" · ")}
                 </CardDescription>
@@ -103,31 +172,16 @@ export default function FoodCards({
                 <p className="flex items-center gap-1">
                     <Star strokeWidth={1} width={18} height={15} color="gold" fill="gold" />
                     <span className="text-content font-medium">{rating}</span>
-
                     {reviewCount && (
-                        <span className="text-content-muted text-xs">
-                            ({reviewCount})
-                        </span>
+                        <span className="text-content-muted text-xs">({reviewCount})</span>
                     )}
                 </p>
-
                 <p className="flex items-center gap-1">
-                    <AlarmClock
-                        strokeWidth={2}
-                        width={18}
-                        height={15}
-                        className="text-accent-fg"
-                    />
+                    <AlarmClock strokeWidth={2} width={18} height={15} className="text-accent-fg" />
                     <span className="text-content">{time}</span>
                 </p>
-
                 <p className="flex items-center gap-1">
-                    <MapPin
-                        strokeWidth={2}
-                        width={18}
-                        height={15}
-                        className="text-warning"
-                    />
+                    <MapPin strokeWidth={2} width={18} height={15} className="text-warning" />
                     <span className="text-content">{location}</span>
                 </p>
             </CardContent>
@@ -146,7 +200,6 @@ export default function FoodCards({
                             Paid
                         </div>
                     )}
-
                     {deliveryTime && (
                         <>
                             <Dot />
