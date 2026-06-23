@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Card, CardContent } from '@/components/ui';
 import { EarningsSummary } from '@/mock/vendor';
+import Link from 'next/link';
 
 interface EarningsSummaryCardProps {
   data: EarningsSummary;
@@ -45,7 +46,9 @@ const EarningsSummaryCard = ({ data }: EarningsSummaryCardProps) => {
               </p>
             </div>
           ))}
-        <Button className="mt-2 w-full">View Details</Button>
+        <Link href="/dashboard/vendor/earnings">
+          <Button className="mt-2 w-full">View Details</Button>
+        </Link>
       </CardContent>
     </Card>
   );
