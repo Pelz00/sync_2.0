@@ -31,18 +31,18 @@ export function Newsletter() {
     <section className="bg-lime text-ink mt-20 w-full">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-16 md:flex-row md:items-center md:justify-between md:py-20">
         <div className="max-w-md">
-          <p className="eyebrow text-accent-fg">Stay in sync</p>
-          <h2 className="font-display mt-3 text-[32px] font-semibold leading-tight tracking-[-0.02em] md:text-[40px]">
+          <p className="eyebrow text-lime-deep">Stay in sync</p>
+          <h2 className="font-display text-ink mt-3 text-[32px] font-semibold leading-tight tracking-[-0.02em] md:text-[40px]">
             New spots, every week.
           </h2>
-          <p className="text-content/70 mt-3 text-sm">
+          <p className="text-ink/70 mt-3 text-sm">
             One short email: fresh verified hostels, what&rsquo;s on this weekend, and student-only
             deals around your campus.
           </p>
         </div>
 
         {done ? (
-          <p className="text-content inline-flex items-center gap-2 text-sm font-medium">
+          <p className="text-ink inline-flex items-center gap-2 text-sm font-medium">
             <span className="bg-ink text-lime flex h-6 w-6 items-center justify-center rounded-full">
               <Check className="h-3.5 w-3.5" strokeWidth={3} />
             </span>
@@ -64,8 +64,8 @@ export function Newsletter() {
                 Subscribe <ArrowRight />
               </Button>
             </div>
-            {error && <p className="text-content/80 mt-2 text-xs">{error}</p>}
-            <p className="text-content/60 mt-2 text-xs">No spam. Unsubscribe anytime.</p>
+            {error && <p className="text-ink/80 mt-2 text-xs">{error}</p>}
+            <p className="text-ink/60 mt-2 text-xs">No spam. Unsubscribe anytime.</p>
           </form>
         )}
       </div>

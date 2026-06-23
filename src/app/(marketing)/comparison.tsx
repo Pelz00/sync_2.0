@@ -23,11 +23,11 @@ const SYNC_WAY = [
 
 export function Comparison() {
   return (
-    <section className="px-6 pt-20">
+    <section className="px-6 pt-12">
       <div className="mx-auto max-w-7xl">
         <Reveal>
           <p className="eyebrow text-accent-fg">Why Sync</p>
-          <h2 className="font-display text-section text-foreground mt-2">The old way vs Syncing.</h2>
+          <h2 className="font-display text-section text-foreground mt-2 whitespace-nowrap capitalize">The old way vs Syncing.</h2>
         </Reveal>
         <div className="mt-10 grid gap-5 md:grid-cols-2">
           {/* Old way */}

@@ -31,7 +31,7 @@ export function LandingAboutTeaser() {
           <p className="eyebrow text-accent-fg">Why Sync exists</p>
           <h2
             id="landing-about-heading"
-            className="font-display text-foreground mt-4 max-w-[640px] text-justify text-[32px] font-semibold leading-tight tracking-[-0.02em] md:text-[48px]"
+            className="font-display text-foreground mt-4 max-w-[640px] text-justify text-[25px] font-semibold leading-tight tracking-[-0.02em] md:text-[48px]"
           >
             We&rsquo;re not building another platform.{' '}
             <em>We&rsquo;re rewriting how Nigerian students live around their campus.</em>

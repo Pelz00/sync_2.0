@@ -4,7 +4,8 @@
  * morphing ambient glow behind it. Merges seamlessly with the dark CTA above.
  */
 import Link from 'next/link';
-import { ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight, ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { SITE } from '@/config/site';
 
 const PRODUCT = [
@@ -45,19 +46,22 @@ export function MarketingFooter() {
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           {/* Brand column */}
           <div className="flex flex-col gap-6">
-            <span className="bg-surface/5 text-lime flex h-10 w-10 items-center justify-center rounded-xl">
-              <Sparkles className="h-5 w-5" />
-            </span>
+            <div className="flex items-center gap-2">
+              <span aria-hidden="true" className="flex items-center gap-1">
+                <span className="bg-cream block h-2.5 w-2.5 rounded-full" />
+                <span className="bg-lime block h-2 w-2 rounded-full" />
+              </span>
+              <span className="font-display text-card text-cream">{SITE.name}</span>
+            </div>
             <p className="text-cream/70 max-w-xs text-sm">{SITE.description}</p>
 
             <div>
               <p className="eyebrow text-cream/40">Get started</p>
-              <Link
-                href="/signup"
-                className="hover:text-lime mt-3 inline-flex items-center gap-1 text-sm transition-colors"
-              >
-                Get Sync <ArrowUpRight className="h-4 w-4" />
-              </Link>
+              <Button asChild size="lg" className="mt-3">
+                <Link href="/signup">
+                  Get Sync <ArrowUpRight />
+                </Link>
+              </Button>
             </div>
 
             <div>
@@ -136,9 +140,15 @@ export function MarketingFooter() {
 
 function FooterCol({ title, items }: { title: string; items: { href: string; label: string }[] }) {
   return (
-    <div>
-      <p className="eyebrow text-cream/40 mb-4">{title}</p>
-      <ul className="flex flex-col gap-3 text-sm">
+    <details className="group border-cream/10 border-t pt-4 md:border-none md:pt-0">
+      {/* Mobile: tappable header that toggles the list. Hidden on desktop. */}
+      <summary className="flex cursor-pointer list-none items-center justify-between md:hidden [&::-webkit-details-marker]:hidden">
+        <span className="eyebrow text-cream/40">{title}</span>
+        <ChevronDown className="text-cream/40 h-4 w-4 transition-transform group-open:rotate-180" />
+      </summary>
+      {/* Desktop: static title (the summary is hidden at md+). */}
+      <p className="eyebrow text-cream/40 mb-4 hidden md:block">{title}</p>
+      <ul className="mt-4 space-y-3 text-sm group-open:block md:mt-0 md:block!">
         {items.map(({ href, label }) => (
           <li key={label}>
             <Link href={href} className="text-cream/70 hover:text-lime transition-colors">
@@ -147,6 +157,6 @@ function FooterCol({ title, items }: { title: string; items: { href: string; lab
           </li>
         ))}
       </ul>
-    </div>
+    </details>
   );
 }

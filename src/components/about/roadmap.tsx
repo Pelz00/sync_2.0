@@ -23,7 +23,7 @@ export function Roadmap() {
           <p className="eyebrow text-accent-fg">05 · Where we&rsquo;re going</p>
           <h2
             id="roadmap-heading"
-            className="font-display text-foreground mt-4 text-[32px] leading-tight font-semibold tracking-[-0.02em] md:text-[44px]"
+            className="font-display text-section text-foreground mt-2"
           >
             <em>Trusted, before everywhere.</em>
           </h2>

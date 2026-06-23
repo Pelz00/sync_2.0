@@ -16,7 +16,7 @@ export function SoftLifeCallout() {
           <p className="eyebrow text-lime">What we&rsquo;re building towards</p>
           <h2
             id="softlife-heading"
-            className="font-display mt-5 text-[36px] font-bold leading-[1.02] tracking-[-0.03em] md:text-[60px]"
+            className="font-display mt-5 text-[44px] font-bold leading-[0.98] tracking-[-0.035em] md:text-[60px] md:leading-[0.96] md:tracking-[-0.04em] lg:text-[68px]"
           >
             This is what <em className="text-lime">soft life</em> means to us.
           </h2>

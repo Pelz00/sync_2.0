@@ -48,7 +48,7 @@ export function Promise() {
           <p className="eyebrow text-accent-fg">04 · The promise</p>
           <h2
             id="promise-heading"
-            className="font-display text-foreground mt-4 text-[32px] font-semibold leading-tight tracking-[-0.02em] md:text-[44px]"
+            className="font-display text-section text-foreground mt-2"
           >
             Three things we will never trade.
           </h2>

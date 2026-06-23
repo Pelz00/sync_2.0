@@ -33,38 +33,43 @@ const TESTIMONIALS = [
 
 export function Testimonials() {
   return (
-    <section className="px-6 pt-20">
+    <section className="px-6 pt-12">
       <div className="mx-auto max-w-7xl">
         <Reveal>
           <p className="eyebrow text-accent-fg">Loved by students</p>
-          <h2 className="font-display text-section text-foreground mt-2">Don&rsquo;t take our word for it.</h2>
+          <h2 className="font-display text-section text-foreground mt-2 capitalize">Don&rsquo;t take our word for it.</h2>
         </Reveal>
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {TESTIMONIALS.map((t, i) => (
             <Reveal key={t.name} delay={i * 0.08}>
               <figure className="bg-panel shadow-card flex h-full flex-col gap-4 rounded-2xl p-6">
-                <div aria-label={`${t.rating} out of 5`} className="flex gap-0.5">
-                  {Array.from({ length: t.rating }).map((_, s) => (
-                    <Star key={s} className="fill-lime text-lime h-4 w-4" strokeWidth={1.5} />
-                  ))}
+                <div className="flex items-center justify-between gap-3">
+                  <figcaption className="flex items-center gap-3">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback>
+                        {t.name
+                          .split(' ')
+                          .map((p) => p[0])
+                          .join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-foreground text-sm font-medium">{t.name}</p>
+                      <p className="text-content-muted text-xs">{t.detail}</p>
+                    </div>
+                  </figcaption>
+                  <div
+                    aria-label={`${t.rating} out of 5`}
+                    className="flex shrink-0 gap-0.5"
+                  >
+                    {Array.from({ length: t.rating }).map((_, s) => (
+                      <Star key={s} className="fill-lime text-lime h-4 w-4" strokeWidth={1.5} />
+                    ))}
+                  </div>
                 </div>
                 <blockquote className="text-foreground flex-1 text-[15px] leading-relaxed">
                   &ldquo;{t.quote}&rdquo;
                 </blockquote>
-                <figcaption className="flex items-center gap-3">
-                  <Avatar className="h-9 w-9">
-                    <AvatarFallback>
-                      {t.name
-                        .split(' ')
-                        .map((p) => p[0])
-                        .join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-foreground text-sm font-medium">{t.name}</p>
-                    <p className="text-content-muted text-xs">{t.detail}</p>
-                  </div>
-                </figcaption>
               </figure>
             </Reveal>
           ))}

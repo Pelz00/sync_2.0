@@ -14,7 +14,7 @@ export function AboutHero() {
           <p className="eyebrow text-accent-fg">Our story · Raavon Limited · Est. 2026</p>
           <h1
             id="about-hero-heading"
-            className="font-display text-foreground mt-6 text-[44px] font-bold leading-[0.98] tracking-[-0.035em] md:text-[72px] md:leading-[0.96] md:tracking-[-0.04em]"
+            className="font-display text-foreground mt-6 text-[44px] font-bold leading-[0.98] tracking-[-0.035em] md:text-[60px] md:leading-[0.96] md:tracking-[-0.04em] lg:text-[68px]"
           >
             Stop walking.
             <br />

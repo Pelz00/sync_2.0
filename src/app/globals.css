@@ -58,8 +58,8 @@
   --text-hero--line-height: 0.96;
   --text-hero--font-weight: 700;
   --text-hero--letter-spacing: -0.04em;
-  --text-section: 3rem;
-  /* 48px / 600 / -0.035em / 1lh */
+  --text-section: clamp(1.325rem, 5vw, 2.425rem);
+  /* fluid 21px→39px (+2px bump) so section headers stay on one line on mobile */
   --text-section--line-height: 1;
   --text-section--font-weight: 600;
   --text-section--letter-spacing: -0.035em;
@@ -202,6 +202,20 @@ input:-webkit-autofill:focus {
   :root:not(.light) .theme-icon-moon {
     display: none;
   }
+}
+
+/* Cross-fade for content that swaps in place (e.g. the rotating "How it works"
+   cards). Opacity only - no transform, so it never fights a hover translate. */
+@keyframes fade-swap {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade-swap {
+  animation: fade-swap 0.45s ease;
 }
 
 /* Eyebrow utility - uppercase mono label used across the design system. */

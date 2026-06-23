@@ -27,7 +27,7 @@ export function Mission() {
           <p className="eyebrow text-accent-fg">03 · The mission</p>
           <h2
             id="mission-heading"
-            className="font-display text-foreground mt-4 text-[32px] font-semibold leading-tight tracking-[-0.02em] md:text-[44px]"
+            className="font-display text-section text-foreground mt-2"
           >
             We&rsquo;re not building another platform.{' '}
             <em>We&rsquo;re rewriting how Nigerian students live around their campus.</em>

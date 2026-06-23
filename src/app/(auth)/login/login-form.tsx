@@ -20,6 +20,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { OtpInput } from '@/components/ui/otp-input';
 import { FormField } from '@/components/forms';
 import { toast } from '@/components/ui/toast';
+import { BrandLoader } from '@/components/ui/brand-loader';
 import { getLoginMethod, sendLoginOtp, signIn, verifyLoginOtp } from '@/modules/auth/actions';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,6 +46,10 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
+  // Stays true from a successful auth until this page is replaced - keeps the
+  // full-screen "Signing you in…" loader up through router.push + refresh, so
+  // it never flashes back to an idle form (which reads as "nothing happened").
+  const [redirecting, setRedirecting] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
   const signupHref = next ? `/signup?next=${encodeURIComponent(next)}` : '/signup';
@@ -88,11 +93,12 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
     }
     setBusy(true);
     const res = await signIn({ email: email.trim(), password });
-    setBusy(false);
     if (!res.ok) {
+      setBusy(false);
       toast(res.error);
       return;
     }
+    setRedirecting(true);
     router.push(destFor(res.role, res.handle, next));
     router.refresh();
   }
@@ -119,11 +125,12 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
     }
     setBusy(true);
     const res = await verifyLoginOtp({ email: email.trim(), code });
-    setBusy(false);
     if (!res.ok) {
+      setBusy(false);
       toast(res.error);
       return;
     }
+    setRedirecting(true);
     router.push(destFor(res.role, res.handle, next));
     router.refresh();
   }
@@ -149,79 +156,86 @@ export function LoginForm({ next, email: initialEmail }: { next?: string; email?
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      {step === 'email' && (
-        <form onSubmit={continueFromEmail} className="flex flex-col gap-4" noValidate>
-          <FormField label="Email" htmlFor="email">
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              autoFocus
-              placeholder="you@student.edu.ng"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </FormField>
-          <Button type="submit" size="lg" disabled={busy} className="w-full">
-            {busy ? 'Checking…' : 'Continue'}
-          </Button>
-        </form>
+    <>
+      {redirecting && (
+        <div className="fixed inset-0 z-[100]">
+          <BrandLoader label="Signing you in…" />
+        </div>
       )}
+      <div className="flex flex-col gap-6">
+        {step === 'email' && (
+          <form onSubmit={continueFromEmail} className="flex flex-col gap-4" noValidate>
+            <FormField label="Email" htmlFor="email">
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                autoFocus
+                placeholder="you@student.edu.ng"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </FormField>
+            <Button type="submit" size="lg" disabled={busy} className="w-full">
+              {busy ? 'Checking…' : 'Continue'}
+            </Button>
+          </form>
+        )}
 
-      {step === 'password' && (
-        <form onSubmit={submitPassword} className="flex flex-col gap-4" noValidate>
-          {emailRow}
-          <FormField label="Password" htmlFor="password">
-            <PasswordInput
-              id="password"
-              autoComplete="current-password"
-              autoFocus
-              placeholder="••••••••"
-              value={password}
-              onChange={setPassword}
-            />
-          </FormField>
-          <Button type="submit" size="lg" disabled={busy} className="w-full">
-            {busy ? 'Logging in…' : 'Log in'}
-          </Button>
-          <button
-            type="button"
-            onClick={sendCode}
-            disabled={busy}
-            className="text-content-muted hover:text-content text-center text-sm disabled:opacity-50"
-          >
-            Sign in with an email code instead
-          </button>
-        </form>
-      )}
+        {step === 'password' && (
+          <form onSubmit={submitPassword} className="flex flex-col gap-4" noValidate>
+            {emailRow}
+            <FormField label="Password" htmlFor="password">
+              <PasswordInput
+                id="password"
+                autoComplete="current-password"
+                autoFocus
+                placeholder="••••••••"
+                value={password}
+                onChange={setPassword}
+              />
+            </FormField>
+            <Button type="submit" size="lg" disabled={busy} className="w-full">
+              {busy ? 'Logging in…' : 'Log in'}
+            </Button>
+            <button
+              type="button"
+              onClick={sendCode}
+              disabled={busy}
+              className="text-content-muted hover:text-content text-center text-sm disabled:opacity-50"
+            >
+              Sign in with an email code instead
+            </button>
+          </form>
+        )}
 
-      {step === 'otp' && (
-        <form onSubmit={verify} className="flex flex-col gap-4" noValidate>
-          {emailRow}
-          <FormField label="Sign-in code" htmlFor="otp">
-            <OtpInput value={code} onChange={setCode} autoFocus disabled={busy} />
-          </FormField>
-          <Button type="submit" size="lg" disabled={busy || code.length < 6} className="w-full">
-            {busy ? 'Verifying…' : 'Verify & sign in'}
-          </Button>
-          <button
-            type="button"
-            onClick={sendCode}
-            disabled={busy || cooldown > 0}
-            className="text-lime-deep text-center text-sm font-medium hover:underline disabled:no-underline disabled:opacity-50"
-          >
-            {cooldown > 0 ? `Resend code in ${cooldown}s` : 'Resend code'}
-          </button>
-        </form>
-      )}
+        {step === 'otp' && (
+          <form onSubmit={verify} className="flex flex-col gap-4" noValidate>
+            {emailRow}
+            <FormField label="Sign-in code" htmlFor="otp">
+              <OtpInput value={code} onChange={setCode} autoFocus disabled={busy} />
+            </FormField>
+            <Button type="submit" size="lg" disabled={busy || code.length < 6} className="w-full">
+              {busy ? 'Verifying…' : 'Verify & sign in'}
+            </Button>
+            <button
+              type="button"
+              onClick={sendCode}
+              disabled={busy || cooldown > 0}
+              className="text-lime-deep text-center text-sm font-medium hover:underline disabled:no-underline disabled:opacity-50"
+            >
+              {cooldown > 0 ? `Resend code in ${cooldown}s` : 'Resend code'}
+            </button>
+          </form>
+        )}
 
-      <p className="text-content-muted text-center text-sm">
-        Don&rsquo;t have an account?{' '}
-        <Link href={signupHref} className="text-lime-deep font-medium hover:underline">
-          Sign up
-        </Link>
-      </p>
-    </div>
+        <p className="text-content-muted text-center text-sm">
+          Don&rsquo;t have an account?{' '}
+          <Link href={signupHref} className="text-lime-deep font-medium hover:underline">
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </>
   );
 }

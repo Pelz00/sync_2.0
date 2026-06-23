@@ -17,7 +17,7 @@ export function WhatWeBuilt() {
           <p className="eyebrow text-accent-fg">02 · So we built Sync</p>
           <h2
             id="built-heading"
-            className="font-display text-foreground mt-4 text-[32px] font-semibold leading-tight tracking-[-0.02em] md:text-[44px]"
+            className="font-display text-section text-foreground mt-2"
           >
             One platform. Every campus need.{' '}
             <em>Verified before it ever touches your screen.</em>

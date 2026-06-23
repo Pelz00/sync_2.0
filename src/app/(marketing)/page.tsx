@@ -22,7 +22,6 @@ import {
   ArrowRight,
   BadgeCheck,
   ChevronDown,
-  MessageSquare,
   Search,
   ShieldCheck,
   Sparkles,
@@ -41,7 +40,7 @@ import { Newsletter } from './newsletter';
 import { ActivityTicker } from './activity-ticker';
 import { Testimonials } from './testimonials';
 import { Comparison } from './comparison';
-import { Reveal } from './reveal';
+import { HowItWorks } from './how-it-works';
 import { LandingAboutTeaser } from '@/components/landing/landing-about-teaser';
 import { FEATURED_HOSTELS, HOSTEL_STATS } from '@/mock/hostels';
 import { FEATURED_EVENT, FEATURED_FOOD, HOTSPOTS_TRENDING } from '@/mock/around';
@@ -129,12 +128,12 @@ export default function LandingPage() {
       <LandingAboutTeaser />
 
       {/* ─── Hostels students love ───────────────────────────────────── */}
-      <section className="px-6 pt-20">
+      <section className="px-6 pt-12">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
             <div>
               <p className="eyebrow text-accent-fg">Featured · This week</p>
-              <h2 className="font-display text-section text-foreground mt-2">
+              <h2 className="font-display text-section text-foreground mt-2 whitespace-nowrap capitalize">
                 Hostels students love
               </h2>
             </div>
@@ -165,12 +164,12 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Happening around you (preview) ──────────────────────────── */}
-      <section className="px-6 pt-20">
+      <section className="px-6 pt-12">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
             <div>
               <p className="eyebrow text-accent-fg">Around you · right now</p>
-              <h2 className="font-display text-section text-foreground mt-2">
+              <h2 className="font-display text-section text-foreground mt-2 whitespace-nowrap capitalize">
                 More than just a room.
               </h2>
             </div>
@@ -185,7 +184,7 @@ export default function LandingPage() {
             {/* Event */}
             <Link
               href={`/events/${FEATURED_EVENT.slug}`}
-              className="bg-ink text-cream group flex flex-col justify-between gap-6 rounded-2xl p-6 transition-transform hover:-translate-y-0.5"
+              className="bg-ink text-cream group flex flex-col justify-between gap-6 rounded-2xl p-6 transition-transform hover:-translate-y-0.5 dark:border dark:border-dotted dark:border-cream/30"
             >
               <span className="bg-lime text-ink inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium">
                 <span className="bg-ink h-1.5 w-1.5 rounded-full" />
@@ -247,73 +246,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── How it works ────────────────────────────────────────────── */}
-      <section className="px-6 pt-20">
-        <div className="mx-auto max-w-7xl">
-          <Reveal>
-            <p className="eyebrow text-accent-fg">How it works</p>
-            <h2 className="font-display text-section text-foreground mt-2">
-              Three steps. No agent runaround.
-            </h2>
-          </Reveal>
-          <div className="relative mt-12 grid gap-5 md:grid-cols-3">
-            {[
-              {
-                num: '01',
-                icon: Search,
-                title: 'Search & filter',
-                body: 'Pick a campus, set a budget, choose your room type. Real-time filtered list.',
-              },
-              {
-                num: '02',
-                icon: MessageSquare,
-                title: 'Request to book',
-                body: 'Message the verified landlord, schedule a visit, agree on terms - all in app.',
-              },
-              {
-                num: '03',
-                icon: ShieldCheck,
-                title: 'Pay in escrow',
-                body: 'Rent + caution sits in Sync escrow via Paystack. Released once you move in.',
-              },
-            ].map(({ num, icon: Icon, title, body }, i) => (
-              <div
-                key={num}
-                className="group bg-panel shadow-card hover:shadow-pop relative flex flex-col gap-5 overflow-hidden rounded-2xl p-7 transition-all duration-300 hover:-translate-y-1"
-              >
-                {/* Oversized ghost number */}
-                <span
-                  aria-hidden="true"
-                  className="font-display text-foreground/4 pointer-events-none absolute -top-4 -right-2 text-[120px] leading-none"
-                >
-                  {num}
-                </span>
-                <div className="relative flex items-center gap-3">
-                  <span className="bg-lime text-ink flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-rotate-6">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="text-accent-fg font-mono text-xs tracking-wider">
-                    Step {num}
-                  </span>
-                </div>
-                <div className="relative">
-                  <p className="font-display text-card text-foreground">{title}</p>
-                  <p className="text-content-muted mt-2 text-sm">{body}</p>
-                </div>
-                {/* Connector arrow to the next step (desktop) */}
-                {i < 2 && (
-                  <span
-                    aria-hidden="true"
-                    className="bg-surface text-foreground absolute top-1/2 -right-2.5 z-10 hidden h-7 w-7 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-sm md:flex"
-                  >
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ─── How it works (rotates through hostels / around / food / events) ─ */}
+      <HowItWorks />
 
       {/* ─── Old way vs Sync ─────────────────────────────────────────── */}
       <Comparison />
@@ -322,11 +256,11 @@ export default function LandingPage() {
       <Testimonials />
 
       {/* ─── FAQ ─────────────────────────────────────────────────────── */}
-      <section className="px-6 pt-20">
+      <section className="px-6 pt-12">
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[1fr_1.2fr] md:gap-16">
           <div>
             <p className="eyebrow text-accent-fg">FAQ</p>
-            <h2 className="font-display text-section text-foreground mt-2">Good questions.</h2>
+            <h2 className="font-display text-section text-foreground mt-2 whitespace-nowrap capitalize">Good questions.</h2>
           </div>
           <Accordion type="single" collapsible className="w-full">
             {FAQS.map((f, i) => (
@@ -342,7 +276,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Verification trust band ─────────────────────────────────── */}
-      <section className="px-6 pt-20">
+      <section className="px-6 pt-12">
         <div className="mx-auto max-w-7xl">
           <div className="bg-surface-deep flex flex-col items-start gap-4 rounded-2xl p-6 md:flex-row md:items-center md:justify-between md:p-8">
             <ul className="text-foreground flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
@@ -371,24 +305,41 @@ export default function LandingPage() {
       {/* ─── Newsletter ──────────────────────────────────────────────── */}
       <Newsletter />
 
-      {/* ─── Landlord CTA (full-bleed, flush under newsletter) ───────── */}
+      {/* ─── Earn on Sync CTA (full-bleed, flush under newsletter) ───── */}
       <section className="bg-ink text-cream w-full">
-        <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 px-6 py-16 md:flex-row md:items-center md:justify-between md:py-20">
-          <div>
+        <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-2 md:gap-16 md:py-20">
+          {/* Landlord */}
+          <div className="flex flex-col items-start">
             <p className="eyebrow text-lime">Are you a landlord?</p>
-            <h2 className="font-display text-section mt-3">
+            <h2 className="font-display text-section mt-3 capitalize">
               List a property. Get verified students.
             </h2>
             <p className="text-cream/70 mt-3 max-w-md text-sm">
               We verify, photograph, and list your property. You keep what you earn - paid via
               Paystack.
             </p>
+            <Button asChild size="lg" className="mt-6">
+              <Link href="/signup?role=vendor&category=landlord">
+                List a property <ArrowRight />
+              </Link>
+            </Button>
           </div>
-          <Button asChild size="lg">
-            <Link href="/signup?role=vendor&category=landlord">
-              List a property <ArrowRight />
-            </Link>
-          </Button>
+          {/* Vendor */}
+          <div className="border-cream/15 flex flex-col items-start md:border-l md:pl-16">
+            <p className="eyebrow text-lime">Are you a vendor?</p>
+            <h2 className="font-display text-section mt-3 capitalize">
+              Sell food, beauty, laundry &amp; more.
+            </h2>
+            <p className="text-cream/70 mt-3 max-w-md text-sm">
+              Reach students around campus. List your menu or services, take orders, and get paid
+              via Paystack.
+            </p>
+            <Button asChild size="lg" className="mt-6">
+              <Link href="/signup?role=vendor">
+                Start selling <ArrowRight />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
     </>
