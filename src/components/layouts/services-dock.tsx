@@ -74,7 +74,7 @@ export function ServicesDock({ location = MALETE_AREAS[0], role }: ServicesDockP
           { href: '/food/search',    label: 'Search',    icon: Search },
           { href: '/food/orders',    label: 'Orders',    icon: ClipboardList },
           { href: '/food/favorites', label: 'Saved',     icon: Heart },
-          { href: '/me',             label: 'You',       icon: User },
+          // { href: '/me',             label: 'You',       icon: User },
         ]
       : role === 'vendor'
         ? [
@@ -92,8 +92,7 @@ export function ServicesDock({ location = MALETE_AREAS[0], role }: ServicesDockP
               ]
             : [{ href: '/login', label: 'Sign in', icon: LogIn }];
 
-  const tabCount = 2 + accountTabs.length;
-
+  const tabCount = (isFood ? 1 : 2) + accountTabs.length;
   return (
     <>
       {/* ── Desktop rail (md+) ─────────────────────────────────────── */}

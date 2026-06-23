@@ -35,7 +35,7 @@ const DELIVERY_FEE = 300
 // Height of the sticky header(s) above this component (AppShell's
 // MarketingHeader + ServicesDock + search row). Adjust to match your real
 // stacked header height in px so the tabs sit just below it, not under it.
-const NAV_H = 80
+const NAV_H = 63
 
 type MobileView = "menu" | "item" | "cart"
 
@@ -201,7 +201,12 @@ export default function VendorClient({
     )
 
     const MenuSections = ({ mobile }: { mobile: boolean }) => (
-        <div className={`flex flex-col gap-6 ${mobile ? "pb-28" : "pb-8"}`}>
+        // pt-4 replaces the old `<div className="mt-4">` wrapper that sat
+        // between the sticky tab bar and this content. A margin placed
+        // right after a sticky element shows up as a permanent visible gap
+        // under the tab bar once it's detached/floating mid-scroll. Moving
+        // the spacing inside the scrollable content fixes that.
+        <div className={`flex flex-col gap-6 ${mobile ? "pt-4 pb-28" : "pb-8"}`}>
             {menu.map(section => (
                 <div key={section.title} id={`sec-${section.title}`}>
                     <h2 className="font-bold text-xl text-content mb-3">{section.title}</h2>
@@ -210,9 +215,18 @@ export default function VendorClient({
                             const qty = getQty(item.id)
                             const cartItem = cart.find(i => i.id === item.id)
                             const isLast = idx === section.items.length - 1
+                            const hasCartRow = mobile && !!cartItem
+
                             return (
                                 <div key={item.id}>
-                                    <div className={`flex gap-3 p-3 sm:p-4 ${!isLast || (mobile && qty > 0) ? "border-b border-content-muted/20" : ""}`}>
+                                    {/* Item row */}
+                                    <div className={`flex gap-3 p-3 sm:p-4 ${
+                                        // only add border-b if there's something below this row
+                                        // (either a cart row, or another item after it)
+                                        hasCartRow || !isLast
+                                            ? "border-b border-content-muted/20"
+                                            : ""
+                                        }`}>
                                         <div className="relative w-20 h-16 sm:w-24 sm:h-20 rounded-lg overflow-hidden flex-shrink-0">
                                             <Image src={item.image} alt={item.name} fill className="object-cover" />
                                         </div>
@@ -265,15 +279,23 @@ export default function VendorClient({
                                         </div>
                                     </div>
 
-                                    {mobile && cartItem && (
-                                        <div className={`flex items-center justify-between px-3 py-2.5 bg-surface-deep ${!isLast ? "border-b border-content-muted/20" : ""}`}>
+                                    {/* Inline cart row */}
+                                    {hasCartRow && (
+                                        <div className={`flex items-center justify-between px-3 py-2.5 bg-surface-deep ${!isLast ? "border-b border-content-muted/20" : ""
+                                            }`}>
                                             <p className="text-xs font-medium text-content truncate flex-1 mr-2">{cartItem.name}</p>
                                             <div className="flex items-center gap-2 flex-shrink-0">
-                                                <button onClick={() => removeOne(cartItem.id)} className="w-6 h-6 rounded-full border border-content-muted/30 flex items-center justify-center text-content-muted hover:text-red-500 cursor-pointer">
+                                                <button
+                                                    onClick={() => removeOne(cartItem.id)}
+                                                    className="w-6 h-6 rounded-full border border-content-muted/30 flex items-center justify-center text-content-muted hover:text-red-500 cursor-pointer"
+                                                >
                                                     <Minus size={10} />
                                                 </button>
                                                 <span className="text-xs font-bold text-content w-4 text-center">{cartItem.qty}</span>
-                                                <button onClick={() => openMobileItem(item)} className="w-6 h-6 rounded-full border border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink cursor-pointer">
+                                                <button
+                                                    onClick={() => openMobileItem(item)}
+                                                    className="w-6 h-6 rounded-full border border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink cursor-pointer"
+                                                >
                                                     <Plus size={10} />
                                                 </button>
                                                 <span className="text-xs font-semibold text-content flex items-center ml-1">
@@ -494,9 +516,10 @@ export default function VendorClient({
                     ))}
                 </div>
 
-                <div className="mt-4">
-                    <MenuSections mobile={true} />
-                </div>
+                {/* Removed the wrapping <div className="mt-4"> that used to sit
+                    here — that margin was the visible gap under the sticky tab
+                    bar. Spacing now lives inside MenuSections (pt-4) instead. */}
+                <MenuSections mobile={true} />
             </div>
 
             {/* ════════════════════════════════════════

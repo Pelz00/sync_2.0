@@ -12,6 +12,7 @@ import {
     CardContent,
     CardFooter,
 } from "@/components/ui/card"
+import { useOptionalFavorites, type FavoriteFood } from "@/app/(app)/food/favorites-context"
 
 type VendorStatus = "open" | "closed" | "delivery-only"
 
@@ -24,6 +25,7 @@ interface FoodCardProps {
     reviewCount?: number
     location: string
     time: string
+    category?: string
     isFree?: boolean
     deliveryTime?: string
     discount?: string
@@ -55,6 +57,7 @@ export default function FoodCards({
     reviewCount,
     location,
     time,
+    category,
     isFree,
     deliveryTime,
     discount,
@@ -63,12 +66,40 @@ export default function FoodCards({
 }: FoodCardProps) {
     const { label, className } = statusConfig[status]
 
-    const [isFavourited, setIsFavourited] = useState(false)
+    // Shared favorites state (persists + powers the Saved page).
+    // Falls back to local-only state if no FavoritesProvider is mounted,
+    // so this component never breaks if used outside /food.
+    const favorites = useOptionalFavorites()
+    const [localFavourited, setLocalFavourited] = useState(false)
+    const isFavourited = favorites ? favorites.isFavorite(slug) : localFavourited
+
     const [toast, setToast] = useState<"added" | "removed" | null>(null)
 
     function toggleFavourite() {
-        const next = !isFavourited
-        setIsFavourited(next)
+        let next: boolean
+
+        if (favorites) {
+            const item: FavoriteFood = {
+                slug,
+                image,
+                name,
+                tags,
+                rating,
+                reviewCount,
+                location,
+                time,
+                category,
+                isFree,
+                deliveryTime,
+                discount,
+                status,
+            }
+            next = favorites.toggleFavorite(item)
+        } else {
+            next = !localFavourited
+            setLocalFavourited(next)
+        }
+
         setToast(next ? "added" : "removed")
         setTimeout(() => setToast(null), 2500)
     }
@@ -107,6 +138,7 @@ export default function FoodCards({
                     type="button"
                     onClick={toggleFavourite}
                     aria-label={isFavourited ? "Remove from favourites" : "Add to favourites"}
+                    aria-pressed={isFavourited}
                     className="absolute top-2 right-2 z-10 flex items-center justify-center w-8 h-8 cursor-pointer rounded-full bg-white shadow-md hover:scale-110 active:scale-95 transition-transform"
                 >
                     <Heart

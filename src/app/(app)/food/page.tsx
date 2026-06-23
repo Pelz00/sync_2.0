@@ -8,8 +8,15 @@ import JollofOne from '@/assets/images/Food-Pics/Jollof/JollofOne.webp'
 import JollofTwo from '@/assets/images/Food-Pics/Jollof/JollofTwo.webp'
 import SwallowOne from '@/assets/images/Food-Pics/Swallow/SwallowOne.webp'
 import SwallowTwo from '@/assets/images/Food-Pics/Swallow/SwallowTwo.webp'
-import FastFoodOne from '@/assets/images/Food-Pics/Burgers and pizza/FastFoodTwo.avif'
-import FastFoodTwo from '@/assets/images/Food-Pics/Burgers and pizza/FastFoodOne.avif'
+import BurgerOne from '@/assets/images/Food-Pics/Burgers/BurgerImageOne.webp'
+import BurgerTwo from '@/assets/images/Food-Pics/Burgers/BurgerImageTwo.webp'
+import BurgerThree from '@/assets/images/Food-Pics/Burgers/FastFoodTwo.avif'
+import PizzaOne from '@/assets/images/Food-Pics/pizza/FastFoodOne.avif'
+import PizzaTwo from '@/assets/images/Food-Pics/pizza/PizzaImageOne.webp'
+import PizzaThree from '@/assets/images/Food-Pics/pizza/PizzaImageTwo.webp'
+import PastaOne from '@/assets/images/Food-Pics/Pasta/pastaImageOne.webp'
+import PastaTwo from '@/assets/images/Food-Pics/Pasta/pastaImageTwo.webp'
+import PastaThree from '@/assets/images/Food-Pics/Pasta/pastaImageThree.webp'
 import SmallChopsOne from '@/assets/images/Food-Pics/SmallChops/SmallChopOne.webp'
 import SmallChopsTwo from '@/assets/images/Food-Pics/SmallChops/SmallChopTwo.webp'
 import DrinkOne from '@/assets/images/Food-Pics/Drinks/DrinkOne.avif'
@@ -133,33 +140,132 @@ const food = [
     status: "open"
   },
   {
-    slug: 'amala-joint',
-    image: FastFoodOne,
-    name: 'Fast joint',
+    slug: 'Burger King',
+    image: BurgerOne,
+    name: 'Burger King',
     tags: ['Loaded Fries', 'Burgers', 'Chips'] as string[],
     rating: '4.6',
     reviewCount: 241,
     location: 'Caffeine Co.',
     time: '8am – 11pm',
-    category: 'Fast Food',
+    category: 'Burger',
     isFree: true,
     deliveryTime: '20–30 min',
     discount: '20% off',       // has promo
     status: "closed"
   },
   {
-    slug: 'krafties-kitchen',
-    image: FastFoodTwo,
-    name: 'Krafties Kitchen',
-    tags: ['Pizza', 'Shawarma'] as string[],
+    slug: 'Fast joint',
+    image: BurgerTwo,
+    name: 'Fast joint',
+    tags: ['Loaded Fries', 'Burgers', 'Chips'] as string[],
+    rating: '4.6',
+    reviewCount: 241,
+    location: 'Tarmac',
+    time: '8am – 11pm',
+    category: 'Burger',
+    isFree: true,
+    deliveryTime: '20–30 min',
+    discount: '20% off',       // has promo
+    status: "delivery-only"
+  },
+  {
+    slug: 'Shaqs Place',
+    image: BurgerThree,
+    name: 'Shaqs Place',
+    tags: ['Burgers', 'Chicken bread'] as string[],
     rating: '3.8',
     reviewCount: 78,
     location: 'Tanke Junction',
     time: '10am – 10pm',
-    category: 'Fast Food',
+    category: 'Burger',
+    isFree: false,
+    deliveryTime: '25–40 min', // no discount
+    status: "closed"
+  },
+  {
+    slug: 'krafties-kitchen',
+    image: PizzaOne,
+    name: 'Italiano Pizza Hub',
+    tags: ['Pizza', 'Shawarma'] as string[],
+    rating: '3.8',
+    reviewCount: 78,
+    location: 'Mandate Estate',
+    time: '10am – 10pm',
+    category: 'Pizza',
+    isFree: false,
+    deliveryTime: '15–35 min', // no discount
+    status: "delivery-only"
+  },
+  {
+    slug: 'krafties-kitchen',
+    image: PizzaTwo,
+    name: 'Pitza Palace',
+    tags: ['Pizza', 'Shawarma'] as string[],
+    rating: '3.8',
+    reviewCount: 78,
+    location: 'West-End phase I',
+    time: '10am – 10pm',
+    category: 'Pizza',
+    isFree: false,
+    deliveryTime: '30–50 min', // no discount
+    status: "open"
+  },
+  {
+    slug: 'krafties-kitchen',
+    image: PizzaThree,
+    name: 'Dodo\'s  Pizza',
+    tags: ['Pizza', 'Shawarma'] as string[],
+    rating: '3.8',
+    reviewCount: 78,
+    location: 'West-End Phase II',
+    time: '10am – 10pm',
+    category: 'Pizza',
+    isFree: false,
+    deliveryTime: '15–20 min', // no discount
+    status: "delivery-only"
+  },
+  {
+    slug: 'krafties-kitchen',
+    image: PastaOne,
+    name: 'Krafties Kitchen',
+    tags: ['Pizza', 'Shawarma'] as string[],
+    rating: '3.8',
+    reviewCount: 78,
+    location: 'Safari',
+    time: '9am – 8pm',
+    category: 'Pasta',
+    isFree: false,
+    deliveryTime: '35–50 min', // no discount
+    status: "closed"
+  },
+  {
+    slug: 'krafties-kitchen',
+    image: PastaTwo,
+    name: 'Krafties Kitchen',
+    tags: ['Pizza', 'Shawarma'] as string[],
+    rating: '3.8',
+    reviewCount: 78,
+    location: 'School gate',
+    time: '8am – 9pm',
+    category: 'Pasta',
     isFree: false,
     deliveryTime: '25–40 min', // no discount
     status: "delivery-only"
+  },
+  {
+    slug: 'krafties-kitchen',
+    image: PastaThree,
+    name: 'Krafties Kitchen',
+    tags: ['Pizza', 'Shawarma'] as string[],
+    rating: '3.8',
+    reviewCount: 78,
+    location: 'Opp Malete Park',
+    time: '10am – 10pm',
+    category: 'Pasta',
+    isFree: false,
+    deliveryTime: '25–40 min', // no discount
+    status: "open"
   },
   {
     slug: 'chop-life',
