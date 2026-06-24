@@ -545,8 +545,6 @@ export default function Page() {
                   </div>
                 </div>
 
-              </div>
-
               {/* Right Sidebar Calculations & CTA Interaction Deck */}
               <div className="lg:col-span-5 space-y-4">
                 <div className="border border-zinc-800/60 rounded-2xl p-6 bg-zinc-500/5 shadow-xl relative overflow-hidden">
@@ -683,6 +681,8 @@ export default function Page() {
                   </div>
                 )}
               </div>
+              </div>
+
 
             </div>
           </div>
@@ -696,21 +696,13 @@ export default function Page() {
     <main className="min-h-screen text-current transition-colors duration-300 animate-in fade-in duration-500">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
         
-        {/* Navigation Core Header */}
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-800/40">
-          <div className="flex items-center gap-2">
-            <span className="h-3 w-3 rounded-full bg-lime-400 animate-pulse" />
-            <span className="text-xs font-mono tracking-widest uppercase opacity-60">KWASU Accommodation Portal</span>
-          </div>
-          <ThemeToggle />
-        </div>
 
         {/* Hero Section */}
         <section className="mb-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display tracking-tight font-extrabold text-current leading-tight">
             Find your{' '}
             <span className="block md:inline italic text-lime-400 font-normal">
-              perfect hostel stay.
+              perfect hostel.
             </span>
           </h1>
           <p className="mt-4 max-w-2xl text-sm md:text-base text-zinc-400">
@@ -732,20 +724,6 @@ export default function Page() {
             </div>
           </div>
         </section>
-
-        {/* Search Bar element */}
-        <div className="flex items-center gap-3 bg-zinc-500/5 border border-zinc-800/40 focus-within:border-lime-500 focus-within:ring-2 focus-within:ring-lime-500/10 rounded-2xl px-4 h-12 mb-4 transition-all duration-200">
-          <svg className="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search hostels by name, distance, area tags..."
-            className="flex-1 bg-transparent outline-none text-sm placeholder-zinc-500 text-current"
-          />
-        </div>
 
         {/* Layout Filter Row Pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-5 no-scrollbar scroll-smooth">

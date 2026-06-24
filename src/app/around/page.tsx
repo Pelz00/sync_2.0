@@ -20,8 +20,6 @@ import { ArrowRight, ChevronDown, Plus, Search, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AroundMap } from '@/components/shared/around-map';
 import {
-  FEATURED_EVENT,
-  FEATURED_FOOD,
   HOSTEL_BOARD,
   HOTSPOTS_TRENDING,
   LAUNDRY_PROMO,
@@ -34,6 +32,7 @@ import {
 import { getCurrentUser, getFirstName } from '@/modules/auth/queries';
 import { formatNaira } from '@/lib/utils';
 import { cn } from '@/lib/utils';
+import { FeaturedEventCarousel, FoodCarousel } from './featured-carousels';
 
 export const metadata = {
   title: 'Around you',
@@ -94,32 +93,29 @@ export default async function AroundPage() {
       {/* ─── Smart search row ───────────────────────────────────────── */}
       <SmartSearch />
 
-      {/* ─── Map + feed, side by side ───────────────────────────────── */}
-      <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:items-start">
-        {/* Map - sticky on desktop so it stays in view while the feed scrolls */}
-        <section aria-labelledby="around-map-heading" className="order-last lg:order-none lg:sticky lg:top-24">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="eyebrow text-content-muted">On the map</p>
-              <h2 id="around-map-heading" className="font-display text-section text-foreground mt-1">
-                Everything within your radius
-              </h2>
-            </div>
-            <p className="text-content-muted text-xs">Tap a pin · distances</p>
+      {/* ─── Map - full width at the top ────────────────────────────── */}
+      <section aria-labelledby="around-map-heading" className="mt-8 w-full">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow text-content-muted">On the map</p>
+            <h2 id="around-map-heading" className="font-display text-section text-foreground mt-1">
+              Everything within your radius
+            </h2>
           </div>
-          <AroundMap />
-        </section>
-
-        {/* Feed - stacked beside the map */}
-        <div className="flex flex-col gap-5">
-          <FeaturedEventCard />
-          <FoodCard />
-          <LaundryCard />
-          <SponsoredCard />
-          <HotspotsCard />
-          <HostelBoardCard />
-          <ResumeBookingCard />
+          <p className="text-content-muted text-xs">Tap a pin · distances</p>
         </div>
+        <AroundMap />
+      </section>
+
+      {/* ─── Feed - below the map ───────────────────────────────────── */}
+      <div className="mt-10 grid items-start gap-5 sm:grid-cols-2">
+        <FeaturedEventCarousel />
+        <FoodCarousel />
+        <LaundryCard />
+        <SponsoredCard />
+        <HotspotsCard />
+        <HostelBoardCard />
+        <ResumeBookingCard />
       </div>
     </main>
   );
@@ -206,126 +202,6 @@ function SearchCell({
         className="text-foreground placeholder:text-content-muted bg-transparent text-sm font-medium outline-none"
       />
     </label>
-  );
-}
-
-function FeaturedEventCard({ className }: { className?: string }) {
-  return (
-    <Link
-      href={`/events/${FEATURED_EVENT.slug}`}
-      className={cn(
-        'group text-cream relative flex flex-col overflow-hidden rounded-2xl bg-gradient-to-br from-[#3a2150] via-[#1e1530] to-[#0a0a14]',
-        'min-h-[420px]',
-        className,
-      )}
-    >
-      {/* Top pills */}
-      <div className="flex items-start gap-2 p-5">
-        <span className="bg-lime text-ink inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium">
-          <span className="bg-ink h-1.5 w-1.5 rounded-full" />
-          {FEATURED_EVENT.when}
-        </span>
-        <span className="border-cream/30 text-cream/90 inline-flex items-center rounded-full border px-3 py-1 text-xs">
-          {FEATURED_EVENT.category}
-        </span>
-      </div>
-
-      {/* Title block - pushed near the bottom */}
-      <div className="mt-auto px-5 pb-2">
-        <h2 className="font-display text-[40px] leading-[0.95] font-bold tracking-[-0.035em] md:text-[48px]">
-          {FEATURED_EVENT.title}
-          <br />
-          <span className="text-lime italic">{FEATURED_EVENT.performer}</span>
-        </h2>
-      </div>
-
-      {/* Footer band - cream surface */}
-      <div className="bg-surface text-foreground mt-4 flex items-center justify-between px-5 py-4">
-        <div className="min-w-0">
-          <p className="text-foreground text-xs">{FEATURED_EVENT.venue}</p>
-          <div className="text-content-muted mt-1.5 flex items-center gap-2 text-[11px]">
-            <FriendStack />
-            <span>
-              {FEATURED_EVENT.goingCount} going · {FEATURED_EVENT.friendsGoing} friends
-            </span>
-          </div>
-        </div>
-        <div className="flex shrink-0 items-end gap-3">
-          <div className="text-right">
-            <p className="text-content-muted text-[10px] tracking-wider uppercase">From</p>
-            <p className="font-display text-card text-foreground leading-none">
-              {formatNaira(FEATURED_EVENT.priceFrom)}
-            </p>
-          </div>
-          <Button size="sm">
-            Get ticket <ArrowRight />
-          </Button>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function FriendStack() {
-  // Tiny BKTD-style attendee initials, per the hi-fi.
-  const initials = ['B', 'K', 'T', 'D'];
-  return (
-    <span aria-hidden="true" className="flex -space-x-1.5">
-      {initials.map((c) => (
-        <span
-          key={c}
-          className="bg-surface-deep border-cream text-foreground flex h-4 w-4 items-center justify-center rounded-full border-2 text-[8px] font-medium"
-        >
-          {c}
-        </span>
-      ))}
-    </span>
-  );
-}
-
-function FoodCard({ className }: { className?: string }) {
-  return (
-    <article
-      className={cn('bg-panel shadow-card flex flex-col overflow-hidden rounded-2xl', className)}
-    >
-      <div className="flex flex-col gap-2 p-5">
-        <p className="text-content-muted font-mono text-[10px] tracking-wider uppercase">
-          Food · {FEATURED_FOOD.etaMinutes} min
-        </p>
-        {/* Stylised food swatch (cream → coral gradient) - no external image needed. */}
-        <div className="from-cream-deep mt-1 h-28 w-full rounded-xl bg-gradient-to-br via-[#f5b486] to-[#e0824a]" />
-        <div className="mt-3 flex items-start justify-between gap-2">
-          <h3 className="font-display text-card text-foreground">{FEATURED_FOOD.name}</h3>
-          <span className="text-foreground inline-flex items-center gap-0.5 text-xs">
-            ★ <span className="font-medium">{FEATURED_FOOD.rating}</span>
-          </span>
-        </div>
-        <p className="text-content-muted text-xs">
-          {FEATURED_FOOD.cuisine} · {FEATURED_FOOD.priceTier}
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {FEATURED_FOOD.promos.map((p) => (
-            <span
-              key={p}
-              className="border-line/15 text-foreground rounded-full border px-2.5 py-0.5 text-[11px]"
-            >
-              {p}
-            </span>
-          ))}
-        </div>
-        <div className="border-line/5 mt-3 flex items-center justify-between border-t pt-3">
-          <p className="text-foreground text-sm">
-            From{' '}
-            <span className="font-display text-card">{formatNaira(FEATURED_FOOD.priceFrom)}</span>
-          </p>
-          <Button asChild variant="outline" size="sm">
-            <Link href={`/food/${FEATURED_FOOD.slug}`}>
-              Order <ArrowRight />
-            </Link>
-          </Button>
-        </div>
-      </div>
-    </article>
   );
 }
 
