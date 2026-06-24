@@ -36,39 +36,39 @@ interface Props {
 }
 
 const ILLUS_TABS: { label: string; image: StaticImageData }[] = [
-    { label: "All",         image: AllImage },
-    { label: "Breakfast",   image: BreakfastImage },
-    { label: "Jollof",      image: JollofImage },
-    { label: "Swallow",     image: LocalFoodImage },
-    { label: "Burger",      image: BurgerImage },
-    { label: "Pizza",       image: PizzaImage },
-    { label: "Pasta",       image: PastaImage },
+    { label: "All", image: AllImage },
+    { label: "Breakfast", image: BreakfastImage },
+    { label: "Jollof", image: JollofImage },
+    { label: "Swallow", image: LocalFoodImage },
+    { label: "Burger", image: BurgerImage },
+    { label: "Pizza", image: PizzaImage },
+    { label: "Pasta", image: PastaImage },
     { label: "Small Chops", image: SmallchopsImage },
-    { label: "Desert",      image: DesertImage },
-    { label: "Suya",        image: SuyaImage },
-    { label: "Drinks",      image: DrinksImage },
-    { label: "Healthy",     image: HealthyImage },
+    { label: "Desert", image: DesertImage },
+    { label: "Suya", image: SuyaImage },
+    { label: "Drinks", image: DrinksImage },
+    { label: "Healthy", image: HealthyImage },
 ]
 
 // ── Fixed: uses image not emoji ───────────────────────────────────────────────
 const FOOD_TYPE_CATEGORIES: { label: string; image: StaticImageData }[] = [
-    { label: "Breakfast",   image: BreakfastImage },
-    { label: "Jollof",      image: JollofImage },
-    { label: "Swallow",     image: LocalFoodImage },
-    { label: "Burger",      image: BurgerImage },
+    { label: "Breakfast", image: BreakfastImage },
+    { label: "Jollof", image: JollofImage },
+    { label: "Swallow", image: LocalFoodImage },
+    { label: "Burger", image: BurgerImage },
     { label: "Small Chops", image: SmallchopsImage },
-    { label: "Desert",      image: DesertImage },
-    { label: "Suya",        image: SuyaImage },
-    { label: "Drinks",      image: DrinksImage },
-    { label: "Pizza",       image: PizzaImage },
-    { label: "Pasta",       image: PastaImage },
+    { label: "Desert", image: DesertImage },
+    { label: "Suya", image: SuyaImage },
+    { label: "Drinks", image: DrinksImage },
+    { label: "Pizza", image: PizzaImage },
+    { label: "Pasta", image: PastaImage },
 ]
 
 const SORT_OPTIONS = [
     { label: "Recommended", value: "recommended", icon: "👤" },
-    { label: "Near me",     value: "near",        icon: "📍" },
-    { label: "Ratings",     value: "rating",      icon: "👍" },
-    { label: "Delivery fee",value: "delivery",    icon: "🛵" },
+    { label: "Near me", value: "near", icon: "📍" },
+    { label: "Ratings", value: "rating", icon: "👍" },
+    { label: "Delivery fee", value: "delivery", icon: "🛵" },
 ]
 
 function Pill({
@@ -144,7 +144,7 @@ export default function FoodSection({ food }: Props) {
     }
 
     if (promotionsOn) filtered = filtered.filter(f => f.discount)
-    if (topRatedOn)   filtered = filtered.filter(f => parseFloat(f.rating) >= 4.6)
+    if (topRatedOn) filtered = filtered.filter(f => parseFloat(f.rating) >= 4.6)
 
     if (sortBy === "rating") {
         filtered = [...filtered].sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating))
@@ -177,11 +177,10 @@ export default function FoodSection({ food }: Props) {
                             className="flex flex-col items-center gap-1.5 flex-shrink-0 cursor-pointer group"
                         >
                             <div className="relative w-16 h-16">
-                                <div className={`w-16 h-16 rounded-full flex items-center justify-center overflow-hidden transition-all ${
-                                    active
-                                        ? "bg-lime"
-                                        : "bg-content-muted/10 group-hover:bg-content-muted/15"
-                                }`}>
+                                <div className={`w-16 h-16 rounded-full flex items-center justify-center overflow-hidden transition-all ${active
+                                    ? "bg-lime"
+                                    : "bg-content-muted/10 group-hover:bg-content-muted/15"
+                                    }`}>
                                     <Image
                                         src={tab.image}
                                         alt={tab.label}
@@ -200,9 +199,8 @@ export default function FoodSection({ food }: Props) {
                                 )}
                             </div>
 
-                            <span className={`text-[11px] font-medium text-center leading-tight transition-colors ${
-                                active ? "text-content font-bold" : "text-content-muted"
-                            }`}>
+                            <span className={`text-[11px] font-medium text-center leading-tight transition-colors ${active ? "text-content font-bold" : "text-content-muted"
+                                }`}>
                                 {tab.label}
                             </span>
                         </button>
@@ -282,7 +280,7 @@ export default function FoodSection({ food }: Props) {
                 {filtered.length} result{filtered.length !== 1 ? "s" : ""}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4 mt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-4 mt-1">
                 {filtered.length > 0 ? (
                     filtered.map((item, index) => (
                         <FoodCards key={index} {...item} isTopRated={parseFloat(item.rating) >= 4.6} />
@@ -319,11 +317,10 @@ export default function FoodSection({ food }: Props) {
                                         <button
                                             key={label}
                                             onClick={() => toggleTempType(label)}
-                                            className={`relative flex flex-col items-center gap-2 p-3 rounded-2xl border-2 cursor-pointer transition-all ${
-                                                selected
-                                                    ? "border-lime bg-lime/10"
-                                                    : "border-content-muted/20 bg-surface-deep hover:border-content-muted/40"
-                                            }`}
+                                            className={`relative flex flex-col items-center gap-2 p-3 rounded-2xl border-2 cursor-pointer transition-all ${selected
+                                                ? "border-lime bg-lime/10"
+                                                : "border-content-muted/20 bg-surface-deep hover:border-content-muted/40"
+                                                }`}
                                         >
                                             {selected && (
                                                 <span className="absolute top-1.5 right-1.5 w-5 h-5 bg-lime rounded-full flex items-center justify-center">
@@ -394,9 +391,8 @@ export default function FoodSection({ food }: Props) {
                                         <span className="text-xl">{opt.icon}</span>
                                         {opt.label}
                                     </span>
-                                    <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition ${
-                                        tempSort === opt.value ? "border-lime bg-lime" : "border-content-muted/40"
-                                    }`}>
+                                    <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition ${tempSort === opt.value ? "border-lime bg-lime" : "border-content-muted/40"
+                                        }`}>
                                         {tempSort === opt.value && <span className="w-2 h-2 rounded-full bg-ink" />}
                                     </span>
                                 </button>
