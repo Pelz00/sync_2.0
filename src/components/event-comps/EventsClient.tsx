@@ -31,7 +31,7 @@ export default function EventsClient({ events }: Props) {
     return (
         <>
             {/* FILTER CHIPS */}
-            <h2 className="text-2xl text-center lg:text-left font-black tracking-tight md:text-4xl lg:text-4xl font-display text-content leading-none">
+            <h2 className="text-2xl text-left lg:text-left font-black tracking-tight md:text-4xl lg:text-4xl font-display text-content leading-none">
                 <span className="text-ink bg-lime px-2 py-1 lg:px-4 lg:py-1 inline-block transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(197,255,74,1)] dark:shadow-[4px_4px_0px_0px_rgba(168,219,60,1)]">
                     Stay tuned.
                 </span>
@@ -42,7 +42,7 @@ export default function EventsClient({ events }: Props) {
                         key={category}
                         onClick={() => setActiveCategory(category)}
                         className={`rounded-lg px-2 py-1 lg:px-3 lg:py-1.5 rounded-lg cursor-pointer text-xs lg:text-sm border transition-colors ${activeCategory === category
-                            ? "bg-lime text-ink font-bold border-transparent shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                            ? "bg-lime text-ink font-bold border-transparent"
                             : "bg-panel text-content border-line/15 hover:bg-content-muted/5"
                             }`}
                     >
@@ -52,7 +52,7 @@ export default function EventsClient({ events }: Props) {
             </div>
 
             {/* EVENT GRID */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 lg:gap-4 mt-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-4 mt-2">
                 {filtered.length > 0 ? (
                     filtered.map((event, index) => (
                         <EventCards key={index} {...event} />
