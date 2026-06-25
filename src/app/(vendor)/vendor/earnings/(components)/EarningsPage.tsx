@@ -393,7 +393,7 @@ export default function EarningsPage({ data = mockData }: EarningsPageProps) {
         txn={selectedTxn}
         onClose={() => setSelectedTxn(null)}
       />
-      <div className="bg-cream-deep min-h-screen space-y-6 px-6 py-6">
+      <div className="min-h-screen space-y-6 px-6 py-6">
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
