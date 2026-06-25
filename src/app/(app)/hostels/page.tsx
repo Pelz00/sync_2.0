@@ -455,18 +455,32 @@ export default function Page() {
             
             {/* Wireframe Mock Panels Framework */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-2 p-0 pb-6 border-b border-line/10">
-              <div className="md:col-span-2 h-64 bg-zinc-500/5 rounded-2xl relative flex items-center justify-center border border-zinc-800/30 overflow-hidden group">
-                <span className="text-xs font-mono opacity-30 text-zinc-400">primary room view</span>
-                <div className="absolute inset-0 pointer-events-none opacity-5 border border-zinc-700 [clip-path:polygon(0_0,100%_100%,100%_0,0_100%)]" />
+              <div className="md:col-span-2 h-64 rounded-2xl relative overflow-hidden border border-line/10 group">
+                <Image
+                  src={hostelArielImg}
+                  alt="Primary room view"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               </div>
               <div className="hidden md:block col-span-1 space-y-2">
-                <div className="h-[124px] bg-zinc-500/5 rounded-2xl flex items-center justify-center border border-zinc-800/30 text-xs font-mono opacity-30">exterior walkway</div>
-                <div className="h-[124px] bg-zinc-500/5 rounded-2xl flex items-center justify-center border border-zinc-800/30 text-xs font-mono opacity-30">kitchen spaces</div>
+                <div className="relative h-[124px] overflow-hidden rounded-2xl border border-line/10">
+                  <Image src={hostelImg} alt="Exterior walkway" fill sizes="25vw" className="object-cover" />
+                </div>
+                <div className="relative h-[124px] overflow-hidden rounded-2xl border border-line/10">
+                  <Image src={hostel1Img} alt="Kitchen spaces" fill sizes="25vw" className="object-cover" />
+                </div>
               </div>
               <div className="hidden md:block col-span-1 space-y-2">
-                <div className="h-[124px] bg-zinc-500/5 rounded-2xl flex items-center justify-center border border-zinc-800/30 text-xs font-mono opacity-30">bathroom profile</div>
-                <div className="h-[124px] bg-zinc-500/5 rounded-2xl bg-lime-500/5 text-lime-400 font-bold flex items-center justify-center border border-lime-500/20 text-sm">
-                  + 8 Blueprint Photos
+                <div className="relative h-[124px] overflow-hidden rounded-2xl border border-line/10">
+                  <Image src={hostelImg} alt="Bathroom profile" fill sizes="25vw" className="object-cover" />
+                </div>
+                <div className="relative h-[124px] overflow-hidden rounded-2xl border border-lime-500/30">
+                  <Image src={hostel1Img} alt="More photos" fill sizes="25vw" className="object-cover" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+                    <span className="text-lime-400 font-bold text-sm">+ 8 Blueprint Photos</span>
+                  </div>
                 </div>
               </div>
             </div>
