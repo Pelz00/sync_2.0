@@ -11,7 +11,6 @@ interface Event {
     title: string
     location: string
     time: string
-    going: number
     category: string
 }
 
@@ -32,7 +31,7 @@ export default function EventsClient({ events }: Props) {
         <>
             {/* FILTER CHIPS */}
             <h2 className="text-2xl text-left lg:text-left font-black tracking-tight md:text-4xl lg:text-4xl font-display text-content leading-none">
-                <span className="text-ink bg-lime px-2 py-1 lg:px-4 lg:py-1 inline-block transform -rotate-1 shadow-[4px_4px_0px_0px_rgba(197,255,74,1)] dark:shadow-[4px_4px_0px_0px_rgba(168,219,60,1)]">
+                <span className="text-ink bg-lime px-2 py-1 lg:px-4 lg:py-1 inline-block transform -rotate-3">
                     Stay tuned.
                 </span>
             </h2>

@@ -170,8 +170,8 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
                                 key={i}
                                 onClick={() => goTo(i)}
                                 className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${i === current
-                                        ? "bg-lime w-5"
-                                        : "bg-white/40 w-2 hover:bg-white/70"
+                                    ? "bg-lime w-5"
+                                    : "bg-white/40 w-2 hover:bg-white/70"
                                     }`}
                                 aria-label={`Go to slide ${i + 1}`}
                             />
@@ -247,7 +247,7 @@ export default function FeaturedCarousel({ items }: { items: FeaturedFood[] }) {
 
                                     <Link
                                         href={`/food/${item.slug}`}
-                                        className="flex items-center gap-2 bg-lime text-ink font-bold font-mono text-sm px-4 py-2 rounded-xl border border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:opacity-90 transition"
+                                        className="flex items-center gap-2 bg-lime text-ink font-bold font-mono text-sm px-4 py-3 lg:px-4 lg:py-2 rounded-xl border border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:opacity-90 transition"
                                     >
                                         Order now{" "}
                                         <MoveRight strokeWidth={3} width={14} height={14} />

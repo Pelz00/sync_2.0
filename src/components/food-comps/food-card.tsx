@@ -141,8 +141,8 @@ export default function FoodCards({
                             size={18}
                             strokeWidth={2}
                             className={`transition-colors duration-200 ${isFavourited
-                                    ? "fill-lime-deep text-lime-deep"
-                                    : "text-green-700"
+                                ? "fill-lime-deep text-lime-deep"
+                                : "text-green-700"
                                 }`}
                         />
                     </button>
@@ -208,9 +208,9 @@ export default function FoodCards({
                         {/* Stop propagation so clicking "Place Order" doesn't double-navigate */}
                         <span
                             onClick={e => e.stopPropagation()}
-                            className={`px-3 py-1 rounded-lg text-sm font-semibold shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] ${status === "closed"
-                                    ? "bg-content-muted/20 text-content-muted pointer-events-none"
-                                    : "bg-lime text-ink"
+                            className={`px-3.5 py-2.5 lg:px-3 lg:py-1.5 rounded-lg text-sm font-semibold shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] ${status === "closed"
+                                ? "bg-content-muted/20 text-content-muted pointer-events-none"
+                                : "bg-lime text-ink"
                                 }`}
                         >
                             {status === "closed" ? "Unavailable" : "Place Order"}
