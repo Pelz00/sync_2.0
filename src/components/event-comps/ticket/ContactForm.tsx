@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { User, Mail } from "lucide-react"
+import { User, Mail, Check } from "lucide-react"
 
 export interface ContactFormData {
     firstName: string
@@ -38,8 +38,14 @@ function Field({
     )
 }
 
+// Matches OrderSummary's borders exactly: plain `border` (default 1px) +
+// border-line/10, nothing fancier. The previous thick look was very likely
+// the `hover:border-line/30` class on the card wrapper firing while the
+// cursor sat over the card during the screenshot (3x more opaque than /10,
+// and a hover state — not the resting style). That class is removed below
+// for the same reason OrderSummary never had it either.
 const inputClass =
-    "w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
+    "w-full rounded-xl border border-line/10 bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
 
 export default function ContactForm({ value, onChange }: ContactFormProps) {
     function set<K extends keyof ContactFormData>(key: K, val: ContactFormData[K]) {
@@ -48,12 +54,14 @@ export default function ContactForm({ value, onChange }: ContactFormProps) {
 
     return (
         <div className="space-y-6">
-            {/* Purchaser details — this is the person actually buying/paying,
-                always required regardless of who the tickets get sent to. */}
-            <div className="rounded-2xl border border-line bg-panel p-5 sm:p-6 space-y-5">
+            {/* Purchaser details — same shell as OrderSummary: rounded-xl,
+                plain border + border-line/10, bg-panel, shadow-card. No
+                hover brightening, so it stays calm at rest like the
+                summary card does. */}
+            <div className="rounded-xl border border-line/10 bg-panel shadow-card p-5 sm:p-6 space-y-5">
                 <div className="flex items-center gap-2">
-                    <User size={16} className="text-lime-deep dark:text-lime" />
-                    <h2 className="font-bold text-content">Your details</h2>
+                    <User size={16} className="text-accent-fg" />
+                    <h2 className="text-xl text-content font-display">Your details</h2>
                 </div>
 
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -108,42 +116,45 @@ export default function ContactForm({ value, onChange }: ContactFormProps) {
                 </Field>
             </div>
 
-            {/* Where should the tickets be sent? Defaults to the purchaser's
-                own email above; toggling reveals a separate recipient field. */}
-            <div className="rounded-2xl border border-line bg-panel p-5 sm:p-6 space-y-4">
+            {/* Where should the tickets be sent? — same calm shell, pill
+                buttons for the choice itself. */}
+            <div className="rounded-xl border border-line/10 bg-panel shadow-card p-5 sm:p-6 space-y-4">
                 <div className="flex items-center gap-2">
-                    <Mail size={16} className="text-lime-deep dark:text-lime" />
-                    <h2 className="font-bold text-content">Send tickets to</h2>
+                    <Mail size={16} className="text-accent-fg" />
+                    <h2 className="text-xl text-content font-display">Send tickets to</h2>
                 </div>
 
-                <div className="flex flex-col gap-2.5">
-                    <label className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 cursor-pointer">
-                        <input
-                            type="radio"
-                            name="ticketRecipient"
-                            checked={!value.sendToOther}
-                            onChange={() => set("sendToOther", false)}
-                            className="h-4 w-4 accent-lime cursor-pointer"
-                        />
-                        <span className="text-sm text-content">
-                            My own email
-                            {value.email && (
-                                <span className="text-content-muted"> ({value.email})</span>
-                            )}
-                        </span>
-                    </label>
+                <div className="flex flex-wrap gap-2">
+                    <button
+                        type="button"
+                        onClick={() => set("sendToOther", false)}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${!value.sendToOther
+                            ? "bg-lime text-ink"
+                            : "border border-line/10 text-content hover:bg-content-muted/5"
+                            }`}
+                    >
+                        {!value.sendToOther && <Check size={14} />}
+                        My own email
+                    </button>
 
-                    <label className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 cursor-pointer">
-                        <input
-                            type="radio"
-                            name="ticketRecipient"
-                            checked={value.sendToOther}
-                            onChange={() => set("sendToOther", true)}
-                            className="h-4 w-4 accent-lime cursor-pointer"
-                        />
-                        <span className="text-sm text-content">Someone else&apos;s email</span>
-                    </label>
+                    <button
+                        type="button"
+                        onClick={() => set("sendToOther", true)}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${value.sendToOther
+                            ? "bg-lime text-ink"
+                            : "border border-line/10 text-content hover:bg-content-muted/5"
+                            }`}
+                    >
+                        {value.sendToOther && <Check size={14} />}
+                        Someone else&apos;s email
+                    </button>
                 </div>
+
+                {!value.sendToOther && value.email && (
+                    <p className="text-xs text-content-muted">
+                        Tickets will be sent to <span className="text-content font-medium">{value.email}</span>
+                    </p>
+                )}
 
                 {value.sendToOther && (
                     <Field label="Recipient's email address" required>

@@ -307,13 +307,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                   text-xl
                   py-4
                   rounded-2xl
-                  border-2
+                  
                   border-black
-                  shadow-[4px_4px_0px_rgba(0,0,0,1)]
+                  shadow-[2px_2px_0px_rgba(0,0,0,1)]
                   transition-all
                   hover:translate-x-[2px]
                   hover:translate-y-[2px]
-                  hover:shadow-none
+                  
 "
           >
             Get Tickets
