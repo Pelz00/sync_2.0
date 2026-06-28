@@ -20,6 +20,14 @@ const SUPABASE_ORIGINS = 'https://*.supabase.co https://*.supabase.in wss://*.su
 // expands to a/b/c.tile.openstreetmap.org - all covered by the wildcard.
 const MAP_TILE_ORIGINS = 'https://*.tile.openstreetmap.org';
 
+// Google Maps embed (event detail page's location preview iframe, using the
+// `output=embed` query format). Scoped to https://www.google.com only — not
+// a wildcard on *.google.com — since that's the single origin the embed
+// iframe actually loads from. Without this, frame-src silently blocked the
+// iframe before it ever requested anything, which is why the map rendered
+// as permanently blank with no console error and onLoad never fired.
+const GOOGLE_MAPS_EMBED_ORIGIN = 'https://www.google.com';
+
 // React + Next dev tooling (HMR, error overlay, call-stack reconstruction)
 // requires `eval()` in dev mode. Production never needs it.
 //
@@ -41,7 +49,7 @@ export const contentSecurityPolicy = [
   `img-src 'self' data: blob: ${SUPABASE_ORIGINS} ${MAP_TILE_ORIGINS}`,
   `font-src 'self' data:`,
   `connect-src 'self' ${SUPABASE_ORIGINS} ${PAYSTACK_ORIGINS}${isDev ? ' ws: http://localhost:* ws://localhost:*' : ''}`,
-  `frame-src ${PAYSTACK_ORIGINS}`,
+  `frame-src ${PAYSTACK_ORIGINS} ${GOOGLE_MAPS_EMBED_ORIGIN}`,
   `frame-ancestors 'none'`,
   `base-uri 'self'`,
   `form-action 'self' ${PAYSTACK_ORIGINS}`,
@@ -61,10 +69,10 @@ export const securityHeaders = [
   // HSTS only in production - never on localhost or it pins your browser.
   ...(process.env.NODE_ENV === 'production'
     ? [
-        {
-          key: 'Strict-Transport-Security',
-          value: 'max-age=63072000; includeSubDomains; preload',
-        },
-      ]
+      {
+        key: 'Strict-Transport-Security',
+        value: 'max-age=63072000; includeSubDomains; preload',
+      },
+    ]
     : []),
 ] as const;
