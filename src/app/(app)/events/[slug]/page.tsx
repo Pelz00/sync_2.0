@@ -1,6 +1,6 @@
 import { LuDot } from "react-icons/lu"
 import { TbCurrencyNaira } from "react-icons/tb"
-import { MoveRight, ArrowLeft, Calendar, Clock, MapPin, MoveLeft } from "lucide-react"
+import { MoveRight, ArrowLeft, Calendar, Clock, MapPin, MoveLeft, XCircle } from "lucide-react"
 import { GoDotFill } from "react-icons/go"
 import Image, { StaticImageData } from "next/image"
 import Link from "next/link"
@@ -47,6 +47,10 @@ interface EventDetail {
   tags: string[]
   tickets: Ticket[]
   lineup: LineupArtist[]
+  // When true: card shows a red "Sold Out" badge instead of price, and
+  // this detail page disables the "Get Tickets" CTA, replacing it with a
+  // non-clickable "Sold Out" button.
+  soldOut?: boolean
 }
 
 const events: EventDetail[] = [
@@ -60,6 +64,7 @@ const events: EventDetail[] = [
     time: "8pm",
     category: "Concert",
     tags: ["Concert", "18+"],
+    soldOut: true, // headliner event — highest demand, marked sold out
     tickets: [
       { id: "regular", name: "Regular", desc: "Standing • open floor", price: 3500 },
       { id: "vip", name: "VIP", desc: "Reserved seats • meet & greet", price: 7500 },
@@ -168,6 +173,7 @@ const events: EventDetail[] = [
     time: "8pm",
     category: "Campus",
     tags: ["Campus"],
+    soldOut: true, // small venue (Convocation Hall) + well-known comedian
     tickets: [
       { id: "regular", name: "Regular", desc: "Standing • open floor", price: 5000 },
       { id: "vip", name: "VIP", desc: "Front row • meet & greet", price: 12000 },
@@ -223,6 +229,7 @@ const events: EventDetail[] = [
     time: "6pm",
     category: "Nightlife",
     tags: ["Nightlife", "18+"],
+    soldOut: true, // 18+ exclusive party — naturally capped capacity
     tickets: [
       { id: "regular", name: "Regular", desc: "Standing • open floor", price: 6000 },
       { id: "vip", name: "VIP", desc: "Reserved table • bottle service", price: 20000 },
@@ -271,7 +278,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     )
   }
 
-  const { tickets, lineup } = event
+  const { tickets, lineup, soldOut } = event
 
   return (
     <section className="flex flex-col gap-4">
@@ -289,36 +296,37 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               src={event.image}
               alt={event.title}
               fill
-              className="object-cover"
+              className={`object-cover ${soldOut ? "grayscale-[30%] opacity-80" : ""}`}
               priority
             />
+            {soldOut && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/35">
+                <span className="rotate-[-6deg] border-2 border-red-500 bg-red-500/90 text-white font-black font-mono text-lg px-6 py-2 rounded-md tracking-wide">
+                  SOLD OUT
+                </span>
+              </div>
+            )}
           </div>
 
-          <Link
-            href={`/events/${event.slug}/tickets`}
-            className="
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                  bg-lime
-                  text-ink
-                  font-black
-                  text-xl
-                  py-4
-                  rounded-2xl
-                  
-                  border-black
-                  shadow-[2px_2px_0px_rgba(0,0,0,1)]
-                  transition-all
-                  hover:translate-x-[2px]
-                  hover:translate-y-[2px]
-                  
-"
-          >
-            Get Tickets
-            <MoveRight size={20} />
-          </Link>
+          {/* CTA — disabled red "Sold Out" button when the event has no
+              tickets left, instead of the normal lime "Get Tickets" link. */}
+          {soldOut ? (
+            <span
+              aria-disabled="true"
+              className="flex items-center justify-center gap-2 bg-red-500 text-white font-black text-xl py-4 rounded-2xl border-2 border-red-700 cursor-not-allowed opacity-90"
+            >
+              <XCircle size={20} />
+              Sold Out
+            </span>
+          ) : (
+            <Link
+              href={`/events/${event.slug}/tickets`}
+              className="flex items-center justify-center gap-2 bg-lime text-ink font-black text-xl py-4 rounded-2xl border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-[2px] hover:translate-y-[2px]"
+            >
+              Get Tickets
+              <MoveRight size={20} />
+            </Link>
+          )}
         </div>
 
         {/* RIGHT — all event details */}
@@ -330,9 +338,15 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               {event.title}
             </h1>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
-              <span className="flex items-center gap-1 bg-lime text-ink text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                <GoDotFill className="animate-pulse" /> Tonight
-              </span>
+              {soldOut ? (
+                <span className="flex items-center gap-1 bg-red-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                  Sold Out
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 bg-lime text-ink text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                  <GoDotFill className="animate-pulse" /> Tonight
+                </span>
+              )}
               {event.tags.map(tag => (
                 <span key={tag} className="border border-line/20 text-content-muted rounded-full px-2 py-0.5 text-[10px]">
                   {tag}

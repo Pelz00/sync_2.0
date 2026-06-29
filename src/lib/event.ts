@@ -13,6 +13,7 @@ import kendrickImage from "@/assets/images/kendrick.jpg"
 import lilYatchyImage from "@/assets/images/lil-yatchy.jpg"
 import BirthdayImage from '@/assets/images/birthday.jpg'
 import ShineImage from '@/assets/images/shine.jpg'
+import partyEvent from '@/assets/images/partyImage.jpg'
 
 export interface Ticket {
     id: string
@@ -37,9 +38,41 @@ export interface Event {
     category: string
     tickets: Ticket[]
     lineup?: LineupArtist[]
+    // Drives the red "Sold Out" badge/button on both the listing grid
+    // (EventCards via EventsClient) and the detail page — this file is the
+    // SINGLE source of truth both consume, so setting it here is enough
+    // for it to show up everywhere consistently.
+    soldOut?: boolean
 }
 
 export const events: Event[] = [
+    {
+        // NOTE: this event didn't exist in this file before but is
+        // referenced by the featured row in app/events/page.tsx
+        // (slug: "freshers-night-phyno-live") and was present in the
+        // detail page's separate local array with soldOut: true. Added
+        // here so it actually resolves on both the listing and detail
+        // page instead of only existing in one disconnected copy.
+        slug: "freshers-night-phyno-live",
+        image: partyEvent,
+        date: "TUE 28",
+        price: "₦3,500",
+        title: "Fresher's Night '26 — Phyno Live",
+        location: "UNILORIN Sports Hall",
+        time: "8pm",
+        category: "Concert",
+        soldOut: true,
+        lineup: [
+            { name: "Phyno", avatar: taylorSwiftImage },
+            { name: "DJ Neptune", avatar: kendrickImage },
+            { name: "Local opening", avatar: lilYatchyImage },
+        ],
+        tickets: [
+            { id: "regular", name: "Regular", desc: "Standing • open floor", price: 3500 },
+            { id: "vip", name: "VIP", desc: "Reserved seats • meet & greet", price: 7500 },
+            { id: "table", name: "Table for 4", desc: "Booth • drinks included", price: 25000 },
+        ],
+    },
     {
         slug: "open-mic-night",
         image: OpenMicImage,
@@ -190,6 +223,7 @@ export const events: Event[] = [
         location: "Convocation Hall",
         time: "8pm",
         category: "Concert",
+        soldOut: true,
         lineup: [
             { name: "I Go Dye", avatar: taylorSwiftImage },
             { name: "AY Comedian", avatar: kendrickImage },
@@ -279,6 +313,7 @@ export const events: Event[] = [
         location: "The Lounge, GRA",
         time: "6pm",
         category: "Nightlife",
+        soldOut: true,
         lineup: [
             { name: "DJ Cuppy", avatar: taylorSwiftImage },
             { name: "Surprise guest", avatar: kendrickImage },
@@ -324,7 +359,3 @@ export const events: Event[] = [
         ],
     },
 ]
-
-
-
-

@@ -4,6 +4,11 @@ import EventCards from "@/components/event-comps/event-card"
 import { StaticImageData } from "next/image"
 import { ChevronDown, ArrowDownUp } from "lucide-react"
 
+interface LineupArtist {
+    name: string
+    avatar?: StaticImageData | string
+}
+
 interface Event {
     slug: string
     image: StaticImageData | string
@@ -13,6 +18,12 @@ interface Event {
     location: string
     time: string
     category: string
+    // These two were missing here, which meant TypeScript never knew
+    // EventCards actually accepts them — soldOut in particular was being
+    // dropped silently even though page.tsx sets it correctly on the
+    // underlying event data. Adding them lets {...event} pass both through.
+    lineup?: LineupArtist[]
+    soldOut?: boolean
 }
 
 interface Props {
