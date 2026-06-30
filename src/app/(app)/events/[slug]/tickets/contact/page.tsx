@@ -146,7 +146,7 @@ export default function ContactPage() {
 
                     {/* Purchaser details — the person completing the purchase,
                         always required regardless of who the tickets go to. */}
-                    <div className="rounded-2xl border border-line bg-panel p-5 sm:p-6 space-y-5">
+                    <div className="rounded-2xl border border-line/10 bg-panel p-5 sm:p-6 space-y-5">
                         <h2 className="font-bold text-content">Your details</h2>
 
                         <div className="grid sm:grid-cols-2 gap-4">
@@ -155,14 +155,14 @@ export default function ContactPage() {
                                 value={purchaser.firstName}
                                 onChange={e => set("firstName", e.target.value)}
                                 placeholder="First name"
-                                className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
+                                className="w-full rounded-xl border border-line/10 bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
                             />
                             <input
                                 type="text"
                                 value={purchaser.lastName}
                                 onChange={e => set("lastName", e.target.value)}
                                 placeholder="Last name"
-                                className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
+                                className="w-full rounded-xl border border-line/10 bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
                             />
                         </div>
 
@@ -171,7 +171,7 @@ export default function ContactPage() {
                             value={purchaser.email}
                             onChange={e => set("email", e.target.value)}
                             placeholder="Email address"
-                            className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
+                            className="w-full rounded-xl border border-line/10 bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
                         />
 
                         <input
@@ -179,7 +179,7 @@ export default function ContactPage() {
                             value={purchaser.confirmEmail}
                             onChange={e => set("confirmEmail", e.target.value)}
                             placeholder="Confirm email address"
-                            className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
+                            className="w-full rounded-xl border border-line/10 bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
                         />
 
                         <input
@@ -187,7 +187,7 @@ export default function ContactPage() {
                             value={purchaser.phone}
                             onChange={e => set("phone", e.target.value)}
                             placeholder="Phone number"
-                            className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
+                            className="w-full rounded-xl border border-line/10 bg-surface px-4 py-3 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
                         />
                     </div>
 

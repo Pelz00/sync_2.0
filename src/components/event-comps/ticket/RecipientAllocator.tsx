@@ -81,7 +81,7 @@ export default function RecipientAllocator({
     )
 
     return (
-        <div className="rounded-2xl border border-line bg-panel p-5 sm:p-6 space-y-5">
+        <div className="rounded-2xl border border-line/10 bg-panel p-5 sm:p-6 space-y-5">
             <div>
                 <h2 className="font-bold text-content">Who are these tickets for?</h2>
                 <p className="text-sm text-content-muted mt-1">
@@ -97,11 +97,10 @@ export default function RecipientAllocator({
                     return (
                         <span
                             key={t.id}
-                            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                                remaining === 0
-                                    ? "bg-lime/15 text-lime-deep dark:text-lime"
-                                    : "bg-content-muted/10 text-content-muted"
-                            }`}
+                            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${remaining === 0
+                                ? "bg-lime/15 text-lime-deep dark:text-lime"
+                                : "bg-content-muted/10 text-content-muted"
+                                }`}
                         >
                             {remaining === 0 ? <CheckCircle2 size={12} /> : <AlertCircle size={12} />}
                             {t.name}: {remaining === 0 ? "all assigned" : `${remaining} left`}
@@ -116,7 +115,7 @@ export default function RecipientAllocator({
                     return (
                         <div
                             key={recipient.id}
-                            className="rounded-xl border border-line bg-surface p-4 sm:p-5 space-y-4"
+                            className="rounded-xl border border-line/10 bg-surface p-4 sm:p-5 space-y-4"
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
@@ -146,14 +145,14 @@ export default function RecipientAllocator({
                                     value={isFirst ? recipient.name || purchaserName : recipient.name}
                                     onChange={e => updateRecipient(recipient.id, { name: e.target.value })}
                                     placeholder={isFirst ? purchaserName || "Full name" : "Full name"}
-                                    className="w-full rounded-lg border border-line bg-panel px-3.5 py-2.5 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
+                                    className="w-full rounded-lg border border-line/10 bg-panel px-3.5 py-2.5 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
                                 />
                                 <input
                                     type="email"
                                     value={isFirst ? recipient.email || purchaserEmail : recipient.email}
                                     onChange={e => updateRecipient(recipient.id, { email: e.target.value })}
                                     placeholder={isFirst ? purchaserEmail || "Email address" : "Email address"}
-                                    className="w-full rounded-lg border border-line bg-panel px-3.5 py-2.5 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
+                                    className="w-full rounded-lg border border-line/10 bg-panel px-3.5 py-2.5 text-sm text-content placeholder:text-content-muted/60 outline-none transition focus:border-lime"
                                 />
                             </div>
 
@@ -174,7 +173,7 @@ export default function RecipientAllocator({
                                                     type="button"
                                                     onClick={() => setAllocation(recipient.id, t.id, qty - 1)}
                                                     disabled={qty === 0}
-                                                    className="h-7 w-7 rounded-md border border-line bg-panel text-content text-sm disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer hover:bg-lime/10"
+                                                    className="h-7 w-7 rounded-md border border-line/10 bg-panel text-content text-sm disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer hover:bg-lime/10"
                                                 >
                                                     −
                                                 </button>
@@ -185,7 +184,7 @@ export default function RecipientAllocator({
                                                     type="button"
                                                     onClick={() => setAllocation(recipient.id, t.id, qty + 1)}
                                                     disabled={qty >= remainingForOthers}
-                                                    className="h-7 w-7 rounded-md border border-line bg-lime text-ink text-sm disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer hover:opacity-90"
+                                                    className="h-7 w-7 rounded-md border border-line/10 bg-lime text-ink text-sm disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer hover:opacity-90"
                                                 >
                                                     +
                                                 </button>
