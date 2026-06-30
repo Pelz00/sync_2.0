@@ -42,7 +42,7 @@ const menu = [
 export default function Page() {
   return (
     <section className="flex flex-col gap-3">
-      <p className="eyebrow text-accent-fg">/food/[vendorSlug]</p>
+      {/* <p className="eyebrow text-accent-fg">/food/[vendorSlug]</p> */}
       <VendorClient
         vendorName="Mama Puta Tanke"
         tagline="Jollof · Amala · Local"

@@ -84,7 +84,7 @@ const food = [
   {
     slug: 'mama-puta-tanke',
     image: JollofOne,
-    name: 'Mama Puta Tanke',
+    name: 'Mama Put Tanke',
     tags: ['Jollof', 'Coconut rice'] as string[],
     rating: '4.8',
     reviewCount: 312,
@@ -387,7 +387,7 @@ const food = [
 export default function Page() {
   return (
     <section className="flex flex-col gap-3">
-      <p className="eyebrow text-accent-fg">/food</p>
+      {/* <p className="eyebrow text-accent-fg">/food</p> */}
 
       <h1 className="text-center text-3xl lg:text-left font-display lg:text-section text-content">
         What are you <span className="text-[#4A8500] dark:text-lime-deep"> <br className='lg:hidden' />Chopping</span> tonight?

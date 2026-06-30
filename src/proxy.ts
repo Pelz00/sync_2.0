@@ -46,9 +46,9 @@ const PROTECTED_PREFIXES: { prefix: string; roles: Role[] }[] = [
   // Dashboards - role-specific. This is the only access difference.
   { prefix: '/me', roles: ['student'] },
   { prefix: '/onboarding', roles: ['vendor'] },
-  // { prefix: '/vendor', roles: ['vendor'] },
+  { prefix: '/vendor', roles: ['vendor'] },
   { prefix: '/landlord', roles: ['vendor'] }, // category-check happens in the page itself
-  // { prefix: '/admin', roles: ['admin', 'super_admin'] },
+  { prefix: '/admin', roles: ['admin', 'super_admin'] },
 ];
 
 const supabaseConfigured = Boolean(

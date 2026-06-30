@@ -48,7 +48,6 @@ export default function VendorClient({
     const [confirmClearOpen, setConfirmClearOpen] = useState(false)
     const [mobileView, setMobileView] = useState<MobileView>("menu")
 
-    // ── item sheet (replaces MobileItemView + desktop modal) ──────────────
     const [itemSheetOpen, setItemSheetOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
     const [itemQty, setItemQty] = useState(1)
@@ -90,7 +89,6 @@ export default function VendorClient({
         })
     }
 
-    // ── item sheet helpers ────────────────────────────────────────────────
     function openItemSheet(item: MenuItem) {
         setSelectedItem(item)
         setItemQty(1)
@@ -114,7 +112,6 @@ export default function VendorClient({
         setItemSheetOpen(false)
     }
 
-    // ── scroll spy ────────────────────────────────────────────────────────
     useEffect(() => {
         if (mobileView !== "menu") return
         const observers: IntersectionObserver[] = []
@@ -144,7 +141,6 @@ export default function VendorClient({
         setTimeout(() => { isScrollingRef.current = false }, 900)
     }
 
-    // ── sub-components ────────────────────────────────────────────────────
     const VendorHeader = () => (
         <>
             <div className="relative w-full h-48 sm:h-60 lg:h-72 rounded-xl overflow-hidden">
@@ -199,7 +195,6 @@ export default function VendorClient({
                         {section.items.map((item, idx) => {
                             const qty = getQty(item.id)
                             const isLast = idx === section.items.length - 1
-
                             return (
                                 <div
                                     key={item.id}
@@ -222,7 +217,6 @@ export default function VendorClient({
                                             </div>
                                             <p className="text-xs text-content-muted mt-1 line-clamp-2">{item.description}</p>
                                         </div>
-
                                         <div className="flex justify-end mt-2">
                                             {qty === 0 ? (
                                                 <button
@@ -318,11 +312,8 @@ export default function VendorClient({
 
             <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
                 {cart.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 gap-4">
-                        <p className="text-content-muted text-sm">Your cart is empty</p>
-                        <button onClick={() => setMobileView("menu")} className="text-sm font-bold text-lime underline cursor-pointer">
-                            Browse menu
-                        </button>
+                    <div className="flex-1 flex items-center justify-center">
+                        <EmptyCart />
                     </div>
                 ) : (
                     <>
@@ -330,7 +321,6 @@ export default function VendorClient({
                             {cart.length} product{cart.length > 1 ? "s" : ""} from{" "}
                             <span className="font-bold text-content">{vendorName}</span>
                         </p>
-
                         <div className="flex flex-col gap-3">
                             {cart.map(item => (
                                 <div key={item.id} className="flex items-center gap-3 border border-content-muted/20 rounded-xl p-3">
@@ -370,14 +360,12 @@ export default function VendorClient({
                                 </div>
                             ))}
                         </div>
-
                         <button
                             onClick={() => setMobileView("menu")}
                             className="self-start text-xs font-bold text-content border border-content-muted/30 rounded-full px-4 py-2 cursor-pointer"
                         >
                             + Add more items
                         </button>
-
                         <div className="border border-content-muted/20 rounded-xl overflow-hidden">
                             <div className="flex flex-col divide-y divide-content-muted/10">
                                 {([
@@ -403,7 +391,7 @@ export default function VendorClient({
 
             {cart.length > 0 && (
                 <div className="flex-shrink-0 p-4 bg-panel border-t border-content-muted/20">
-                    <button className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5">
+                    <button className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5">
                         <span className="flex items-center gap-1">
                             <TbCurrencyNaira />{total.toLocaleString()}
                         </span>
@@ -416,15 +404,28 @@ export default function VendorClient({
         </div>
     )
 
-    // ── item sheet ────────────────────────────────────────────────────────
+    // ── Item sheet ────────────────────────────────────────────────────────
+    // Mobile  → slides up from the bottom (side="bottom")
+    // Desktop → centered modal via translate trick, capped at max-w-md
     const ItemSheet = () => (
         <Sheet open={itemSheetOpen} onOpenChange={setItemSheetOpen}>
             <SheetContent
                 side="bottom"
-                className="sm:bottom-auto sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[400px] sm:max-w-[400px] sm:rounded-l-xl sm:rounded-r-none p-0 flex flex-col max-h-[92dvh] sm:max-h-screen overflow-hidden"
+                className="
+                p-0 flex flex-col overflow-hidden
+                max-h-[92dvh] rounded-t-2xl
+                sm:rounded-2xl sm:max-h-[85vh]
+                sm:w-full sm:max-w-md
+                sm:inset-x-auto sm:inset-y-auto
+                sm:top-1/2 sm:left-1/2
+                sm:-translate-x-1/2 sm:-translate-y-1/2
+                sm:bottom-auto sm:right-auto
+                [&>button:last-child]:hidden
+            "
             >
                 {selectedItem && (
                     <>
+                        {/* Hero image */}
                         <div className="relative w-full h-56 flex-shrink-0">
                             <Image
                                 src={selectedItem.image}
@@ -437,6 +438,7 @@ export default function VendorClient({
                             </SheetClose>
                         </div>
 
+                        {/* Body */}
                         <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-4">
                             <div className="flex items-start justify-between gap-3">
                                 <h2 className="font-bold text-xl text-content leading-tight">
@@ -454,16 +456,17 @@ export default function VendorClient({
 
                             <div className="border-t border-content-muted/20" />
 
-                            <div className="flex flex-col gap-3">
-                                <p className="font-bold text-sm text-content">Quantity</p>
-                                <div className="flex items-center gap-5">
+                            {/* Quantity — centered on both mobile and desktop */}
+                            <div className="flex flex-col items-center gap-3">
+                                <p className="font-bold text-sm text-content self-start">Quantity</p>
+                                <div className="flex items-center justify-center gap-6 w-full">
                                     <button
                                         onClick={() => setItemQty(q => Math.max(1, q - 1))}
                                         className="w-11 h-11 rounded-full border-2 border-content-muted/30 flex items-center justify-center text-content hover:border-lime transition cursor-pointer"
                                     >
                                         <Minus size={18} />
                                     </button>
-                                    <span className="font-bold text-2xl text-content w-10 text-center">
+                                    <span className="font-bold text-2xl text-content w-10 text-center tabular-nums">
                                         {itemQty}
                                     </span>
                                     <button
@@ -476,6 +479,7 @@ export default function VendorClient({
                             </div>
                         </div>
 
+                        {/* Sticky CTA */}
                         <div className="flex-shrink-0 px-5 pb-6 pt-3 border-t border-content-muted/20 bg-panel">
                             <button
                                 onClick={addToCartFromSheet}
@@ -566,8 +570,8 @@ export default function VendorClient({
                                 {cart.map(item => (
                                     <div key={item.id} className="flex items-start gap-2">
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-medium text-content truncate">{item.name}</p>
-                                            <p className="text-xs text-content-muted flex items-center mt-0.5">
+                                            <p className="text-[13px] font-medium text-content truncate">{item.name}</p>
+                                            <p className="text-[13px] text-content-muted flex items-center mt-0.5">
                                                 <TbCurrencyNaira />{(item.price * item.qty).toLocaleString()}
                                             </p>
                                         </div>
@@ -588,18 +592,18 @@ export default function VendorClient({
                                         ["Packaging fee", PACKAGING_FEE],
                                         ["Sync fee", SYNC_FEE],
                                     ] as [string, number][]).map(([label, val]) => (
-                                        <div key={label} className="flex justify-between text-xs text-content-muted">
+                                        <div key={label} className="flex justify-between text-[13px] text-content-muted">
                                             <span>{label}</span>
                                             <span className="flex items-center"><TbCurrencyNaira />{val.toLocaleString()}</span>
                                         </div>
                                     ))}
                                 </div>
                                 <div className="flex justify-between px-4 py-2 font-bold text-sm text-content">
-                                    <span>Total</span>
-                                    <span className="flex items-center"><TbCurrencyNaira />{total.toLocaleString()}</span>
+                                    <span className="text-base">Total</span>
+                                    <span className="flex items-center"><TbCurrencyNaira className="text-xl" />{total.toLocaleString()}</span>
                                 </div>
                                 <div className="px-4 pb-4">
-                                    <button className="w-full bg-lime text-ink font-bold text-sm border-2 border-black rounded-xl py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono">
+                                    <button className="w-full bg-lime text-ink font-bold text-sm border-0 border-black rounded-xl py-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono">
                                         Proceed to Checkout →
                                     </button>
                                 </div>
@@ -628,7 +632,7 @@ export default function VendorClient({
             {/* ── Mobile cart view ── */}
             {mobileView === "cart" && <MobileCartView />}
 
-            {/* ── Item sheet (unified, replaces MobileItemView + desktop modal) ── */}
+            {/* ── Item sheet ── */}
             <ItemSheet />
 
             {storeInfoOpen && (

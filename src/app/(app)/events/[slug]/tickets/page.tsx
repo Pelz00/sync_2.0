@@ -17,7 +17,8 @@ export default function TicketsPage() {
     const event = events.find(e => e.slug === slug)
 
     const [quantities, setQuantities] = useState<Record<string, number>>({})
-
+    console.log("slug param:", slug, "found event:", event)
+    
     if (!event) notFound()
 
     function increase(ticketId: string) {
