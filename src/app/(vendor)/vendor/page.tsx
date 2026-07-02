@@ -10,7 +10,13 @@
 import type { Metadata } from 'next';
 import type { PendingRequestItem } from '@/components/dashboard/pending-request-card';
 import { RoleDashboard } from '@/components/dashboard/role-dashboard';
-import { bookingRequests, earningsSummary, foodProducts, revenueWeekly, vendorStats } from '@/mock/vendor';
+import {
+  bookingRequests,
+  earningsSummary,
+  foodProducts,
+  revenueWeekly,
+  vendorStats,
+} from '@/mock/vendor';
 import EarningsChart from './(components)/EarningChart';
 import EarningsSummaryCard from './(components)/EarningsSummaryCard';
 import { ProductsCard } from './(components)/ProductsCard';
@@ -36,25 +42,19 @@ export default function Page() {
       pending={pending}
       chart={revenueWeekly}
     >
-      <section className="flex items-start gap-4 lg:gap-8">
-        <div className="flex-1">
-          <h2 className="text-content-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
+      <section className="flex flex-col items-stretch gap-4 lg:flex-row lg:items-start lg:gap-8">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-content-muted mb-2 max-w-xl font-mono text-sm tracking-wide">
             BEST SELLING FOOD
           </h2>
           <EarningsChart />
         </div>
-        <div>
-          <h2 className="text-content-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
+        <div className="border-line/10 shadow-card w-full rounded-xl border p-4 lg:w-auto lg:min-w-[280px]">
+          <h2 className="text-content-muted mb-2 max-w-xl font-mono text-sm tracking-wide">
             MY EARNINGS
           </h2>
           <EarningsSummaryCard data={earningsSummary[0]} />
         </div>
-      </section>
-      <section>
-        <h2 className="text-content-muted mb-2 max-w-xl flex-1 font-mono text-sm tracking-wide">
-          MY PRODUCTS
-        </h2>
-        <ProductsCard products={foodProducts} />
       </section>
     </RoleDashboard>
   );

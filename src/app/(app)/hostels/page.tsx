@@ -1,7 +1,11 @@
 ﻿'use client';
 
 import { useMemo, useState, useEffect } from 'react';
+import Image, { type StaticImageData } from 'next/image';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import hostelImg from '@/assets/images/hostel.jpeg';
+import hostel1Img from '@/assets/images/hostel1.jpeg';
+import hostelArielImg from '@/assets/images/hostelariel.jpeg';
 
 interface Hostel {
   slug: string;
@@ -146,6 +150,12 @@ const HOSTELS: Hostel[] = [
     type: 'two bedroom',
   },
 ];
+
+// Real photos for the cards, assigned deterministically per hostel (cycled).
+const HOSTEL_IMAGES = [hostelImg, hostel1Img, hostelArielImg];
+const HOSTEL_IMAGE_BY_SLUG: Record<string, StaticImageData> = Object.fromEntries(
+  HOSTELS.map((h, i) => [h.slug, HOSTEL_IMAGES[i % HOSTEL_IMAGES.length]]),
+);
 
 const FILTERS = [
   { value: 'all', label: 'All Layouts' },
@@ -399,11 +409,11 @@ export default function Page() {
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
           
           {/* Top Navigation Bar */}
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-800/40">
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-line/10">
             <button
               type="button"
               onClick={() => setSelectedHostel(null)}
-              className="flex items-center gap-2 group text-sm font-semibold text-zinc-400 hover:text-lime-400 transition-colors"
+              className="flex items-center gap-2 group text-sm font-semibold text-content-muted hover:text-lime-400 transition-colors"
             >
               <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -414,11 +424,11 @@ export default function Page() {
           </div>
 
           {/* CAPACITY MONITOR HUD BANNER */}
-          <div className="mb-8 border border-zinc-800/60 rounded-2xl p-4 bg-zinc-500/5 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-300">
+          <div className="mb-8 border border-line/10 rounded-2xl p-4 bg-panel flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in slide-in-from-top-2 duration-300">
             <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Directory Capacity Monitoring</span>
-              <div className="text-xs text-zinc-300">
-                Viewing <span className="text-white font-bold">{selectedHostel.name}</span> ({selectedHostel.roomsLeft} left of {selectedHostel.totalRooms} total rooms) · Global pool totals <span className="text-lime-400 font-extrabold">{totalHostelsCount} complexes</span>.
+              <span className="text-[10px] uppercase font-bold text-content-muted tracking-wider">Directory Capacity Monitoring</span>
+              <div className="text-xs text-content">
+                Viewing <span className="text-content font-bold">{selectedHostel.name}</span> ({selectedHostel.roomsLeft} left of {selectedHostel.totalRooms} total rooms) · Global pool totals <span className="text-lime-400 font-extrabold">{totalHostelsCount} complexes</span>.
               </div>
             </div>
             
@@ -444,19 +454,33 @@ export default function Page() {
           <div className="bg-transparent rounded-3xl overflow-hidden">
             
             {/* Wireframe Mock Panels Framework */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-2 p-0 pb-6 border-b border-zinc-800/40">
-              <div className="md:col-span-2 h-64 bg-zinc-500/5 rounded-2xl relative flex items-center justify-center border border-zinc-800/30 overflow-hidden group">
-                <span className="text-xs font-mono opacity-30 text-zinc-400">primary room view</span>
-                <div className="absolute inset-0 pointer-events-none opacity-5 border border-zinc-700 [clip-path:polygon(0_0,100%_100%,100%_0,0_100%)]" />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-2 p-0 pb-6 border-b border-line/10">
+              <div className="md:col-span-2 h-64 rounded-2xl relative overflow-hidden border border-line/10 group">
+                <Image
+                  src={hostelArielImg}
+                  alt="Primary room view"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               </div>
               <div className="hidden md:block col-span-1 space-y-2">
-                <div className="h-[124px] bg-zinc-500/5 rounded-2xl flex items-center justify-center border border-zinc-800/30 text-xs font-mono opacity-30">exterior walkway</div>
-                <div className="h-[124px] bg-zinc-500/5 rounded-2xl flex items-center justify-center border border-zinc-800/30 text-xs font-mono opacity-30">kitchen spaces</div>
+                <div className="relative h-[124px] overflow-hidden rounded-2xl border border-line/10">
+                  <Image src={hostelImg} alt="Exterior walkway" fill sizes="25vw" className="object-cover" />
+                </div>
+                <div className="relative h-[124px] overflow-hidden rounded-2xl border border-line/10">
+                  <Image src={hostel1Img} alt="Kitchen spaces" fill sizes="25vw" className="object-cover" />
+                </div>
               </div>
               <div className="hidden md:block col-span-1 space-y-2">
-                <div className="h-[124px] bg-zinc-500/5 rounded-2xl flex items-center justify-center border border-zinc-800/30 text-xs font-mono opacity-30">bathroom profile</div>
-                <div className="h-[124px] bg-zinc-500/5 rounded-2xl bg-lime-500/5 text-lime-400 font-bold flex items-center justify-center border border-lime-500/20 text-sm">
-                  + 8 Blueprint Photos
+                <div className="relative h-[124px] overflow-hidden rounded-2xl border border-line/10">
+                  <Image src={hostelImg} alt="Bathroom profile" fill sizes="25vw" className="object-cover" />
+                </div>
+                <div className="relative h-[124px] overflow-hidden rounded-2xl border border-lime-500/30">
+                  <Image src={hostel1Img} alt="More photos" fill sizes="25vw" className="object-cover" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+                    <span className="text-lime-400 font-bold text-sm">+ 8 Blueprint Photos</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -483,31 +507,31 @@ export default function Page() {
                     {selectedHostel.name} <span className="font-normal italic text-lime-400">Complex</span>
                   </h1>
 
-                  <div className="flex flex-wrap items-center gap-3 mt-3 text-sm text-zinc-400">
-                    <span className="flex items-center gap-1 text-amber-400 font-bold">★ {selectedHostel.rating} <span className="text-zinc-500 font-normal">(Verified Reviews)</span></span>
+                  <div className="flex flex-wrap items-center gap-3 mt-3 text-sm text-content-muted">
+                    <span className="flex items-center gap-1 text-amber-400 font-bold">★ {selectedHostel.rating} <span className="text-content-muted font-normal">(Verified Reviews)</span></span>
                     <span>•</span>
                     <span>{selectedHostel.location}</span>
                     <span>•</span>
-                    <span className="text-zinc-500 italic">Managed by {selectedHostel.host}</span>
+                    <span className="text-content-muted italic">Managed by {selectedHostel.host}</span>
                   </div>
                 </div>
 
-                <div className="border-t border-dashed border-zinc-800/60 pt-6">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2">Architectural Description</h3>
-                  <p className="text-sm leading-relaxed text-zinc-400">
+                <div className="border-t border-dashed border-line/10 pt-6">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-content-muted mb-2">Architectural Description</h3>
+                  <p className="text-sm leading-relaxed text-content-muted">
                     A secure structurally vetted facility configured for maximum academic tranquility. Provides premium amenities spacing layout tailored effectively to students attending Kwara State University (KWASU).
                   </p>
                 </div>
 
                 {/* Amenities framework layout lists */}
                 <div>
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Facility Amenities Framework</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-content-muted mb-3">Facility Amenities Framework</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {['High-speed Wi-Fi', 'Continuous Water Supply', '24h Light Inverter', 'Secure Gated Perimeter', 'Full Tiled Floorplan', 'Private Closet space', 'Water Heater system', 'Dedicated Kitchen area'].map((facility) => {
                       return (
-                        <div key={facility} className="flex items-center gap-2 border border-zinc-800/40 rounded-xl p-2.5 bg-zinc-500/5 text-xs">
+                        <div key={facility} className="flex items-center gap-2 border border-line/10 rounded-xl p-2.5 bg-panel text-xs">
                           <span className="text-lime-400 font-bold">✓</span>
-                          <span className="font-medium text-zinc-300">{facility}</span>
+                          <span className="font-medium text-content">{facility}</span>
                         </div>
                       );
                     })}
@@ -515,10 +539,10 @@ export default function Page() {
                 </div>
 
                 {/* MAP BLUEPRINT SEGMENT */}
-                <div className="border-t border-dashed border-zinc-800/60 pt-6">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Malete Geographic Coordinate Route</h3>
-                  
-                  <div className="h-48 rounded-2xl border border-zinc-800/40 relative overflow-hidden flex flex-col justify-between p-4 group bg-zinc-500/5">
+                <div className="border-t border-dashed border-line/10 pt-6">
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-content-muted mb-3">Malete Geographic Coordinate Route</h3>
+
+                  <div className="h-48 rounded-2xl border border-line/10 relative overflow-hidden flex flex-col justify-between p-4 group bg-panel">
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:24px_24px] opacity-20" />
                     
                     <div className="absolute inset-0 flex items-center justify-center gap-8 md:gap-16 z-10 px-4">
@@ -545,15 +569,13 @@ export default function Page() {
                   </div>
                 </div>
 
-              </div>
-
               {/* Right Sidebar Calculations & CTA Interaction Deck */}
               <div className="lg:col-span-5 space-y-4">
-                <div className="border border-zinc-800/60 rounded-2xl p-6 bg-zinc-500/5 shadow-xl relative overflow-hidden">
-                  
+                <div className="border border-line/10 rounded-2xl p-6 bg-panel shadow-xl relative overflow-hidden">
+
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Rental Session Fee</p>
+                      <p className="text-[10px] text-content-muted uppercase font-bold tracking-wider">Rental Session Fee</p>
                       <h2 className="text-4xl font-black font-mono text-current mt-1">{selectedHostel.price}</h2>
                     </div>
                     <span className="text-xs font-semibold bg-lime-500/10 border border-lime-500/20 text-lime-400 px-2.5 py-1 rounded-md">
@@ -561,26 +583,26 @@ export default function Page() {
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 border border-zinc-800/40 rounded-xl p-3 bg-zinc-900/20 text-xs mb-4">
+                  <div className="grid grid-cols-2 gap-3 border border-line/10 rounded-xl p-3 bg-surface-deep text-xs mb-4">
                     <div>
-                      <span className="text-[10px] text-zinc-500 uppercase block font-medium">Academic Year</span>
-                      <p className="font-bold text-zinc-300 mt-0.5">2026 / 2027</p>
+                      <span className="text-[10px] text-content-muted uppercase block font-medium">Academic Year</span>
+                      <p className="font-bold text-content mt-0.5">2026 / 2027</p>
                     </div>
-                    <div className="border-l border-zinc-800/40 pl-3">
-                      <span className="text-[10px] text-zinc-500 uppercase block font-medium">Allocation Mode</span>
-                      <p className="font-bold text-zinc-300 mt-0.5">Direct Key Handover</p>
+                    <div className="border-l border-line/10 pl-3">
+                      <span className="text-[10px] text-content-muted uppercase block font-medium">Allocation Mode</span>
+                      <p className="font-bold text-content mt-0.5">Direct Key Handover</p>
                     </div>
                   </div>
 
                   {/* PRESERVED BREAKDOWN CALCULATIONS MATRIX */}
-                  <div className="space-y-2 border-b border-dashed border-zinc-800/60 pb-4 mb-4 text-xs text-zinc-400">
+                  <div className="space-y-2 border-b border-dashed border-line/10 pb-4 mb-4 text-xs text-content-muted">
                     <div className="flex justify-between">
                       <span>Base Rental Amount</span>
-                      <span className="font-mono text-zinc-200">₦{selectedHostel.numericPrice.toLocaleString()}</span>
+                      <span className="font-mono text-content">₦{selectedHostel.numericPrice.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Original Breakdown Overhead Fee</span>
-                      <span className="font-mono text-zinc-200">₦25,000</span>
+                      <span className="font-mono text-content">₦25,000</span>
                     </div>
                     <div className="flex justify-between text-amber-400/90">
                       <span>Mandatory Inspection Fee</span>
@@ -625,8 +647,8 @@ export default function Page() {
                           <button
                             type="button"
                             onClick={() => setChatOpen(!chatOpen)}
-                            className={`col-span-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-1 border border-zinc-700/60 ${
-                              chatOpen ? 'bg-lime-400 text-black border-lime-400' : 'bg-zinc-500/5 text-white hover:bg-zinc-800'
+                            className={`col-span-2 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-1 border border-line/10 ${
+                              chatOpen ? 'bg-lime-400 text-black border-lime-400' : 'bg-surface-deep text-content hover:bg-panel'
                             }`}
                           >
                             <span className="text-base">💬</span>
@@ -639,7 +661,7 @@ export default function Page() {
                     <button
                       type="button"
                       onClick={() => setShowScheduleModal(true)}
-                      className="w-full py-3 border border-zinc-800/60 text-zinc-300 hover:text-lime-400 font-bold rounded-xl text-xs hover:bg-zinc-900/40 transition-all active:scale-98"
+                      className="w-full py-3 border border-line/10 text-content hover:text-lime-400 font-bold rounded-xl text-xs hover:bg-surface-deep transition-all active:scale-98"
                     >
                       Schedule In-Person Inspection Walk
                     </button>
@@ -683,6 +705,8 @@ export default function Page() {
                   </div>
                 )}
               </div>
+              </div>
+
 
             </div>
           </div>
@@ -696,56 +720,34 @@ export default function Page() {
     <main className="min-h-screen text-current transition-colors duration-300 animate-in fade-in duration-500">
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
         
-        {/* Navigation Core Header */}
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-800/40">
-          <div className="flex items-center gap-2">
-            <span className="h-3 w-3 rounded-full bg-lime-400 animate-pulse" />
-            <span className="text-xs font-mono tracking-widest uppercase opacity-60">KWASU Accommodation Portal</span>
-          </div>
-          <ThemeToggle />
-        </div>
 
         {/* Hero Section */}
         <section className="mb-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-display tracking-tight font-extrabold text-current leading-tight">
             Find your{' '}
             <span className="block md:inline italic text-lime-400 font-normal">
-              perfect hostel stay.
+              perfect hostel.
             </span>
           </h1>
-          <p className="mt-4 max-w-2xl text-sm md:text-base text-zinc-400">
+          <p className="mt-4 max-w-2xl text-sm md:text-base text-content-muted">
             Browse comprehensively vetted off-campus student accommodations around Malete town. Filter by your layout requirements to pinpoint available allocations.
           </p>
 
           <div className="grid grid-cols-3 gap-3 mt-8 max-w-2xl">
-            <div className="bg-zinc-500/5 border border-zinc-800/40 rounded-2xl p-4">
-              <p className="text-xs text-zinc-500 font-medium">Total Vetted Complexes</p>
-              <h3 className="text-2xl font-bold mt-1 text-zinc-200">{totalHostelsCount} Pool Items</h3>
+            <div className="bg-panel border border-line/10 rounded-2xl p-4">
+              <p className="text-xs text-content-muted font-medium">Total Vetted Complexes</p>
+              <h3 className="text-2xl font-bold mt-1 text-content">{totalHostelsCount} Pool Items</h3>
             </div>
-            <div className="bg-zinc-500/5 border border-zinc-800/40 rounded-2xl p-4">
-              <p className="text-xs text-zinc-500 font-medium">Starting Price</p>
-              <h3 className="text-2xl font-bold mt-1 text-zinc-200">₦70,000</h3>
+            <div className="bg-panel border border-line/10 rounded-2xl p-4">
+              <p className="text-xs text-content-muted font-medium">Starting Price</p>
+              <h3 className="text-2xl font-bold mt-1 text-content">₦70,000</h3>
             </div>
-            <div className="bg-zinc-500/5 border border-zinc-800/40 rounded-2xl p-4">
-              <p className="text-xs text-zinc-500 font-medium">System Quality</p>
-              <h3 className="text-2xl font-bold mt-1 text-zinc-200">4.6 ★</h3>
+            <div className="bg-panel border border-line/10 rounded-2xl p-4">
+              <p className="text-xs text-content-muted font-medium">System Quality</p>
+              <h3 className="text-2xl font-bold mt-1 text-content">4.6 ★</h3>
             </div>
           </div>
         </section>
-
-        {/* Search Bar element */}
-        <div className="flex items-center gap-3 bg-zinc-500/5 border border-zinc-800/40 focus-within:border-lime-500 focus-within:ring-2 focus-within:ring-lime-500/10 rounded-2xl px-4 h-12 mb-4 transition-all duration-200">
-          <svg className="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search hostels by name, distance, area tags..."
-            className="flex-1 bg-transparent outline-none text-sm placeholder-zinc-500 text-current"
-          />
-        </div>
 
         {/* Layout Filter Row Pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-5 no-scrollbar scroll-smooth">
@@ -759,7 +761,7 @@ export default function Page() {
                 className={`whitespace-nowrap px-5 py-2 rounded-full border text-sm font-medium transition-all duration-200 transform active:scale-95 ${
                   isSelected
                     ? 'bg-zinc-100 text-black border-zinc-100 shadow-sm'
-                    : 'bg-zinc-500/5 text-zinc-400 border-zinc-800/40 hover:bg-zinc-900/40'
+                    : 'bg-panel text-content-muted border-line/10 hover:bg-surface-deep'
                 }`}
               >
                 {filter.label}
@@ -769,7 +771,7 @@ export default function Page() {
         </div>
 
         <div className="mb-4">
-          <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+          <p className="text-xs font-bold uppercase tracking-wider text-content-muted">
             Showing {visible.length} of {totalHostelsCount} Match Complexes
           </p>
         </div>
@@ -780,20 +782,27 @@ export default function Page() {
             <div
               key={hostel.slug}
               onClick={() => setSelectedHostel(hostel)}
-              className="group text-left cursor-pointer overflow-hidden rounded-3xl border border-zinc-800/40 bg-zinc-500/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-zinc-700/60 flex flex-col h-full focus:outline-none"
+              className="group text-left cursor-pointer overflow-hidden rounded-3xl border border-line/10 bg-panel transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-line/15 flex flex-col h-full focus:outline-none"
             >
-              <div className="h-44 w-full bg-gradient-to-br from-zinc-900/30 to-zinc-950/20 relative flex items-center justify-center overflow-hidden border-b border-zinc-800/30">
+              <div className="h-44 w-full relative overflow-hidden border-b border-line/10">
+                <Image
+                  src={HOSTEL_IMAGE_BY_SLUG[hostel.slug]}
+                  alt={hostel.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                {/* Gradient so the badges stay legible over the photo */}
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent"
+                />
                 <span className={`absolute top-4 right-4 px-3 py-1 rounded-full border text-xs font-semibold backdrop-blur-xs z-10 shadow-sm ${STATUS_MAP[hostel.status].cls}`}>
                   {STATUS_MAP[hostel.status].label}
                 </span>
-                
-                <span className="absolute bottom-3 left-4 text-[10px] uppercase tracking-wider font-mono bg-black/60 text-zinc-300 border border-zinc-800 px-2 py-0.5 rounded">
+                <span className="absolute bottom-3 left-4 z-10 text-[10px] uppercase tracking-wider font-mono bg-black/60 text-zinc-300 border border-zinc-800 px-2 py-0.5 rounded">
                   {hostel.type}
                 </span>
-
-                <svg className="w-14 h-14 text-zinc-800/60 group-hover:scale-110 group-hover:text-lime-500/20 transition-all duration-500" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19 9.3V4h-3v2.6L12 3 2 12h3v8h5v-6h4v6h5v-8h3L19 9.3zM10 10c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1-1-.45-1-1z"/>
-                </svg>
               </div>
 
               <div className="p-5 flex flex-col flex-1 justify-between">
@@ -803,7 +812,7 @@ export default function Page() {
                       <h3 className="font-bold text-lg text-current group-hover:text-lime-400 transition-colors">
                         {hostel.name}
                       </h3>
-                      <p className="text-xs text-zinc-400 mt-1 flex items-center gap-1">
+                      <p className="text-xs text-content-muted mt-1 flex items-center gap-1">
                         <svg className="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         </svg>
@@ -816,10 +825,10 @@ export default function Page() {
                   </div>
 
                   {/* Room counters matrix */}
-                  <div className="mt-3 flex items-center justify-between border border-zinc-800/50 rounded-xl p-2 bg-zinc-900/40 text-[11px] font-mono">
-                    <span className="text-zinc-500">Structural Capacity:</span>
-                    <span className="text-zinc-300 font-bold">{hostel.totalRooms} Rooms</span>
-                    <span className="text-zinc-500">|</span>
+                  <div className="mt-3 flex items-center justify-between border border-line/10 rounded-xl p-2 bg-surface-deep text-[11px] font-mono">
+                    <span className="text-content-muted">Structural Capacity:</span>
+                    <span className="text-content font-bold">{hostel.totalRooms} Rooms</span>
+                    <span className="text-content-muted">|</span>
                     <span className={`${hostel.roomsLeft === 0 ? 'text-red-400 font-black' : 'text-lime-400 font-black'}`}>
                       {hostel.roomsLeft === 0 ? 'SOLD OUT' : `${hostel.roomsLeft} LEFT`}
                     </span>
@@ -827,13 +836,13 @@ export default function Page() {
 
                   <div className="mt-4">
                     <p className="text-2xl font-black text-current font-mono tracking-tight">{hostel.price}</p>
-                    <span className="text-[11px] text-zinc-500 font-medium">per academic session lease</span>
+                    <span className="text-[11px] text-content-muted font-medium">per academic session lease</span>
                   </div>
                 </div>
 
                 <div className="flex flex-wrap gap-1 mt-5">
                   {hostel.tags.slice(0, 3).map((tag) => (
-                    <span key={tag} className="text-[10px] font-semibold px-2.5 py-0.5 rounded-md bg-zinc-900/60 border border-zinc-800/30 text-zinc-400">
+                    <span key={tag} className="text-[10px] font-semibold px-2.5 py-0.5 rounded-md bg-surface-deep border border-line/10 text-content-muted">
                       {tag}
                     </span>
                   ))}

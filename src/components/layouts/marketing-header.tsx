@@ -12,8 +12,8 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { MobileMenu } from './mobile-menu';
-import { ActiveModuleIndicator } from './active-module-indicator';
 import { UserMenu } from './user-menu';
+import { SearchBar } from '@/components/shared/search-bar';
 import { getCurrentUser, getFirstName, getProfile } from '@/modules/auth/queries';
 import { resolveHandle } from '@/lib/handle';
 import { SITE } from '@/config/site';
@@ -80,79 +80,84 @@ export async function MarketingHeader({ dockMode = false }: MarketingHeaderProps
       email: user?.email,
     }) ?? undefined;
 
+  const logo = (
+    <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Sync home">
+      <span aria-hidden="true" className="flex items-center gap-1">
+        <span className="bg-foreground block h-2 w-2 rounded-full" />
+        <span className="bg-accent-fg block h-1.5 w-1.5 rounded-full" />
+      </span>
+      <span className="font-display text-card text-foreground">{SITE.name}</span>
+    </Link>
+  );
+
+  const rightCluster = (
+    <div className="flex items-center justify-end gap-6">
+      <nav aria-label="Primary right" className="hidden items-center gap-5 text-sm md:flex">
+        {!dockMode && RIGHT_MODULE_LINKS.map((l) => <NavLink key={l.href} {...l} />)}
+        {EXTRA_LINKS.map((l) => (
+          <NavLink key={l.href} {...l} />
+        ))}
+      </nav>
+      <ThemeToggle className="hidden md:inline-flex" />
+      {user ? (
+        <UserMenu
+          name={name}
+          email={user.email ?? ''}
+          initial={initial}
+          role={role}
+          category={category}
+          handle={handle}
+        />
+      ) : (
+        <div className="hidden items-center gap-2 md:flex">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-foreground hover:bg-foreground/10"
+          >
+            <Link href="/login">Sign in / Sign up</Link>
+          </Button>
+          <Button asChild size="sm">
+            <Link href="/signup?role=vendor&category=landlord">
+              List a property <ArrowRight />
+            </Link>
+          </Button>
+        </div>
+      )}
+      {/* Hamburger - mobile only, far right */}
+      <MobileMenu signedIn={!!user} name={name} email={user?.email ?? ''} role={role} handle={handle} />
+    </div>
+  );
+
   return (
     <header className="bg-surface/90 border-line/5 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="mx-auto flex h-16 items-center justify-between gap-4 px-6 md:grid md:grid-cols-[1fr_auto_1fr]">
-        {/* Left nav - desktop only. In dockMode: just the active module. */}
-        <nav
-          aria-label="Primary left"
-          className="hidden items-center gap-5 text-sm md:flex md:justify-start"
-        >
-          {dockMode ? (
-            <ActiveModuleIndicator />
-          ) : (
-            LEFT_LINKS.map((l) => <NavLink key={l.href} {...l} />)
-          )}
-        </nav>
-
-        {/* Logo - left on mobile, centered on desktop */}
-        <Link
-          href="/"
-          className="flex shrink-0 items-center gap-2 md:justify-self-center"
-          aria-label="Sync home"
-        >
-          <span aria-hidden="true" className="flex items-center gap-1">
-            <span className="bg-foreground block h-2 w-2 rounded-full" />
-            <span className="bg-accent-fg block h-1.5 w-1.5 rounded-full" />
-          </span>
-          <span className="font-display text-card text-foreground">{SITE.name}</span>
-        </Link>
-
-        {/* Right cluster - right nav + auth (desktop) / hamburger (mobile) */}
-        <div className="flex items-center justify-end gap-6">
-          <nav aria-label="Primary right" className="hidden items-center gap-5 text-sm md:flex">
-            {!dockMode && RIGHT_MODULE_LINKS.map((l) => <NavLink key={l.href} {...l} />)}
-            {EXTRA_LINKS.map((l) => (
+      {dockMode ? (
+        // App pages: logo · general search · cluster. The ServicesDock already
+        // shows the active module, so the header carries the search instead.
+        <div className="mx-auto flex h-16 items-center gap-3 px-6 md:gap-5">
+          {logo}
+          <div className="flex-1">
+            <SearchBar className="mx-auto w-full max-w-lg" />
+          </div>
+          {rightCluster}
+        </div>
+      ) : (
+        <div className="mx-auto flex h-16 items-center justify-between gap-4 px-6 md:grid md:grid-cols-[1fr_auto_1fr]">
+          {/* Left nav - desktop only */}
+          <nav
+            aria-label="Primary left"
+            className="hidden items-center gap-5 text-sm md:flex md:justify-start"
+          >
+            {LEFT_LINKS.map((l) => (
               <NavLink key={l.href} {...l} />
             ))}
           </nav>
-          <ThemeToggle className="hidden md:inline-flex" />
-          {user ? (
-            <UserMenu
-              name={name}
-              email={user.email ?? ''}
-              initial={initial}
-              role={role}
-              category={category}
-              handle={handle}
-            />
-          ) : (
-            <div className="hidden items-center gap-2 md:flex">
-              <Button
-                asChild
-                variant="ghost"
-                size="sm"
-                className="text-foreground hover:bg-foreground/10"
-              >
-                <Link href="/login">Sign in / Sign up</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link href="/signup?role=vendor&category=landlord">
-                  List a property <ArrowRight />
-                </Link>
-              </Button>
-            </div>
-          )}
-          {/* Hamburger - mobile only, far right */}
-          <MobileMenu
-            signedIn={!!user}
-            name={name}
-            email={user?.email ?? ''}
-            role={role}
-            handle={handle}
-          />
+          {/* Logo - centered on desktop */}
+          <div className="md:justify-self-center">{logo}</div>
+          {rightCluster}
         </div>
-      </div>
+      )}
     </header>
   );
 }

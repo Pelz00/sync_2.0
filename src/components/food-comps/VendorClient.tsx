@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
 import Image, { StaticImageData } from "next/image"
-import { X, Plus, Minus, ShoppingBag, Star, AlarmClock, MapPin, Bike, ArrowLeft, Trash2 } from "lucide-react"
+import { X, Plus, Minus, ShoppingBag, Star, AlarmClock, MapPin, Bike, ArrowLeft, Trash2, ShoppingCart } from "lucide-react"
 import { TbCurrencyNaira } from "react-icons/tb"
 import { GoDotFill } from "react-icons/go"
 import EmptyCart from '@/components/food-comps/EmptyCart'
@@ -15,7 +15,7 @@ interface MenuItem {
     image: StaticImageData | string
 }
 interface MenuSection { title: string; items: MenuItem[] }
-interface CartItem { id: string; name: string; price: number; qty: number; image: StaticImageData | string }
+interface CartItem { id: string; name: string; description: string; price: number; qty: number; image: StaticImageData | string }
 
 interface Props {
     vendorName: string
@@ -32,10 +32,13 @@ interface Props {
 
 const SYNC_FEE = 150
 const DELIVERY_FEE = 300
+// "Nylon" fee — the mandatory packaging/wrap charge applied once per order,
+// same treatment as Delivery fee and Sync fee below.
+const PACKAGING_FEE = 100
 // Height of the sticky header(s) above this component (AppShell's
 // MarketingHeader + ServicesDock + search row). Adjust to match your real
 // stacked header height in px so the tabs sit just below it, not under it.
-const NAV_H = 80
+const NAV_H = 63
 
 type MobileView = "menu" | "item" | "cart"
 
@@ -48,6 +51,7 @@ export default function VendorClient({
     const [modalItem, setModalItem] = useState<MenuItem | null>(null)
     const [modalQty, setModalQty] = useState(1)
     const [storeInfoOpen, setStoreInfoOpen] = useState(false)
+    const [confirmClearOpen, setConfirmClearOpen] = useState(false)
 
     const [mobileView, setMobileView] = useState<MobileView>("menu")
     const [mobileSelectedItem, setMobileSelectedItem] = useState<MenuItem | null>(null)
@@ -56,7 +60,7 @@ export default function VendorClient({
     const isScrollingRef = useRef(false)
 
     const subtotal = cart.reduce((acc, i) => acc + i.price * i.qty, 0)
-    const total = cart.length > 0 ? subtotal + DELIVERY_FEE + SYNC_FEE : 0
+    const total = cart.length > 0 ? subtotal + DELIVERY_FEE + SYNC_FEE + PACKAGING_FEE : 0
     const totalItems = cart.reduce((acc, i) => acc + i.qty, 0)
 
     useEffect(() => {
@@ -67,11 +71,11 @@ export default function VendorClient({
 
     function getQty(id: string) { return cart.find(i => i.id === id)?.qty ?? 0 }
 
-    function addOne(item: { id: string; name: string; price: number; image: StaticImageData | string }) {
+    function addOne(item: { id: string; name: string; description: string; price: number; image: StaticImageData | string }) {
         setCart(prev => {
             const ex = prev.find(i => i.id === item.id)
             if (ex) return prev.map(i => i.id === item.id ? { ...i, qty: i.qty + 1 } : i)
-            return [...prev, { id: item.id, name: item.name, price: item.price, qty: 1, image: item.image }]
+            return [...prev, { id: item.id, name: item.name, description: item.description, price: item.price, qty: 1, image: item.image }]
         })
     }
 
@@ -85,7 +89,11 @@ export default function VendorClient({
     }
 
     function removeFromCart(id: string) { setCart(prev => prev.filter(i => i.id !== id)) }
-    function clearCart() { setCart([]) }
+
+    function clearCart() {
+        setCart([])
+        setConfirmClearOpen(false)
+    }
 
     function updateQty(id: string, delta: number) {
         setCart(prev => {
@@ -134,7 +142,7 @@ export default function VendorClient({
         setCart(prev => {
             const ex = prev.find(i => i.id === modalItem.id)
             if (ex) return prev.map(i => i.id === modalItem.id ? { ...i, qty: i.qty + modalQty } : i)
-            return [...prev, { id: modalItem.id, name: modalItem.name, price: modalItem.price, qty: modalQty, image: modalItem.image }]
+            return [...prev, { id: modalItem.id, name: modalItem.name, description: modalItem.description, price: modalItem.price, qty: modalQty, image: modalItem.image }]
         })
         closeModal()
     }
@@ -150,7 +158,7 @@ export default function VendorClient({
         setCart(prev => {
             const ex = prev.find(i => i.id === mobileSelectedItem.id)
             if (ex) return prev.map(i => i.id === mobileSelectedItem.id ? { ...i, qty: i.qty + mobileItemQty } : i)
-            return [...prev, { id: mobileSelectedItem.id, name: mobileSelectedItem.name, price: mobileSelectedItem.price, qty: mobileItemQty, image: mobileSelectedItem.image }]
+            return [...prev, { id: mobileSelectedItem.id, name: mobileSelectedItem.name, description: mobileSelectedItem.description, price: mobileSelectedItem.price, qty: mobileItemQty, image: mobileSelectedItem.image }]
         })
         setMobileView("menu")
     }
@@ -199,103 +207,108 @@ export default function VendorClient({
             </div>
         </>
     )
+const MenuSections = ({ mobile }: { mobile: boolean }) => (
+    <div className={`flex flex-col gap-6 ${mobile ? "pt-4 pb-28" : "pb-8"}`}>
+        {menu.map(section => (
+            <div key={section.title} id={`sec-${section.title}`}>
+                <h2 className="font-bold text-xl text-content mb-3">{section.title}</h2>
+                <div className="flex flex-col border border-content-muted/20 rounded-xl overflow-hidden">
+                    {section.items.map((item, idx) => {
+                        const qty = getQty(item.id)
+                        const isLast = idx === section.items.length - 1
 
-    const MenuSections = ({ mobile }: { mobile: boolean }) => (
-        <div className={`flex flex-col gap-6 ${mobile ? "pb-28" : "pb-8"}`}>
-            {menu.map(section => (
-                <div key={section.title} id={`sec-${section.title}`}>
-                    <h2 className="font-bold text-xl text-content mb-3">{section.title}</h2>
-                    <div className="flex flex-col border border-content-muted/20 rounded-xl overflow-hidden">
-                        {section.items.map((item, idx) => {
-                            const qty = getQty(item.id)
-                            const cartItem = cart.find(i => i.id === item.id)
-                            const isLast = idx === section.items.length - 1
-                            return (
-                                <div key={item.id}>
-                                    <div className={`flex gap-3 p-3 sm:p-4 ${!isLast || (mobile && qty > 0) ? "border-b border-content-muted/20" : ""}`}>
-                                        <div className="relative w-20 h-16 sm:w-24 sm:h-20 rounded-lg overflow-hidden flex-shrink-0">
-                                            <Image src={item.image} alt={item.name} fill className="object-cover" />
+                        return (
+                            <div
+                                key={item.id}
+                                className={`flex gap-3 p-3 sm:p-4 ${!isLast ? "border-b border-content-muted/20" : ""}`}
+                            >
+                                <div className="relative w-20 h-16 sm:w-24 sm:h-20 rounded-lg overflow-hidden flex-shrink-0">
+                                    <Image src={item.image} alt={item.name} fill className="object-cover" />
+                                </div>
+                                <div className="flex flex-col justify-between flex-1 min-w-0">
+                                    <div>
+                                        <div className="flex items-start justify-between gap-2">
+                                            <h3 className="font-medium text-sm text-content">{item.name}</h3>
+                                            <p className="font-bold text-sm text-content flex-shrink-0 flex items-center">
+                                                <TbCurrencyNaira />
+                                                {qty > 0
+                                                    ? (item.price * qty).toLocaleString()
+                                                    : item.price.toLocaleString()
+                                                }
+                                            </p>
                                         </div>
-                                        <div className="flex flex-col justify-between flex-1 min-w-0">
-                                            <div>
-                                                <div className="flex items-start justify-between gap-2">
-                                                    <h3 className="font-medium text-sm text-content">{item.name}</h3>
-                                                    <p className="font-bold text-sm text-content flex-shrink-0 flex items-center">
-                                                        <TbCurrencyNaira />{item.price.toLocaleString()}
-                                                    </p>
-                                                </div>
-                                                <p className="text-xs text-content-muted mt-1 line-clamp-2">{item.description}</p>
-                                            </div>
-                                            <div className="flex justify-end mt-2">
-                                                {mobile ? (
-                                                    qty === 0 ? (
-                                                        <button
-                                                            onClick={() => openMobileItem(item)}
-                                                            className="w-8 h-8 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition-colors cursor-pointer"
-                                                        >
-                                                            <Plus size={16} strokeWidth={2} />
-                                                        </button>
-                                                    ) : (
-                                                        <div className="flex items-center gap-1.5">
-                                                            <button
-                                                                onClick={() => removeOne(item.id)}
-                                                                className="w-7 h-7 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition cursor-pointer"
-                                                            >
-                                                                <Minus size={12} strokeWidth={2.5} />
-                                                            </button>
-                                                            <span className="text-sm font-bold text-content w-5 text-center">{qty}</span>
-                                                            <button
-                                                                onClick={() => openMobileItem(item)}
-                                                                className="w-7 h-7 rounded-full bg-lime text-ink flex items-center justify-center cursor-pointer"
-                                                            >
-                                                                <Plus size={12} strokeWidth={2.5} />
-                                                            </button>
-                                                        </div>
-                                                    )
-                                                ) : (
-                                                    <button
-                                                        onClick={() => openDesktopModal(item)}
-                                                        className="w-8 h-8 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition-colors cursor-pointer"
-                                                        aria-label={`Add ${item.name}`}
-                                                    >
-                                                        <Plus size={16} strokeWidth={2} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
+                                        <p className="text-xs text-content-muted mt-1 line-clamp-2">{item.description}</p>
                                     </div>
 
-                                    {mobile && cartItem && (
-                                        <div className={`flex items-center justify-between px-3 py-2.5 bg-surface-deep ${!isLast ? "border-b border-content-muted/20" : ""}`}>
-                                            <p className="text-xs font-medium text-content truncate flex-1 mr-2">{cartItem.name}</p>
-                                            <div className="flex items-center gap-2 flex-shrink-0">
-                                                <button onClick={() => removeOne(cartItem.id)} className="w-6 h-6 rounded-full border border-content-muted/30 flex items-center justify-center text-content-muted hover:text-red-500 cursor-pointer">
-                                                    <Minus size={10} />
+                                    <div className="flex justify-end mt-2">
+                                        {mobile ? (
+                                            qty === 0 ? (
+                                                <button
+                                                    onClick={() => openMobileItem(item)}
+                                                    className="w-8 h-8 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition-colors cursor-pointer"
+                                                >
+                                                    <Plus size={16} strokeWidth={2} />
                                                 </button>
-                                                <span className="text-xs font-bold text-content w-4 text-center">{cartItem.qty}</span>
-                                                <button onClick={() => openMobileItem(item)} className="w-6 h-6 rounded-full border border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink cursor-pointer">
-                                                    <Plus size={10} />
+                                            ) : (
+                                                <div className="flex items-center gap-1.5">
+                                                    <button
+                                                        onClick={() => removeOne(item.id)}
+                                                        className="w-7 h-7 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition cursor-pointer"
+                                                    >
+                                                        <Minus size={12} strokeWidth={2.5} />
+                                                    </button>
+                                                    <span className="text-sm font-bold text-content w-5 text-center">{qty}</span>
+                                                    <button
+                                                        onClick={() => openMobileItem(item)}
+                                                        className="w-7 h-7 rounded-full bg-lime text-ink flex items-center justify-center cursor-pointer"
+                                                    >
+                                                        <Plus size={12} strokeWidth={2.5} />
+                                                    </button>
+                                                </div>
+                                            )
+                                        ) : (
+                                            qty === 0 ? (
+                                                <button
+                                                    onClick={() => openDesktopModal(item)}
+                                                    className="w-8 h-8 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition-colors cursor-pointer"
+                                                    aria-label={`Add ${item.name}`}
+                                                >
+                                                    <Plus size={16} strokeWidth={2} />
                                                 </button>
-                                                <span className="text-xs font-semibold text-content flex items-center ml-1">
-                                                    <TbCurrencyNaira />{(cartItem.price * cartItem.qty).toLocaleString()}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    )}
+                                            ) : (
+                                                <div className="flex items-center gap-1.5">
+                                                    <button
+                                                        onClick={() => removeOne(item.id)}
+                                                        className="w-7 h-7 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition cursor-pointer"
+                                                    >
+                                                        <Minus size={12} strokeWidth={2.5} />
+                                                    </button>
+                                                    <span className="text-sm font-bold text-content w-5 text-center">{qty}</span>
+                                                    <button
+                                                        onClick={() => openDesktopModal(item)}
+                                                        className="w-7 h-7 rounded-full bg-lime text-ink flex items-center justify-center cursor-pointer"
+                                                    >
+                                                        <Plus size={12} strokeWidth={2.5} />
+                                                    </button>
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
                                 </div>
-                            )
-                        })}
-                    </div>
+                            </div>
+                        )
+                    })}
                 </div>
-            ))}
-            {mobile && (
-                <div className="flex items-center justify-center gap-1 text-xs text-content-muted pt-2">
-                    <span>Fees information</span>
-                    <span className="w-4 h-4 rounded-full border border-content-muted/40 flex items-center justify-center text-[9px]">i</span>
-                </div>
-            )}
-        </div>
-    )
+            </div>
+        ))}
+        {mobile && (
+            <div className="flex items-center justify-center gap-1 text-xs text-content-muted pt-2">
+                <span>Fees information</span>
+                <span className="w-4 h-4 rounded-full border border-content-muted/40 flex items-center justify-center text-[9px]">i</span>
+            </div>
+        )}
+    </div>
+)
 
     const MobileItemView = () => {
         if (!mobileSelectedItem) return null
@@ -358,6 +371,41 @@ export default function VendorClient({
         )
     }
 
+    // Confirmation sheet shown before wiping the whole cart — mirrors the
+    // "Delete cart? / Delete cart / Keep cart" pattern from the reference
+    // screenshot. Slides up from the bottom on mobile, centered on larger
+    // screens, dismissible by tapping the backdrop or "Keep cart".
+    const ConfirmClearSheet = () => (
+        <div
+            className="fixed inset-0 z-[60] bg-black/60 flex items-end sm:items-center justify-center"
+            onClick={e => { if (e.target === e.currentTarget) setConfirmClearOpen(false) }}
+        >
+            <div className="w-full sm:max-w-sm bg-panel rounded-t-3xl sm:rounded-3xl px-6 pt-8 pb-6 flex flex-col items-center text-center gap-1">
+                <div className="w-16 h-16 rounded-full bg-red-500/15 flex items-center justify-center mb-3">
+                    <ShoppingCart size={26} className="text-red-500" strokeWidth={1.5} />
+                </div>
+
+                <h2 className="font-bold text-lg text-content">Delete cart?</h2>
+                <p className="text-sm text-content-muted leading-relaxed mt-1 mb-5">
+                    All items will be removed. To add items back, you&apos;ll need to start a new cart.
+                </p>
+
+                <button
+                    onClick={clearCart}
+                    className="w-full bg-red-500 text-white font-bold text-sm rounded-full py-3.5 cursor-pointer hover:bg-red-600 transition"
+                >
+                    Delete cart
+                </button>
+                <button
+                    onClick={() => setConfirmClearOpen(false)}
+                    className="w-full text-content font-medium text-sm rounded-full py-3.5 cursor-pointer hover:bg-content-muted/5 transition"
+                >
+                    Keep cart
+                </button>
+            </div>
+        </div>
+    )
+
     const MobileCartView = () => (
         <div className="fixed inset-0 z-50 bg-panel flex flex-col">
             <div className="flex items-center gap-3 px-4 py-4 border-b border-content-muted/20 flex-shrink-0">
@@ -370,8 +418,9 @@ export default function VendorClient({
                 <h1 className="font-bold text-lg text-content flex-1">Your Cart</h1>
                 {cart.length > 0 && (
                     <button
-                        onClick={clearCart}
+                        onClick={() => setConfirmClearOpen(true)}
                         className="w-9 h-9 rounded-full border border-content-muted/20 flex items-center justify-center text-content-muted hover:text-red-500 cursor-pointer"
+                        aria-label="Delete cart"
                     >
                         <Trash2 size={16} />
                     </button>
@@ -393,6 +442,10 @@ export default function VendorClient({
                             <span className="font-bold text-content">{vendorName}</span>
                         </p>
 
+                        {/* Cart item rows — now show the item description beneath
+                            the name (more detail on exactly what's being ordered),
+                            plus a unit-price line so the per-item and line-total
+                            costs are both visible, not just the line-total. */}
                         <div className="flex flex-col gap-3">
                             {cart.map(item => (
                                 <div key={item.id} className="flex items-center gap-3 border border-content-muted/20 rounded-xl p-3">
@@ -401,14 +454,22 @@ export default function VendorClient({
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium text-sm text-content truncate">{item.name}</p>
-                                        <p className="text-sm font-bold text-content flex items-center mt-0.5">
-                                            <TbCurrencyNaira />{(item.price * item.qty).toLocaleString()}
-                                        </p>
+                                        <p className="text-xs text-content-muted mt-0.5 line-clamp-2">{item.description}</p>
+                                        <div className="flex items-center gap-1.5 mt-1">
+                                            <span className="text-xs text-content-muted flex items-center">
+                                                <TbCurrencyNaira />{item.price.toLocaleString()} each
+                                            </span>
+                                            <span className="text-content-muted/40">·</span>
+                                            <span className="text-sm font-bold text-content flex items-center">
+                                                <TbCurrencyNaira />{(item.price * item.qty).toLocaleString()}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                    <div className="flex items-center gap-2 flex-shrink-0 self-start">
                                         <button
                                             onClick={() => updateQty(item.id, -1)}
                                             className="w-8 h-8 rounded-full border border-content-muted/30 flex items-center justify-center text-content cursor-pointer"
+                                            aria-label={item.qty === 1 ? `Remove ${item.name}` : `Decrease ${item.name}`}
                                         >
                                             {item.qty === 1 ? <Trash2 size={13} /> : <Minus size={13} />}
                                         </button>
@@ -416,6 +477,7 @@ export default function VendorClient({
                                         <button
                                             onClick={() => updateQty(item.id, 1)}
                                             className="w-8 h-8 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink cursor-pointer transition"
+                                            aria-label={`Increase ${item.name}`}
                                         >
                                             <Plus size={13} />
                                         </button>
@@ -431,9 +493,17 @@ export default function VendorClient({
                             + Add more items
                         </button>
 
+                        {/* Fee breakdown — Subtotal, Delivery fee, Sync fee, and the
+                            packaging ("nylon") fee are each itemized so it's clear
+                            exactly what's being charged before the total. */}
                         <div className="border border-content-muted/20 rounded-xl overflow-hidden">
                             <div className="flex flex-col divide-y divide-content-muted/10">
-                                {([["Subtotal", subtotal], ["Delivery fee", DELIVERY_FEE], ["Sync fee", SYNC_FEE]] as [string, number][]).map(([label, val]) => (
+                                {([
+                                    ["Subtotal", subtotal],
+                                    ["Delivery fee", DELIVERY_FEE],
+                                    ["Packaging (nylon) fee", PACKAGING_FEE],
+                                    ["Sync fee", SYNC_FEE],
+                                ] as [string, number][]).map(([label, val]) => (
                                     <div key={label} className="flex justify-between px-4 py-3 text-sm">
                                         <span className="text-content-muted">{label}</span>
                                         <span className="font-medium text-content flex items-center"><TbCurrencyNaira />{val.toLocaleString()}</span>
@@ -459,6 +529,8 @@ export default function VendorClient({
                     </button>
                 </div>
             )}
+
+            {confirmClearOpen && <ConfirmClearSheet />}
         </div>
     )
 
@@ -494,9 +566,10 @@ export default function VendorClient({
                     ))}
                 </div>
 
-                <div className="mt-4">
-                    <MenuSections mobile={true} />
-                </div>
+                {/* Removed the wrapping <div className="mt-4"> that used to sit
+                    here — that margin was the visible gap under the sticky tab
+                    bar. Spacing now lives inside MenuSections (pt-4) instead. */}
+                <MenuSections mobile={true} />
             </div>
 
             {/* ════════════════════════════════════════
@@ -564,7 +637,12 @@ export default function VendorClient({
                             </div>
                             <div className="flex-shrink-0 border-t border-content-muted/20">
                                 <div className="px-4 pt-3 pb-1 flex flex-col gap-1 border-b border-dashed border-content-muted/20">
-                                    {([["Subtotal", subtotal], ["Delivery", DELIVERY_FEE], ["Sync fee", SYNC_FEE]] as [string, number][]).map(([label, val]) => (
+                                    {([
+                                        ["Subtotal", subtotal],
+                                        ["Delivery", DELIVERY_FEE],
+                                        ["Packaging fee", PACKAGING_FEE],
+                                        ["Sync fee", SYNC_FEE],
+                                    ] as [string, number][]).map(([label, val]) => (
                                         <div key={label} className="flex justify-between text-xs text-content-muted">
                                             <span>{label}</span>
                                             <span className="flex items-center"><TbCurrencyNaira />{val.toLocaleString()}</span>

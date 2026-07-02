@@ -10,7 +10,6 @@
  */
 import { MarketingHeader } from './marketing-header';
 import { ServicesDock } from './services-dock';
-import { SearchBar } from '@/components/shared/search-bar';
 import { ChatWidget } from '@/components/chat/chat-widget';
 import { getCurrentUser, getProfile } from '@/modules/auth/queries';
 
@@ -26,13 +25,6 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     <div className="bg-surface text-foreground flex min-h-screen flex-col">
       <MarketingHeader dockMode />
       <ServicesDock role={role} />
-
-      {/* Search row - sits under the nav (was inline in the old top bar). */}
-      <div className="border-line/5 border-b">
-        <div className="mx-auto w-full max-w-7xl px-4 py-3 md:px-6">
-          <SearchBar />
-        </div>
-      </div>
 
       <main className="mx-auto w-full max-w-7xl min-w-0 flex-1 px-4 pt-6 pb-24 md:px-6 md:pb-12">
         {children}
