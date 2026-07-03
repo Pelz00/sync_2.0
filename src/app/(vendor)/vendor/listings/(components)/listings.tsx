@@ -17,6 +17,7 @@ import {
   DeleteModal,
   EditModal,
 } from './listings-modal';
+import { useModalStore } from '@/store';
 
 type ModalState =
   | { type: 'none' }
@@ -34,6 +35,28 @@ export default function ListingsPage() {
   const [search, setSearch] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [modal, setModal] = useState<ModalState>({ type: 'none' });
+  const {
+    addListing,
+    editListing,
+    deleteListing,
+    bulkDelete,
+    archiveListings,
+
+    openAddListing,
+    closeAddListing,
+
+    openEditListing,
+    closeEditListing,
+
+    openDeleteListing,
+    closeDeleteListing,
+
+    openBulkDelete,
+    closeBulkDelete,
+
+    openArchiveListings,
+    closeArchiveListings,
+  } = useModalStore();
 
   // ── filtering ────────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -58,17 +81,18 @@ export default function ListingsPage() {
   // ── CRUD ─────────────────────────────────────────────────────
   const handleAdd = (listing: Listing) => {
     setListings((prev) => [listing, ...prev]);
-    setModal({ type: 'none' });
+
+    closeAddListing();
   };
 
   const handleEdit = (updated: Listing) => {
     setListings((prev) => prev.map((l) => (l.id === updated.id ? updated : l)));
-    setModal({ type: 'none' });
+    closeAddListing();
   };
 
   const handleDelete = (listing: Listing) => {
     setListings((prev) => prev.filter((l) => l.id !== listing.id));
-    setModal({ type: 'none' });
+    closeAddListing();
   };
 
   const handleDuplicate = (listing: Listing) => {
@@ -84,14 +108,14 @@ export default function ListingsPage() {
   const handleBulkDelete = () => {
     setListings((prev) => prev.filter((l) => !selectedIds.has(l.id)));
     clearSelection();
-    setModal({ type: 'none' });
+    closeAddListing();
   };
 
   const handleArchive = () => {
     // In production: PATCH status to 'archived' via API
     setListings((prev) => prev.map((l) => (selectedIds.has(l.id) ? { ...l, status: 'Draft' } : l)));
     clearSelection();
-    setModal({ type: 'none' });
+    closeAddListing();
   };
 
   return (
@@ -108,7 +132,7 @@ export default function ListingsPage() {
         <Button
           variant="primary"
           className="hover:bg-accent-fg bg-lime-500 text-white"
-          onClick={() => setModal({ type: 'add' })}
+          onClick={openAddListing}
         >
           <Plus className="size-4" /> Add New Listing
         </Button>
@@ -138,10 +162,13 @@ export default function ListingsPage() {
         count={selectedIds.size}
         onEdit={() => {
           const first = listings.find((l) => selectedIds.has(l.id));
-          if (first) setModal({ type: 'edit', listing: first });
+
+          if (first) {
+            openEditListing(first);
+          }
         }}
-        onArchive={() => setModal({ type: 'archive' })}
-        onDelete={() => setModal({ type: 'bulk-delete' })}
+        onArchive={() => openArchiveListings(Array.from(selectedIds))}
+        onDelete={openBulkDelete}
         onClear={clearSelection}
       />
 
@@ -154,7 +181,7 @@ export default function ListingsPage() {
               listing={listing}
               selected={selectedIds.has(listing.id)}
               onToggleSelect={toggleSelect}
-              onEdit={(l) => setModal({ type: 'edit', listing: l })}
+              onEdit={openEditListing}
               onPromote={() => {}}
               onMore={() => {}}
             />
@@ -168,44 +195,46 @@ export default function ListingsPage() {
       ) : (
         <ListingListView
           listings={filtered}
-          onEdit={(l) => setModal({ type: 'edit', listing: l })}
+          onEdit={openEditListing}
           onDuplicate={handleDuplicate}
-          onDelete={(l) => setModal({ type: 'delete', listing: l })}
+          onDelete={openDeleteListing}
         />
       )}
 
       {/* Modals */}
-      {modal.type === 'add' && (
-        <AddListingModal onAdd={handleAdd} onClose={() => setModal({ type: 'none' })} />
-      )}
-      {modal.type === 'edit' && (
-        <EditModal
-          listing={modal.listing}
-          onSave={handleEdit}
-          onClose={() => setModal({ type: 'none' })}
-        />
-      )}
-      {modal.type === 'delete' && (
-        <DeleteModal
-          listing={modal.listing}
-          onConfirm={() => handleDelete(modal.listing)}
-          onClose={() => setModal({ type: 'none' })}
-        />
-      )}
-      {modal.type === 'bulk-delete' && (
-        <BulkDeleteModal
-          count={selectedIds.size}
-          onConfirm={handleBulkDelete}
-          onClose={() => setModal({ type: 'none' })}
-        />
-      )}
-      {modal.type === 'archive' && (
-        <ArchiveModal
-          count={selectedIds.size}
-          onConfirm={handleArchive}
-          onClose={() => setModal({ type: 'none' })}
-        />
-      )}
+      <AddListingModal open={addListing.open} onAdd={handleAdd} onClose={closeAddListing} />
+
+      <EditModal
+        open={editListing.open}
+        listing={editListing.listing!}
+        onSave={handleEdit}
+        onClose={closeEditListing}
+      />
+
+      <DeleteModal
+        open={deleteListing.open}
+        listing={deleteListing.listing!}
+        onConfirm={() => {
+          if (deleteListing.listing) {
+            handleDelete(deleteListing.listing);
+          }
+        }}
+        onClose={closeDeleteListing}
+      />
+
+      <BulkDeleteModal
+        open={bulkDelete.open}
+        count={selectedIds.size}
+        onConfirm={handleBulkDelete}
+        onClose={closeBulkDelete}
+      />
+
+      <ArchiveModal
+        open={archiveListings.open}
+        count={archiveListings.listingIds.length}
+        onConfirm={handleArchive}
+        onClose={closeArchiveListings}
+      />
     </section>
   );
 }
