@@ -19,14 +19,6 @@ import {
 } from './listings-modal';
 import { useModalStore } from '@/store';
 
-type ModalState =
-  | { type: 'none' }
-  | { type: 'add' }
-  | { type: 'edit'; listing: Listing }
-  | { type: 'delete'; listing: Listing }
-  | { type: 'bulk-delete' }
-  | { type: 'archive' };
-
 export default function ListingsPage() {
   const [listings, setListings] = useState<Listing[]>(mockListings);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -34,7 +26,7 @@ export default function ListingsPage() {
   const [status, setStatus] = useState('All Status');
   const [search, setSearch] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [modal, setModal] = useState<ModalState>({ type: 'none' });
+
   const {
     addListing,
     editListing,
@@ -69,53 +61,88 @@ export default function ListingsPage() {
   }, [listings, category, status, search]);
 
   // ── selection ────────────────────────────────────────────────
+
+  // ── selection ────────────────────────────────────────────────
+  // ── selection ────────────────────────────────────────────────
+
+  const filteredIds = filtered.map((listing) => listing.id);
+
+  const selectedCount = selectedIds.size;
+
+  const allSelected = filteredIds.length > 0 && filteredIds.every((id) => selectedIds.has(id));
+
+  const someSelected = filteredIds.some((id) => selectedIds.has(id)) && !allSelected;
+
   const toggleSelect = (id: string) =>
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+
       return next;
     });
+
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+
+      if (allSelected) {
+        filteredIds.forEach((id) => next.delete(id));
+      } else {
+        filteredIds.forEach((id) => next.add(id));
+      }
+
+      return next;
+    });
+  };
 
   const clearSelection = () => setSelectedIds(new Set());
 
   // ── CRUD ─────────────────────────────────────────────────────
   const handleAdd = (listing: Listing) => {
     setListings((prev) => [listing, ...prev]);
-
     closeAddListing();
   };
 
   const handleEdit = (updated: Listing) => {
     setListings((prev) => prev.map((l) => (l.id === updated.id ? updated : l)));
-    closeAddListing();
+
+    closeEditListing();
+  };
+
+  const handleDuplicate = (listing: Listing) => {
+    const duplicate: Listing = {
+      ...listing,
+      id: `lst-${Date.now()}`,
+      name: `${listing.name} (Copy)`,
+      sold: 0,
+    };
+
+    setListings((prev) => [duplicate, ...prev]);
   };
 
   const handleDelete = (listing: Listing) => {
     setListings((prev) => prev.filter((l) => l.id !== listing.id));
-    closeAddListing();
-  };
 
-  const handleDuplicate = (listing: Listing) => {
-    const dupe: Listing = {
-      ...listing,
-      id: `lst-${Date.now()}`,
-      name: `${listing.name} (copy)`,
-      sold: 0,
-    };
-    setListings((prev) => [dupe, ...prev]);
+    closeDeleteListing();
   };
 
   const handleBulkDelete = () => {
     setListings((prev) => prev.filter((l) => !selectedIds.has(l.id)));
+
     clearSelection();
-    closeAddListing();
+    closeBulkDelete();
   };
 
   const handleArchive = () => {
-    // In production: PATCH status to 'archived' via API
     setListings((prev) => prev.map((l) => (selectedIds.has(l.id) ? { ...l, status: 'Draft' } : l)));
+
     clearSelection();
-    closeAddListing();
+    closeArchiveListings();
   };
 
   return (
@@ -155,6 +182,10 @@ export default function ListingsPage() {
           setView(v);
           clearSelection();
         }}
+        allSelected={allSelected}
+        someSelected={someSelected}
+        selectedCount={selectedCount}
+        onToggleSelectAll={toggleSelectAll}
       />
 
       {/* Bulk bar */}
@@ -195,6 +226,8 @@ export default function ListingsPage() {
       ) : (
         <ListingListView
           listings={filtered}
+          selectedIds={selectedIds}
+          onToggleSelect={toggleSelect}
           onEdit={openEditListing}
           onDuplicate={handleDuplicate}
           onDelete={openDeleteListing}
