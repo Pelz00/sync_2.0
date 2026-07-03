@@ -142,6 +142,11 @@ interface EditModalProps {
 }
 export function EditModal({ open, listing, onSave, onClose }: EditModalProps) {
   const [form, setForm] = useState({ ...listing });
+
+  useEffect(() => {
+    if (open && listing) setForm({ ...listing });
+  }, [open, listing]);
+
   if (!open) return null;
 
   const set = (key: keyof Listing, value: string | number) =>
@@ -149,6 +154,7 @@ export function EditModal({ open, listing, onSave, onClose }: EditModalProps) {
 
   return (
     <Modal open={open} onClose={onClose}>
+      {' '}
       <h2 className="font-display text-ink text-lg font-semibold">Edit listing</h2>
       <div className="mt-4 flex flex-col gap-3">
         <Field label="Name">

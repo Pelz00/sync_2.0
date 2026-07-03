@@ -52,11 +52,13 @@ export function ListingFilters({
             className="h-11 pl-10"
           />
         </div>
-
         {/* View Toggle */}
         <div className="border-line/10 flex w-fit items-center rounded-lg border bg-transparent p-1">
           <button
+            type="button"
             onClick={() => onViewChange('grid')}
+            aria-label="Grid view"
+            aria-pressed={view === 'grid'}
             className={cn(
               'rounded-md p-2 transition-all',
               view === 'grid'
@@ -68,7 +70,10 @@ export function ListingFilters({
           </button>
 
           <button
+            type="button"
             onClick={() => onViewChange('list')}
+            aria-label="List view"
+            aria-pressed={view === 'list'}
             className={cn(
               'rounded-md p-2 transition-all',
               view === 'list'
@@ -78,7 +83,7 @@ export function ListingFilters({
           >
             <List className="h-4 w-4" />
           </button>
-        </div>
+        </div>{' '}
       </div>
 
       {/* Bottom Row */}
@@ -94,16 +99,13 @@ export function ListingFilters({
               <SelectItem key={status} value={status}>
                 {status}
               </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        {/* Categories */}
         <div className="-mx-1 flex flex-1 gap-2 overflow-x-auto px-1 pb-1">
           {categories.map((cat) => (
             <button
               key={cat}
+              type="button"
               onClick={() => onCategoryChange(cat)}
+              aria-pressed={selectedCategory === cat}
               className={cn(
                 'shrink-0 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-200',
                 selectedCategory === cat
@@ -111,6 +113,10 @@ export function ListingFilters({
                   : 'border-line/10 bg-background text-muted-foreground hover:border-border hover:bg-lime-500 hover:text-white',
               )}
             >
+              {cat}
+            </button>
+          ))}
+        </div>            >
               {cat}
             </button>
           ))}

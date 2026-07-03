@@ -15,21 +15,21 @@ export function ListingStatsBar({ listings }: ListingStatsBarProps) {
     {
       label: 'TOTAL LISTINGS',
       value: total,
-      // valueColor: 'text-ink',
+      valueColor: 'text-ink',
       icon: <Package className="size-5 text-blue-600" />,
       iconBg: 'bg-blue-100',
     },
     {
       label: 'ACTIVE',
       value: active,
-      // valueColor: 'text-green-600',
+      valueColor: 'text-green-600',
       icon: <BadgeCheck className="size-5 text-green-600" />,
       iconBg: 'bg-green-100',
     },
     {
       label: 'DRAFT',
       value: draft,
-      // valueColor: 'text-amber-600',
+      valueColor: 'text-amber-600',
       icon: <FilePenLine className="size-5 text-amber-600" />,
       iconBg: 'bg-amber-100',
     },
@@ -41,7 +41,6 @@ export function ListingStatsBar({ listings }: ListingStatsBarProps) {
       iconBg: 'bg-red-100',
     },
   ];
-
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {stats.map((stat) => (
