@@ -7,7 +7,9 @@ import { GoDotFill } from "react-icons/go"
 import EmptyCart from '@/components/food-comps/EmptyCart'
 import StoreInfoModal, { type StoreInfo } from "@/components/food-comps/StoreInfoModal"
 import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet"
-
+import { useRouter } from "next/navigation"
+import { useCart } from "@/app/(app)/food/cart-context"
+import { saveDemoOrder } from "@/lib/demo-order"
 interface MenuItem {
     id: string
     name: string
@@ -42,6 +44,8 @@ export default function VendorClient({
     vendorName, tagline, location, rating, reviews,
     deliveryTime, deliveryFee, heroImage, menu, storeInfo
 }: Props) {
+
+    const router = useRouter()
     const [cart, setCart] = useState<CartItem[]>([])
     const [activeSection, setActiveSection] = useState(menu[0]?.title ?? "")
     const [storeInfoOpen, setStoreInfoOpen] = useState(false)
@@ -603,7 +607,10 @@ export default function VendorClient({
                                     <span className="flex items-center"><TbCurrencyNaira className="text-xl" />{total.toLocaleString()}</span>
                                 </div>
                                 <div className="px-4 pb-4">
-                                    <button className="w-full bg-lime text-ink font-bold text-sm border-0 border-black rounded-xl py-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono">
+                                    <button
+                                        onClick={() => router.push("/food/checkout")}
+                                        className="w-full bg-lime text-ink font-bold text-sm border-0 border-black rounded-xl py-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono"
+                                    >
                                         Proceed to Checkout →
                                     </button>
                                 </div>
