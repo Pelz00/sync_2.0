@@ -1,184 +1,178 @@
-"use client"
+'use client'
 
-import { useState, useEffect, useRef } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { ChevronDown, FileText, HelpCircle, CheckCircle2 } from "lucide-react"
-import { getDemoOrder, updateDemoOrderStatus, type DemoOrder } from "@/lib/demo-order"
+import { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
+import { ChevronDown, FileText, HelpCircle } from 'lucide-react'
+import { getDemoOrder, type DemoOrder } from '@/lib/demo-order'
 
-const STAGES: {
-    status: DemoOrder["status"]
-    title: string
-    etaMinutes: number
-    durationMs: number
+const TrackMap = dynamic(
+    () => import('./TrackLeaflet'),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="h-full w-full flex items-center justify-center bg-surface-deep">
+                <p className="text-xs text-content-muted">Loading map…</p>
+            </div>
+        ),
+    }
+)
+
+const STEPS: {
+    key: DemoOrder['status']
+    label: (order: DemoOrder) => string
 }[] = [
-        { status: "preparing", title: "Restaurant is preparing your order", etaMinutes: 25, durationMs: 10000 },
-        { status: "rider_assigned", title: "Rider is on the way to the restaurant", etaMinutes: 18, durationMs: 10000 },
-        { status: "en_route", title: "Rider has picked up your order", etaMinutes: 10, durationMs: 10000 },
-        { status: "arriving", title: "Rider is almost at your location", etaMinutes: 3, durationMs: 10000 },
-        { status: "delivered", title: "Order delivered — enjoy your meal!", etaMinutes: 0, durationMs: 0 },
+        { key: 'preparing', label: o => `${o.vendorName} has received your order` },
+        { key: 'picked_up', label: o => `Rider is on the way to ${o.vendorName}` },
+        { key: 'on_the_way', label: () => 'Rider has picked up your order' },
+        { key: 'on_the_way', label: () => 'Rider is almost at your location' },
+        { key: 'delivered', label: () => 'Order delivered — enjoy your meal!' },
     ]
 
-export default function TrackOrderPage() {
+const STATUS_ORDER: DemoOrder['status'][] = [
+    'preparing',
+    'picked_up',
+    'on_the_way',
+    'delivered',
+]
+
+function getCompletedStepCount(status: DemoOrder['status']): number {
+    const idx = STATUS_ORDER.indexOf(status)
+    if (idx === 0) return 1
+    if (idx === 1) return 2
+    if (idx === 2) return 4
+    return 5
+}
+
+function formatTimeWindow(createdAt: number, etaMinutes: number, status: DemoOrder['status']) {
+    const start = new Date(createdAt)
+    const end = new Date(createdAt + etaMinutes * 60_000)
+    const extra = status === 'delivered' ? 0 : 15
+    const fmt = (d: Date) =>
+        d.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit', hour12: false })
+    return `${fmt(start)} – ${fmt(new Date(end.getTime() + extra * 60_000))}`
+}
+
+function progressPct(status: DemoOrder['status']): number {
+    return { preparing: 20, picked_up: 45, on_the_way: 75, delivered: 100 }[status]
+}
+
+export default function TrackPage() {
+    // ✅ matches folder name [orderId]
     const { orderId } = useParams<{ orderId: string }>()
     const router = useRouter()
     const [order, setOrder] = useState<DemoOrder | null>(null)
-    const [stageIndex, setStageIndex] = useState(0)
-    const [etaUpdated, setEtaUpdated] = useState(false)
-    const startTimeRef = useRef(Date.now())
 
     useEffect(() => {
-        const found = getDemoOrder(orderId)
-        if (!found) { router.replace("/food/orders"); return }
-        setOrder(found)
-        const savedIndex = STAGES.findIndex(s => s.status === found.status)
-        if (savedIndex > 0) { setStageIndex(savedIndex); setEtaUpdated(true) }
+        const o = getDemoOrder(orderId)
+        if (!o) { router.replace('/food/orders'); return }
+        setOrder(o)
     }, [orderId, router])
 
-    useEffect(() => {
-        if (!order || stageIndex >= STAGES.length - 1) return
-        const stage = STAGES[stageIndex]
-        const t = setTimeout(() => {
-            const next = stageIndex + 1
-            setStageIndex(next)
-            setEtaUpdated(true)
-            updateDemoOrderStatus(orderId, STAGES[next].status, STAGES[next].etaMinutes)
-        }, stage.durationMs)
-        return () => clearTimeout(t)
-    }, [stageIndex, order, orderId])
+    if (!order) {
+        return (
+            <div className="min-h-screen bg-ink flex items-center justify-center">
+                <p className="text-white/60 text-sm">Loading order…</p>
+            </div>
+        )
+    }
 
-    if (!order) return null
-
-    const stage = STAGES[stageIndex]
-    const isDelivered = stage.status === "delivered"
-    const progressPct = ((stageIndex + 1) / STAGES.length) * 100
-
-    const now = new Date()
-    const etaStart = new Date(now.getTime() + stage.etaMinutes * 60000)
-    const etaEnd = new Date(etaStart.getTime() + 15 * 60000)
-    const fmt = (d: Date) => d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })
-
-    const originalStart = useRef(new Date(startTimeRef.current + 25 * 60000)).current
-    const originalEnd = useRef(new Date(originalStart.getTime() + 15 * 60000)).current
+    const isDelivered = order.status === 'delivered'
+    const completedSteps = getCompletedStepCount(order.status)
+    const timeWindow = formatTimeWindow(order.createdAt, order.etaMinutes, order.status)
+    const pct = progressPct(order.status)
 
     return (
-        <div className="fixed inset-0 z-50 bg-ink flex flex-col overflow-hidden">
+        <div className="min-h-screen bg-ink text-white flex flex-col">
 
             {/* Top bar */}
-            <div className="flex items-center justify-between px-4 pt-10 pb-3 flex-shrink-0">
+            <div className="flex items-center justify-between px-4 py-3 flex-shrink-0">
                 <button
-                    onClick={() => router.push("/food/orders")}
-                    className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center text-white cursor-pointer"
+                    onClick={() => router.push('/food/orders')}
+                    className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center cursor-pointer"
                 >
-                    <ChevronDown size={20} />
+                    <ChevronDown size={18} className="text-white/70" />
                 </button>
-                <div className="flex items-center gap-2">
-                    <button className="w-11 h-11 rounded-full bg-white/10 flex items-center justify-center text-white cursor-pointer">
-                        <FileText size={18} />
+                <div className="flex gap-2">
+                    <button className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center cursor-pointer">
+                        <FileText size={16} className="text-white/70" />
                     </button>
-                    <button className="h-11 px-5 rounded-full bg-white/10 text-white font-bold text-sm cursor-pointer flex items-center gap-1.5">
-                        <HelpCircle size={16} /> Help
+                    <button className="flex items-center gap-1.5 border border-white/10 rounded-full px-3 py-2 text-xs font-medium text-white/70 cursor-pointer">
+                        <HelpCircle size={14} /> Help
                     </button>
                 </div>
             </div>
 
             {/* ETA */}
-            <div className="px-5 pt-2 pb-5 flex-shrink-0">
-                {etaUpdated && !isDelivered ? (
-                    <div className="flex items-center gap-2 mb-2">
-                        <span className="bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-full">
-                            Updated arrival
-                        </span>
-                        <span className="text-white/40 text-sm line-through">
-                            {fmt(originalStart)} – {fmt(originalEnd)}
-                        </span>
-                    </div>
+            <div className="px-4 pt-1 pb-4 flex-shrink-0">
+                {isDelivered ? (
+                    <h1 className="text-4xl font-black text-white flex items-center gap-3">
+                        Delivered <span className="text-3xl">🎉</span>
+                    </h1>
                 ) : (
-                    <div className="h-[26px] mb-2" />
+                    <>
+                        <p className="text-xs text-white/50 font-medium uppercase tracking-wide mb-1">
+                            Estimated arrival
+                        </p>
+                        <h1 className="text-4xl font-black text-white tracking-tight">
+                            {timeWindow}
+                        </h1>
+                    </>
                 )}
-
-                <h1 className="text-white font-bold text-4xl tabular-nums">
-                    {isDelivered ? "Delivered 🎉" : `${fmt(etaStart)} – ${fmt(etaEnd)}`}
-                </h1>
-
-                <div className="mt-4 h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                <div className="mt-3 h-1.5 bg-white/10 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-amber-400 rounded-full transition-all duration-700 ease-out"
-                        style={{ width: `${progressPct}%` }}
+                        className="h-full bg-lime rounded-full transition-all duration-700"
+                        style={{ width: `${pct}%` }}
                     />
                 </div>
             </div>
 
-            {/* Status feed */}
-            <div className="px-4 pb-4 flex-shrink-0">
-                <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden divide-y divide-white/10">
-                    {STAGES.slice(0, stageIndex + 1).reverse().map((s, idx) => (
-                        <div key={s.status} className="flex items-center gap-3 px-4 py-4">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${idx === 0 ? "bg-lime/20" : "bg-white/5"
-                                }`}>
-                                {idx === 0
-                                    ? <div className="w-2.5 h-2.5 rounded-full bg-lime animate-pulse" />
-                                    : <CheckCircle2 size={14} className="text-white/30" />
-                                }
+            {/* Map */}
+            {!isDelivered && (
+                <div className="flex-shrink-0 h-52 overflow-hidden">
+                    <TrackMap />
+                </div>
+            )}
+
+            {/* Steps */}
+            <div className="flex-1 bg-panel rounded-t-3xl mt-2 px-4 pt-5 pb-8 flex flex-col gap-0">
+                {STEPS.map((step, i) => {
+                    const done = i < completedSteps
+                    const active = i === completedSteps - 1
+                    const isLast = i === STEPS.length - 1
+
+                    return (
+                        <div key={i} className="flex gap-3">
+                            <div className="flex flex-col items-center w-5 flex-shrink-0">
+                                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${active
+                                        ? 'border-lime bg-lime'
+                                        : done
+                                            ? 'border-lime/40 bg-transparent'
+                                            : 'border-content-muted/20 bg-transparent'
+                                    }`}>
+                                    {active && <div className="w-2 h-2 rounded-full bg-ink" />}
+                                </div>
+                                {!isLast && (
+                                    <div className={`w-0.5 flex-1 my-1 min-h-[20px] ${done ? 'bg-lime/30' : 'bg-content-muted/10'}`} />
+                                )}
                             </div>
-                            <p className={`text-sm leading-snug ${idx === 0 ? "text-white font-medium" : "text-white/40"
+                            <p className={`pb-5 text-sm leading-snug ${active
+                                    ? 'font-bold text-content'
+                                    : done
+                                        ? 'text-content-muted'
+                                        : 'text-content-muted/30'
                                 }`}>
-                                {s.title}
+                                {step.label(order)}
                             </p>
                         </div>
-                    ))}
+                    )
+                })}
+
+                <div className="mt-4 pt-4 border-t border-line/10 text-xs text-content-muted">
+                    Order from <span className="font-semibold text-content">{order.vendorName}</span>
+                    {' · '}Delivering to <span className="font-semibold text-content">{order.deliveryAddress}</span>
                 </div>
             </div>
-
-            {/* Mock map */}
-            <div className="flex-1 relative bg-[#1a1d1a] mx-4 rounded-2xl overflow-hidden">
-                <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 400 300">
-                    <line x1="0" y1="150" x2="400" y2="150" stroke="#4a5568" strokeWidth="1" />
-                    <line x1="200" y1="0" x2="200" y2="300" stroke="#4a5568" strokeWidth="1" />
-                    <line x1="0" y1="75" x2="400" y2="75" stroke="#2d3748" strokeWidth="0.5" />
-                    <line x1="0" y1="225" x2="400" y2="225" stroke="#2d3748" strokeWidth="0.5" />
-                    <line x1="100" y1="0" x2="100" y2="300" stroke="#2d3748" strokeWidth="0.5" />
-                    <line x1="300" y1="0" x2="300" y2="300" stroke="#2d3748" strokeWidth="0.5" />
-                    <path d="M 80 200 Q 160 160 240 130 Q 300 110 340 80" stroke="#ffffff20" strokeWidth="2" fill="none" strokeDasharray="6 4" />
-                </svg>
-
-                <div
-                    className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-[1500ms] ease-in-out"
-                    style={{
-                        left: `${20 + stageIndex * 16}%`,
-                        top: `${72 - stageIndex * 12}%`,
-                    }}
-                >
-                    <div className="w-9 h-9 rounded-full bg-amber-400 border-2 border-ink shadow-lg flex items-center justify-center text-lg">
-                        🛵
-                    </div>
-                </div>
-
-                <div className="absolute left-[84%] top-[20%] -translate-x-1/2 -translate-y-full">
-                    <div className="w-9 h-9 rounded-full bg-emerald-500 border-2 border-white shadow-lg flex items-center justify-center">
-                        🏠
-                    </div>
-                </div>
-
-                <div className="absolute left-[18%] top-[72%] -translate-x-1/2 -translate-y-full">
-                    <div className="w-9 h-9 rounded-full bg-lime border-2 border-ink shadow-lg flex items-center justify-center text-sm">
-                        🍽️
-                    </div>
-                </div>
-
-                <p className="absolute bottom-2 right-3 text-white/20 text-[10px] font-mono">
-                    Map · demo only
-                </p>
-            </div>
-
-            {/* Order info */}
-            <div className="flex-shrink-0 px-4 py-3 mt-2">
-                <p className="text-white/40 text-xs text-center">
-                    Order from{" "}
-                    <span className="text-white/70 font-medium">{order.vendorName}</span>
-                    {" · "}Delivering to {order.deliveryAddress}
-                </p>
-            </div>
-
         </div>
     )
 }

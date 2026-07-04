@@ -9,29 +9,17 @@ import AllergyCard from "./components/AllergyCard"
 import PaymentMethod, { PaymentType, } from "./components/PaymentMethod"
 import CheckoutSummary, { CheckoutItem, } from "./components/CheckoutSummary"
 import DeliveryOptions, { DeliveryType, } from "./components/DeliveryOptions"
+import { useCart } from "@/app/(app)/food/cart-context"
+import { useRouter } from "next/navigation"
+import { saveDemoOrder } from "@/lib/demo-order"
 
 const DELIVERY_FEE = 300
 const PACKAGING_FEE = 100
 const SERVICE_FEE = 150
 
-const mockItems: CheckoutItem[] = [
-    {
-        id: "1",
-        name: "Jollof Rice + Chicken",
-        image: "/images/food/jollof.jpg",
-        qty: 2,
-        price: 2500,
-    },
-    {
-        id: "2",
-        name: "Beef Suya",
-        image: "/images/food/suya.jpg",
-        qty: 1,
-        price: 1800,
-    },
-]
 
 export default function CheckoutClient() {
+    const router = useRouter()
     const [addressData, setAddressData] = useState<DeliveryAddressData>({
         address: "",
         building: "",
@@ -49,17 +37,40 @@ export default function CheckoutClient() {
     const [deliveryOption, setDeliveryOption] =
         useState<DeliveryType>("standard")
 
-
     const [payment, setPayment] =
         useState<PaymentType>("cash")
 
+
+    const {
+        vendor,
+        items,
+        subtotal,
+        clearCart,
+    } = useCart()
+
+    const checkoutItems: CheckoutItem[] = items.map(item => ({
+        id: item.id,
+        name: item.name,
+        image: item.image,
+        qty: item.qty,
+        price: item.price,
+    }))
+
     function placeOrder() {
-        console.log({
-            address: addressData,
-            allergies,
-            payment,
-            items: mockItems,
+        if (!vendor) return
+
+        const order = saveDemoOrder({
+            vendorName: vendor.name,
+            vendorLogo: vendor.image ?? "",
+            deliveryAddress:
+                addressData.address || "Campus Delivery",
+            status: "preparing",
+            etaMinutes: 25,
         })
+
+        // clearCart()
+
+        router.push(`/food/orders/${order.id}/track`)
     }
 
     return (
@@ -74,8 +85,8 @@ export default function CheckoutClient() {
                 <div className="space-y-6">
 
                     <OrderItems
-                        vendorName="Chicken Republic"
-                        items={mockItems}
+                        vendorName={vendor?.name ?? ""}
+                        items={checkoutItems}
                     />
 
                     <AllergyCard
@@ -102,8 +113,8 @@ export default function CheckoutClient() {
                 <div className="hidden lg:block">
 
                     <CheckoutSummary
-                        vendorName="Chicken Republic"
-                        items={mockItems}
+                        vendorName={vendor?.name ?? ""}
+                        items={checkoutItems}
                         deliveryFee={DELIVERY_FEE}
                         packagingFee={PACKAGING_FEE}
                         serviceFee={SERVICE_FEE}
@@ -121,8 +132,8 @@ export default function CheckoutClient() {
                 <div className="px-4 py-4">
 
                     <CheckoutSummary
-                        vendorName="Chicken Republic"
-                        items={mockItems}
+                        vendorName={vendor?.name ?? ""}
+                        items={checkoutItems}
                         deliveryFee={DELIVERY_FEE}
                         packagingFee={PACKAGING_FEE}
                         serviceFee={SERVICE_FEE}

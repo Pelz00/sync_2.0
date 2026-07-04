@@ -1,5 +1,8 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
+// import { useEffect, useState } from "react"
+import Link from "next/link"
+import { isVendorOpen } from "@/lib/vendor-hours"
 import Image, { StaticImageData } from "next/image"
 import { X, Plus, Minus, ShoppingBag, Star, AlarmClock, MapPin, Bike, ArrowLeft, Trash2, ShoppingCart } from "lucide-react"
 import { TbCurrencyNaira } from "react-icons/tb"
@@ -28,6 +31,7 @@ interface Props {
     reviews: number
     deliveryTime: string
     deliveryFee: string
+    time: string           // ← add this
     heroImage: StaticImageData | string
     menu: MenuSection[]
     storeInfo: StoreInfo
@@ -42,11 +46,23 @@ type MobileView = "menu" | "cart"
 
 export default function VendorClient({
     vendorName, tagline, location, rating, reviews,
-    deliveryTime, deliveryFee, heroImage, menu, storeInfo
+    deliveryTime, deliveryFee, time, heroImage, menu, storeInfo  // ← add time
 }: Props) {
 
     const router = useRouter()
-    const [cart, setCart] = useState<CartItem[]>([])
+
+    const {
+        vendor,
+        items,
+        addItem,
+        removeItem,
+        increaseQty,
+        decreaseQty,
+        clearCart,
+        subtotal,
+        totalItems,
+    } = useCart()
+
     const [activeSection, setActiveSection] = useState(menu[0]?.title ?? "")
     const [storeInfoOpen, setStoreInfoOpen] = useState(false)
     const [confirmClearOpen, setConfirmClearOpen] = useState(false)
@@ -55,12 +71,14 @@ export default function VendorClient({
     const [itemSheetOpen, setItemSheetOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
     const [itemQty, setItemQty] = useState(1)
+    const [closedModalOpen, setClosedModalOpen] = useState(false)
 
     const isScrollingRef = useRef(false)
 
-    const subtotal = cart.reduce((acc, i) => acc + i.price * i.qty, 0)
-    const total = cart.length > 0 ? subtotal + DELIVERY_FEE + SYNC_FEE + PACKAGING_FEE : 0
-    const totalItems = cart.reduce((acc, i) => acc + i.qty, 0)
+
+    // const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0)
+    const total = items.length > 0 ? subtotal + DELIVERY_FEE + SYNC_FEE + PACKAGING_FEE : 0
+    // const totalItems = items.reduce((acc, i) => acc + i.qty, 0)
 
     useEffect(() => {
         if (mobileView !== "menu") document.body.style.overflow = "hidden"
@@ -68,29 +86,28 @@ export default function VendorClient({
         return () => { document.body.style.overflow = "" }
     }, [mobileView])
 
-    function getQty(id: string) { return cart.find(i => i.id === id)?.qty ?? 0 }
-
+    function getQty(id: string) {
+        return items.find(i => i.id === id)?.qty ?? 0
+    }
     function removeOne(id: string) {
-        setCart(prev => {
-            const ex = prev.find(i => i.id === id)
-            if (!ex) return prev
-            if (ex.qty === 1) return prev.filter(i => i.id !== id)
-            return prev.map(i => i.id === id ? { ...i, qty: i.qty - 1 } : i)
-        })
+        decreaseQty(id)
     }
 
-    function removeFromCart(id: string) { setCart(prev => prev.filter(i => i.id !== id)) }
+    function removeFromCart(id: string) {
+        removeItem(id)
+    }
 
-    function clearCart() {
-        setCart([])
+    function handleClearCart() {
+        clearCart()
         setConfirmClearOpen(false)
     }
 
     function updateQty(id: string, delta: number) {
-        setCart(prev => {
-            const updated = prev.map(i => i.id === id ? { ...i, qty: Math.max(0, i.qty + delta) } : i)
-            return updated.filter(i => i.qty > 0)
-        })
+        if (delta > 0) {
+            increaseQty(id)
+        } else {
+            decreaseQty(id)
+        }
     }
 
     function openItemSheet(item: MenuItem) {
@@ -101,18 +118,27 @@ export default function VendorClient({
 
     function addToCartFromSheet() {
         if (!selectedItem) return
-        setCart(prev => {
-            const ex = prev.find(i => i.id === selectedItem.id)
-            if (ex) return prev.map(i => i.id === selectedItem.id ? { ...i, qty: i.qty + itemQty } : i)
-            return [...prev, {
-                id: selectedItem.id,
-                name: selectedItem.name,
-                description: selectedItem.description,
-                price: selectedItem.price,
-                image: selectedItem.image,
-                qty: itemQty,
-            }]
-        })
+
+        for (let i = 0; i < itemQty; i++) {
+            addItem(
+                {
+                    slug: vendorName.toLowerCase().replace(/\s+/g, "-"),
+                    name: vendorName,
+                    image: typeof heroImage === "string" ? heroImage : "",
+                },
+                {
+                    id: selectedItem.id,
+                    name: selectedItem.name,
+                    description: selectedItem.description,   // <-- add this
+                    image:
+                        typeof selectedItem.image === "string"
+                            ? selectedItem.image
+                            : "",
+                    price: selectedItem.price,
+                }
+            )
+        }
+
         setItemSheetOpen(false)
     }
 
@@ -134,6 +160,12 @@ export default function VendorClient({
         })
         return () => observers.forEach(o => o.disconnect())
     }, [menu, mobileView])
+
+    useEffect(() => {
+        if (!isVendorOpen(time)) {
+            setClosedModalOpen(true)
+        }
+    }, [time])
 
     function scrollToSection(title: string) {
         setActiveSection(title)
@@ -278,7 +310,7 @@ export default function VendorClient({
                     All items will be removed. To add items back, you&apos;ll need to start a new cart.
                 </p>
                 <button
-                    onClick={clearCart}
+                    onClick={handleClearCart}
                     className="w-full bg-red-500 text-white font-bold text-sm rounded-full py-3.5 cursor-pointer hover:bg-red-600 transition"
                 >
                     Delete cart
@@ -293,6 +325,45 @@ export default function VendorClient({
         </div>
     )
 
+    const ClosedModal = () => (
+        <div className="fixed inset-0 z-[80] bg-black/60 flex items-center justify-center px-4">
+            <div className="w-full max-w-md bg-panel rounded-3xl px-6 pt-8 pb-6 flex flex-col items-center text-center gap-2 shadow-xl">
+
+                {/* Vendor hero image thumbnail */}
+                <div className="relative w-16 h-16 rounded-2xl overflow-hidden mb-2 border border-line/10">
+                    <Image src={heroImage} alt={vendorName} fill className="object-cover" />
+                </div>
+
+                <h2 className="font-bold text-xl text-content leading-tight">
+                    {vendorName} is temporarily closed
+                </h2>
+                <p className="text-sm text-content-muted mt-1 leading-relaxed">
+                    This store is currently closed. Come back during opening hours or browse other stores.
+                </p>
+                <p className="text-xs text-content-muted/70 mt-1">
+                    Opening hours: <span className="font-medium text-content-muted">{time}</span>
+                </p>
+
+                <div className="flex flex-col gap-3 w-full mt-4">
+                    <Link
+                        href="/food"
+                        className="w-full bg-lime text-ink font-bold text-sm py-4 rounded-2xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all text-center cursor-pointer"
+                    >
+                        Browse open stores
+                    </Link>
+                    <button
+                        onClick={() => setClosedModalOpen(false)}
+                        className="w-full bg-content-muted/10 text-content font-medium text-sm py-4 rounded-2xl cursor-pointer hover:bg-content-muted/15 transition"
+                    >
+                        View menu anyway
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+    {/* ── Closed modal ── */ }
+    { closedModalOpen && <ClosedModal /> }
+
     const MobileCartView = () => (
         <div className="fixed inset-0 z-50 bg-panel flex flex-col">
             <div className="flex items-center gap-3 px-4 py-4 border-b border-content-muted/20 flex-shrink-0">
@@ -303,7 +374,7 @@ export default function VendorClient({
                     <ArrowLeft size={18} />
                 </button>
                 <h1 className="font-bold text-lg text-content flex-1">Your Cart</h1>
-                {cart.length > 0 && (
+                {items.length > 0 && (
                     <button
                         onClick={() => setConfirmClearOpen(true)}
                         className="w-9 h-9 rounded-full border border-content-muted/20 flex items-center justify-center text-content-muted hover:text-red-500 cursor-pointer"
@@ -315,25 +386,25 @@ export default function VendorClient({
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
-                {cart.length === 0 ? (
+                {items.length === 0 ? (
                     <div className="flex-1 flex items-center justify-center">
                         <EmptyCart />
                     </div>
                 ) : (
                     <>
                         <p className="text-sm text-content-muted">
-                            {cart.length} product{cart.length > 1 ? "s" : ""} from{" "}
+                            {items.length} product{items.length > 1 ? "s" : ""} from{" "}
                             <span className="font-bold text-content">{vendorName}</span>
                         </p>
                         <div className="flex flex-col gap-3">
-                            {cart.map(item => (
+                            {items.map(item => (
                                 <div key={item.id} className="flex items-center gap-3 border border-content-muted/20 rounded-xl p-3">
                                     <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                                         <Image src={item.image} alt={item.name} fill className="object-cover" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium text-sm text-content truncate">{item.name}</p>
-                                        <p className="text-xs text-content-muted mt-0.5 line-clamp-2">{item.description}</p>
+                                        {/*error in this place the description */}    <p className="text-xs text-content-muted mt-0.5 line-clamp-2">{item.description}</p>
                                         <div className="flex items-center gap-1.5 mt-1">
                                             <span className="text-xs text-content-muted flex items-center">
                                                 <TbCurrencyNaira />{item.price.toLocaleString()} each
@@ -393,7 +464,7 @@ export default function VendorClient({
                 )}
             </div>
 
-            {cart.length > 0 && (
+            {items.length > 0 && (
                 <div className="flex-shrink-0 p-4 bg-panel border-t border-content-muted/20">
                     <button className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5">
                         <span className="flex items-center gap-1">
@@ -561,17 +632,17 @@ export default function VendorClient({
                         <h3 className="font-bold text-sm text-content flex items-center gap-2">
                             <ShoppingBag size={16} className="text-lime" /> Your order
                         </h3>
-                        {cart.length > 0 && (
+                        {items.length > 0 && (
                             <span className="bg-lime text-ink text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                                 {totalItems}
                             </span>
                         )}
                     </div>
 
-                    {cart.length === 0 ? <EmptyCart /> : (
+                    {items.length === 0 ? <EmptyCart /> : (
                         <>
                             <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 min-h-0">
-                                {cart.map(item => (
+                                {items.map(item => (
                                     <div key={item.id} className="flex items-start gap-2">
                                         <div className="flex-1 min-w-0">
                                             <p className="text-[13px] font-medium text-content truncate">{item.name}</p>
@@ -621,11 +692,11 @@ export default function VendorClient({
             </div>
 
             {/* ── Mobile floating cart bar ── */}
-            {cart.length > 0 && mobileView === "menu" && (
+            {items.length > 0 && mobileView === "menu" && (
                 <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-panel/95 backdrop-blur-sm border-t border-content-muted/20 px-4 py-3">
                     <button
                         onClick={() => setMobileView("cart")}
-                        className="w-full flex items-center justify-between bg-lime text-ink font-bold text-sm px-5 py-3.5 rounded-2xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] font-mono cursor-pointer"
+                        className="w-full flex items-center justify-between bg-lime text-ink font-bold text-sm px-5 py-3.5 rounded-2xl border-0 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-mono cursor-pointer"
                     >
                         <span className="flex items-center gap-2">
                             <span className="bg-ink text-lime text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">{totalItems}</span>
