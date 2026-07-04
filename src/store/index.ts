@@ -33,3 +33,13 @@ export type AppStore = ReturnType<typeof makeStore>;
 export type RootState = ReturnType<AppStore['getState']>;
 export type AppDispatch = AppStore['dispatch'];
 export type AppThunk<R = void> = ThunkAction<R, RootState, unknown, Action>;
+
+// Zustand store. Scope is intentionally narrow - only the things the
+// PRD calls out as needing client state across pages:
+//   - modals (multi-step forms: onboarding, request, etc)
+//   - ui     (mobile nav, dismissed banners - transient UI state)
+export * from './use-modal-store';
+
+// export * from './listing-modal-store';
+// export * from './promotion-modal-store';
+// export * from './vendor-modal-store';

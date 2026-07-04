@@ -21,12 +21,23 @@ const statusStyle: Record<Listing['status'], string> = {
 
 interface ListingListViewProps {
   listings: Listing[];
-  onEdit: (l: Listing) => void;
-  onDuplicate: (l: Listing) => void;
-  onDelete: (l: Listing) => void;
+
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
+
+  onEdit: (listing: Listing) => void;
+  onDuplicate: (listing: Listing) => void;
+  onDelete: (listing: Listing) => void;
 }
 
-export function ListingListView({ listings, onEdit, onDuplicate, onDelete }: ListingListViewProps) {
+export function ListingListView({
+  listings,
+  selectedIds,
+  onToggleSelect,
+  onEdit,
+  onDuplicate,
+  onDelete,
+}: ListingListViewProps) {
   return (
     <div className="bg-panel shadow-card overflow-hidden rounded-xl">
       <Table>

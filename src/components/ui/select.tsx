@@ -49,14 +49,32 @@ export const SelectContent = React.forwardRef<
         ref={ref}
         position={position}
         className={cn(
-          'bg-panel text-content shadow-pop z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-hidden rounded-lg',
+          'bg-panel text-content shadow-pop z-50',
+          'max-h-[--radix-select-content-available-height]',
+          'border-border overflow-hidden rounded-xl border',
+
+          // 👇 Match the width of the trigger
+          position === 'popper' &&
+            'w-[--radix-popper-anchor-width] data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1',
+
+          // 👇 Nice animations
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
-          position === 'popper' && 'data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1',
+          'data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0',
+          'data-[state=open]:zoom-in-95 data-[state=closed]:zoom-out-95',
+
           className,
         )}
         {...props}
       >
-        <SelectPrimitive.Viewport className="p-1">{children}</SelectPrimitive.Viewport>
+        <SelectPrimitive.Viewport
+          className={cn(
+            'p-1',
+            position === 'popper' &&
+              'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-popper-anchor-width)]',
+          )}
+        >
+          {children}
+        </SelectPrimitive.Viewport>
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
   );
@@ -70,8 +88,8 @@ export const SelectItem = React.forwardRef<
     <SelectPrimitive.Item
       ref={ref}
       className={cn(
-        'relative flex w-full cursor-default select-none items-center rounded-md py-2 pl-8 pr-2 text-sm',
-        'data-[highlighted]:bg-surface-deep data-[disabled]:opacity-50 outline-none',
+        'relative flex w-full cursor-default items-center rounded-md py-2 pr-2 pl-8 text-sm select-none',
+        'data-[highlighted]:bg-surface-deep outline-none data-[disabled]:opacity-50',
         className,
       )}
       {...props}

@@ -7,15 +7,30 @@ import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { mockCategories } from '@/mock/listings';
 import { Listing } from '@/modules/vendor/types';
+import { AppSelect } from '@/components/shared/app-select';
 
-function Modal({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+function Modal({
+  open,
+  children,
+  onClose,
+}: {
+  open: boolean;
+  children: React.ReactNode;
+  onClose: () => void;
+}) {
   useEffect(() => {
+    if (!open) return;
+
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
+
     document.addEventListener('keydown', handleEscape);
+
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [onClose]);
+  }, [open, onClose]);
+
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -27,29 +42,27 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose: () =
         <button onClick={onClose} className="text-muted hover:text-ink absolute top-4 right-4">
           <X className="size-4" />
         </button>
+
         {children}
       </div>
     </div>
   );
 }
 // ── Delete confirm ───────────────────────────────────────────────
-export function DeleteModal({
-  listing,
-  onConfirm,
-  onClose,
-}: {
+interface DeleteModalProps {
+  open: boolean;
   listing: Listing;
   onConfirm: () => void;
   onClose: () => void;
-}) {
+}
+export function DeleteModal({ open, listing, onConfirm, onClose }: DeleteModalProps) {
   return (
-    <Modal onClose={onClose}>
+    <Modal open={open} onClose={onClose}>
       <h2 className="font-display text-ink text-lg font-semibold">Delete listing</h2>
       <p className="text-muted mt-2 text-sm">
         Are you sure you want to delete{' '}
-        <span className="text-ink font-semibold">&ldquo;{listing.name}&rdquo;</span>? This action
-        cannot be
-        undone.
+        <span className="text-ink font-semibold">&ldquo;{listing?.name}&rdquo;</span>? This action
+        cannot be undone.
       </p>
       <div className="mt-6 flex justify-end gap-3">
         <Button variant="outline" size="sm" onClick={onClose}>
@@ -64,17 +77,15 @@ export function DeleteModal({
 }
 
 // ── Bulk delete confirm ──────────────────────────────────────────
-export function BulkDeleteModal({
-  count,
-  onConfirm,
-  onClose,
-}: {
+interface BulkDeleteModalProps {
+  open: boolean;
   count: number;
   onConfirm: () => void;
   onClose: () => void;
-}) {
+}
+export function BulkDeleteModal({ open, count, onConfirm, onClose }: BulkDeleteModalProps) {
   return (
-    <Modal onClose={onClose}>
+    <Modal open={open} onClose={onClose}>
       <h2 className="font-display text-ink text-lg font-semibold">Delete {count} listings</h2>
       <p className="text-muted mt-2 text-sm">
         Are you sure you want to delete{' '}
@@ -94,17 +105,15 @@ export function BulkDeleteModal({
 }
 
 // ── Archive confirm ──────────────────────────────────────────────
-export function ArchiveModal({
-  count,
-  onConfirm,
-  onClose,
-}: {
+interface ArchiveModalProps {
+  open: boolean;
   count: number;
   onConfirm: () => void;
   onClose: () => void;
-}) {
+}
+export function ArchiveModal({ open, count, onConfirm, onClose }: ArchiveModalProps) {
   return (
-    <Modal onClose={onClose}>
+    <Modal open={open} onClose={onClose}>
       <h2 className="font-display text-ink text-lg font-semibold">
         Archive {count} listing{count > 1 ? 's' : ''}
       </h2>
@@ -116,7 +125,7 @@ export function ArchiveModal({
         <Button variant="outline" size="sm" onClick={onClose}>
           Cancel
         </Button>
-        <Button size="sm" variant="dark" onClick={onConfirm}>
+        <Button size="sm" variant="primary" onClick={onConfirm}>
           Archive
         </Button>
       </div>
@@ -125,22 +134,27 @@ export function ArchiveModal({
 }
 
 // ── Edit modal ───────────────────────────────────────────────────
-export function EditModal({
-  listing,
-  onSave,
-  onClose,
-}: {
+interface EditModalProps {
+  open: boolean;
   listing: Listing;
   onSave: (updated: Listing) => void;
   onClose: () => void;
-}) {
+}
+export function EditModal({ open, listing, onSave, onClose }: EditModalProps) {
   const [form, setForm] = useState({ ...listing });
+
+  useEffect(() => {
+    if (open && listing) setForm({ ...listing });
+  }, [open, listing]);
+
+  if (!open) return null;
 
   const set = (key: keyof Listing, value: string | number) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
   return (
-    <Modal onClose={onClose}>
+    <Modal open={open} onClose={onClose}>
+      {' '}
       <h2 className="font-display text-ink text-lg font-semibold">Edit listing</h2>
       <div className="mt-4 flex flex-col gap-3">
         <Field label="Name">
@@ -150,19 +164,12 @@ export function EditModal({
             className="input-clean"
           />
         </Field>
-        <Field label="Category">
-          <select
-            value={form.category}
-            onChange={(e) => set('category', e.target.value)}
-            className="border-line/15 text-ink bg-panel h-11 w-full rounded-lg border px-3 text-sm focus:outline-none"
-          >
-            {mockCategories
-              .filter((c) => c !== 'All')
-              .map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-          </select>
-        </Field>
+        <AppSelect
+          label="Category"
+          value={form.category}
+          onValueChange={(value) => set('category', value)}
+          options={mockCategories.filter((c) => c !== 'All')}
+        />
         <div className="grid grid-cols-2 gap-3">
           <Field label="Price (₦)">
             <Input
@@ -181,23 +188,19 @@ export function EditModal({
             />
           </Field>
         </div>
-        <Field label="Status">
-          <select
-            value={form.status}
-            onChange={(e) => set('status', e.target.value as Listing['status'])}
-            className="border-line/15 text-ink bg-panel h-11 w-full rounded-lg border px-3 text-sm focus:outline-none"
-          >
-            <option>Active</option>
-            <option>Draft</option>
-            <option>Out of Stock</option>
-          </select>
-        </Field>
+
+        <AppSelect
+          label="Category"
+          value={form.category}
+          onValueChange={(value) => set('category', value)}
+          options={mockCategories.filter((c) => c !== 'All')}
+        />
       </div>
       <div className="mt-6 flex justify-end gap-3">
         <Button variant="outline" size="sm" onClick={onClose}>
           Cancel
         </Button>
-        <Button size="sm" variant="dark" onClick={() => onSave(form)}>
+        <Button size="sm" variant="primary" onClick={() => onSave(form)}>
           Save changes
         </Button>
       </div>
@@ -215,13 +218,13 @@ const EMPTY: Omit<Listing, 'id' | 'sold'> = {
   imageUrl: '',
 };
 
-export function AddListingModal({
-  onAdd,
-  onClose,
-}: {
+interface AddListingModalProps {
+  open: boolean;
   onAdd: (listing: Listing) => void;
   onClose: () => void;
-}) {
+}
+
+export function AddListingModal({ open, onAdd, onClose }: AddListingModalProps) {
   const [form, setForm] = useState({ ...EMPTY });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -230,25 +233,44 @@ export function AddListingModal({
 
   const validate = () => {
     const e: Record<string, string> = {};
+
     if (!form.name.trim()) e.name = 'Name is required';
     if (form.price <= 0) e.price = 'Price must be greater than 0';
     if (form.stock < 0) e.stock = 'Stock cannot be negative';
+
     setErrors(e);
+
     return Object.keys(e).length === 0;
   };
 
   const handleAdd = () => {
     if (!validate()) return;
+
     onAdd({
       ...form,
       id: `lst-${Date.now()}`,
       sold: 0,
     });
+
+    // Reset form for the next time the modal opens
+    setForm({ ...EMPTY });
+    setErrors({});
+
+    onClose();
   };
 
+  const handleClose = () => {
+    setForm({ ...EMPTY });
+    setErrors({});
+    onClose();
+  };
+
+  if (!open) return null;
+
   return (
-    <Modal onClose={onClose}>
+    <Modal open={open} onClose={handleClose}>
       <h2 className="font-display text-ink text-lg font-semibold">Add new listing</h2>
+
       <div className="mt-4 flex flex-col gap-3">
         <Field label="Product name" error={errors.name}>
           <Input
@@ -258,19 +280,14 @@ export function AddListingModal({
             className={cn('input-clean', errors.name && 'border-red-400')}
           />
         </Field>
-        <Field label="Category">
-          <select
-            value={form.category}
-            onChange={(e) => set('category', e.target.value)}
-            className="border-line/15 text-ink bg-panel h-11 w-full rounded-lg border px-3 text-sm focus:outline-none"
-          >
-            {mockCategories
-              .filter((c) => c !== 'All')
-              .map((c) => (
-                <option key={c}>{c}</option>
-              ))}
-          </select>
-        </Field>
+
+        <AppSelect
+          label="Category"
+          value={form.category}
+          onValueChange={(value) => set('category', value)}
+          options={mockCategories.filter((c) => c !== 'All')}
+        />
+
         <div className="grid grid-cols-2 gap-3">
           <Field label="Price (₦)" error={errors.price}>
             <Input
@@ -281,6 +298,7 @@ export function AddListingModal({
               className={cn('input-clean', errors.price && 'border-red-400')}
             />
           </Field>
+
           <Field label="Stock" error={errors.stock}>
             <Input
               type="number"
@@ -291,6 +309,7 @@ export function AddListingModal({
             />
           </Field>
         </div>
+
         <Field label="Status">
           <select
             value={form.status}
@@ -303,11 +322,13 @@ export function AddListingModal({
           </select>
         </Field>
       </div>
+
       <div className="mt-6 flex justify-end gap-3">
-        <Button variant="outline" size="sm" onClick={onClose}>
+        <Button variant="outline" size="sm" onClick={handleClose}>
           Cancel
         </Button>
-        <Button size="sm" variant="dark" onClick={handleAdd}>
+
+        <Button size="sm" variant="primary" onClick={handleAdd}>
           Add listing
         </Button>
       </div>

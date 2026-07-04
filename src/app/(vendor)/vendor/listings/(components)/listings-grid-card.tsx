@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Pencil, Megaphone, MoreHorizontal } from 'lucide-react';
 import { Listing } from '@/modules/vendor/types';
+import { Checkbox } from '@/components/ui';
 
 interface ListingGridCardProps {
   listing: Listing;
@@ -32,7 +33,7 @@ export function ListingGridCard({
     <div
       className={cn(
         'bg-panel shadow-card group relative flex flex-col overflow-hidden rounded-xl transition-all duration-200',
-        selected && 'ring-2 ring-violet-600',
+        selected && 'ring-2 ring-lime-600',
       )}
     >
       {/* Image area */}
@@ -61,11 +62,12 @@ export function ListingGridCard({
         {/* Checkbox */}
         <div
           className={cn(
-            'absolute top-3 left-3 flex size-5 items-center justify-center rounded border-2 bg-white transition-all',
-            selected ? 'border-violet-600' : 'border-white/70',
+            'absolute top-3 left-3 transition-all duration-200',
+            selected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
           )}
+          onClick={(e) => e.stopPropagation()}
         >
-          {selected && <div className="size-2.5 rounded-sm bg-violet-600" />}
+          <Checkbox checked={selected} onCheckedChange={() => onToggleSelect(listing.id)} />
         </div>
 
         {/* Status badge */}

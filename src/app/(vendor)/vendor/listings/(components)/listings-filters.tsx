@@ -1,7 +1,17 @@
 'use client';
+
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Search, LayoutGrid, List } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface ListingFiltersProps {
   categories: string[];
@@ -13,6 +23,10 @@ interface ListingFiltersProps {
   onSearchChange: (val: string) => void;
   view: 'grid' | 'list';
   onViewChange: (view: 'grid' | 'list') => void;
+  allSelected: boolean;
+  someSelected: boolean;
+  selectedCount: number;
+  onToggleSelectAll: () => void;
 }
 
 const STATUS_OPTIONS = ['All Status', 'Active', 'Draft', 'Out of Stock'];
@@ -27,71 +41,111 @@ export function ListingFilters({
   onSearchChange,
   view,
   onViewChange,
+  allSelected,
+  someSelected,
+  selectedCount,
+  onToggleSelectAll,
 }: ListingFiltersProps) {
   return (
-    <div className="bg-panel shadow-card flex flex-col gap-4 rounded-xl p-4">
-      {/* Search + category pills */}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-[200px] flex-1">
-          <Search className="text-muted absolute top-1/2 left-3 size-3.5 -translate-y-1/2" />
-          <Input
-            placeholder="Search listings..."
-            value={searchValue}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-8 !ring-0 !outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0"
-          />
+    <div className="bg-panel shadow-card border-line/5 rounded-xl border p-5">
+      {/* Top Row */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        {/* Left Side */}
+        <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center">
+          {/* Select All */}
+          <div className="border-line/10 bg-background flex shrink-0 items-center gap-3 rounded-lg border px-3 py-2">
+            <Checkbox
+              checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+              onCheckedChange={onToggleSelectAll}
+            />
+
+            <span className="text-sm font-medium">
+              {selectedCount > 0 ? `${selectedCount} selected` : 'Select All'}
+            </span>
+          </div>
+
+          {/* Search */}
+          <div className="relative w-full lg:max-w-md">
+            <Search className="text-muted absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+
+            <Input
+              value={searchValue}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Search listings..."
+              className="h-11 pl-10"
+            />
+          </div>
         </div>
-        <div className="flex flex-wrap gap-1.5">
+
+        {/* View Toggle */}
+        <div className="border-line/10 flex w-fit items-center rounded-lg border bg-transparent p-1">
+          <button
+            type="button"
+            onClick={() => onViewChange('grid')}
+            aria-label="Grid view"
+            aria-pressed={view === 'grid'}
+            className={cn(
+              'rounded-md p-2 transition-all',
+              view === 'grid'
+                ? 'bg-lime-500 text-white shadow-sm'
+                : 'text-muted-foreground hover:bg-background',
+            )}
+          >
+            <LayoutGrid className="h-4 w-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onViewChange('list')}
+            aria-label="List view"
+            aria-pressed={view === 'list'}
+            className={cn(
+              'rounded-md p-2 transition-all',
+              view === 'list'
+                ? 'bg-lime-500 text-white shadow-sm'
+                : 'text-muted-foreground hover:bg-background',
+            )}
+          >
+            <List className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Bottom Row */}
+      <div className="mt-5 flex flex-col gap-4 lg:flex-row lg:items-center">
+        {/* Status */}
+        <Select value={selectedStatus} onValueChange={onStatusChange}>
+          <SelectTrigger className="h-10 w-full lg:w-[180px]">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+
+          <SelectContent>
+            {STATUS_OPTIONS.map((status) => (
+              <SelectItem key={status} value={status}>
+                {status}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Categories */}
+        <div className="-mx-1 flex flex-1 gap-2 overflow-x-auto px-1 pb-1">
           {categories.map((cat) => (
             <button
               key={cat}
+              type="button"
               onClick={() => onCategoryChange(cat)}
+              aria-pressed={selectedCategory === cat}
               className={cn(
-                'rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
+                'shrink-0 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-all duration-200',
                 selectedCategory === cat
-                  ? 'bg-lime-500 text-white'
-                  : 'border-line/15 text-ink hover:bg-ink/5 border',
+                  ? 'border-lime-500 bg-lime-500 text-white shadow-sm'
+                  : 'border-line/10 bg-background text-muted-foreground hover:border-border hover:bg-lime-500 hover:text-white',
               )}
             >
               {cat}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* Status filter + view toggle */}
-      <div className="flex items-center justify-between">
-        <select
-          value={selectedStatus}
-          onChange={(e) => onStatusChange(e.target.value)}
-          className="border-line/15 text-ink bg-panel rounded-lg border px-3 py-2 text-sm focus:outline-none"
-        >
-          {STATUS_OPTIONS.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
-
-        <div className="border-line/15 flex items-center gap-1 rounded-lg border p-1">
-          <button
-            onClick={() => onViewChange('grid')}
-            className={cn(
-              'rounded-md p-1.5 transition-colors',
-              view === 'grid' ? 'bg-lime-500 text-white' : 'text-muted hover:bg-ink/5',
-            )}
-          >
-            <LayoutGrid className="size-4" />
-          </button>
-          <button
-            onClick={() => onViewChange('list')}
-            className={cn(
-              'rounded-md p-1.5 transition-colors',
-              view === 'list' ? 'bg-lime-500 text-white' : 'text-muted hover:bg-ink/5',
-            )}
-          >
-            <List className="size-4" />
-          </button>
         </div>
       </div>
     </div>

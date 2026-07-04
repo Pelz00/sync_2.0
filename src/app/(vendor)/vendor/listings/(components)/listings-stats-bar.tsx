@@ -1,5 +1,6 @@
+import { CustomCard } from '@/components/shared/card';
 import { Listing } from '@/modules/vendor/types';
-
+import { BadgeCheck, FilePenLine, Package, PackageX } from 'lucide-react';
 interface ListingStatsBarProps {
   listings: Listing[];
 }
@@ -11,19 +12,45 @@ export function ListingStatsBar({ listings }: ListingStatsBarProps) {
   const outOfStock = listings.filter((l) => l.status === 'Out of Stock').length;
 
   const stats = [
-    { label: 'TOTAL LISTINGS', value: total, color: 'text-ink' },
-    { label: 'ACTIVE', value: active, color: 'text-green-600' },
-    { label: 'DRAFT', value: draft, color: 'text-ink' },
-    { label: 'OUT OF STOCK', value: outOfStock, color: 'text-red-500' },
+    {
+      label: 'TOTAL LISTINGS',
+      value: total,
+      valueColor: 'text-ink',
+      icon: <Package className="size-5 text-blue-600" />,
+      iconBg: 'bg-blue-100',
+    },
+    {
+      label: 'ACTIVE',
+      value: active,
+      valueColor: 'text-green-600',
+      icon: <BadgeCheck className="size-5 text-green-600" />,
+      iconBg: 'bg-green-100',
+    },
+    {
+      label: 'DRAFT',
+      value: draft,
+      valueColor: 'text-amber-600',
+      icon: <FilePenLine className="size-5 text-amber-600" />,
+      iconBg: 'bg-amber-100',
+    },
+    {
+      label: 'OUT OF STOCK',
+      value: outOfStock,
+      valueColor: 'text-red-600',
+      icon: <PackageX className="size-5 text-red-600" />,
+      iconBg: 'bg-red-100',
+    },
   ];
-
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      {stats.map(({ label, value, color }) => (
-        <div key={label} className="bg-panel shadow-card rounded-xl p-5">
-          <p className="text-muted font-mono text-[10px] tracking-widest uppercase">{label}</p>
-          <p className={`mt-1 text-3xl font-bold ${color}`}>{value}</p>
-        </div>
+      {stats.map((stat) => (
+        <CustomCard
+          key={stat.label}
+          label={stat.label}
+          value={<span className={stat.valueColor}>{stat.value}</span>}
+          icon={stat.icon}
+          iconBg={stat.iconBg}
+        />
       ))}
     </div>
   );

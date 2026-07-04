@@ -17,14 +17,7 @@ import {
   DeleteModal,
   EditModal,
 } from './listings-modal';
-
-type ModalState =
-  | { type: 'none' }
-  | { type: 'add' }
-  | { type: 'edit'; listing: Listing }
-  | { type: 'delete'; listing: Listing }
-  | { type: 'bulk-delete' }
-  | { type: 'archive' };
+import { useModalStore } from '@/store';
 
 export default function ListingsPage() {
   const [listings, setListings] = useState<Listing[]>(mockListings);
@@ -33,7 +26,29 @@ export default function ListingsPage() {
   const [status, setStatus] = useState('All Status');
   const [search, setSearch] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
-  const [modal, setModal] = useState<ModalState>({ type: 'none' });
+
+  const {
+    addListing,
+    editListing,
+    deleteListing,
+    bulkDelete,
+    archiveListings,
+
+    openAddListing,
+    closeAddListing,
+
+    openEditListing,
+    closeEditListing,
+
+    openDeleteListing,
+    closeDeleteListing,
+
+    openBulkDelete,
+    closeBulkDelete,
+
+    openArchiveListings,
+    closeArchiveListings,
+  } = useModalStore();
 
   // ── filtering ────────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -46,52 +61,88 @@ export default function ListingsPage() {
   }, [listings, category, status, search]);
 
   // ── selection ────────────────────────────────────────────────
+
+  // ── selection ────────────────────────────────────────────────
+  // ── selection ────────────────────────────────────────────────
+
+  const filteredIds = filtered.map((listing) => listing.id);
+
+  const selectedCount = selectedIds.size;
+
+  const allSelected = filteredIds.length > 0 && filteredIds.every((id) => selectedIds.has(id));
+
+  const someSelected = filteredIds.some((id) => selectedIds.has(id)) && !allSelected;
+
   const toggleSelect = (id: string) =>
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+
       return next;
     });
+
+  const toggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+
+      if (allSelected) {
+        filteredIds.forEach((id) => next.delete(id));
+      } else {
+        filteredIds.forEach((id) => next.add(id));
+      }
+
+      return next;
+    });
+  };
 
   const clearSelection = () => setSelectedIds(new Set());
 
   // ── CRUD ─────────────────────────────────────────────────────
   const handleAdd = (listing: Listing) => {
     setListings((prev) => [listing, ...prev]);
-    setModal({ type: 'none' });
+    closeAddListing();
   };
 
   const handleEdit = (updated: Listing) => {
     setListings((prev) => prev.map((l) => (l.id === updated.id ? updated : l)));
-    setModal({ type: 'none' });
+
+    closeEditListing();
+  };
+
+  const handleDuplicate = (listing: Listing) => {
+    const duplicate: Listing = {
+      ...listing,
+      id: `lst-${Date.now()}`,
+      name: `${listing.name} (Copy)`,
+      sold: 0,
+    };
+
+    setListings((prev) => [duplicate, ...prev]);
   };
 
   const handleDelete = (listing: Listing) => {
     setListings((prev) => prev.filter((l) => l.id !== listing.id));
-    setModal({ type: 'none' });
-  };
 
-  const handleDuplicate = (listing: Listing) => {
-    const dupe: Listing = {
-      ...listing,
-      id: `lst-${Date.now()}`,
-      name: `${listing.name} (copy)`,
-      sold: 0,
-    };
-    setListings((prev) => [dupe, ...prev]);
+    closeDeleteListing();
   };
 
   const handleBulkDelete = () => {
     setListings((prev) => prev.filter((l) => !selectedIds.has(l.id)));
+
     clearSelection();
-    setModal({ type: 'none' });
+    closeBulkDelete();
   };
 
   const handleArchive = () => {
-    // In production: PATCH status to 'archived' via API
     setListings((prev) => prev.map((l) => (selectedIds.has(l.id) ? { ...l, status: 'Draft' } : l)));
+
     clearSelection();
-    setModal({ type: 'none' });
+    closeArchiveListings();
   };
 
   return (
@@ -108,7 +159,7 @@ export default function ListingsPage() {
         <Button
           variant="primary"
           className="hover:bg-accent-fg bg-lime-500 text-white"
-          onClick={() => setModal({ type: 'add' })}
+          onClick={openAddListing}
         >
           <Plus className="size-4" /> Add New Listing
         </Button>
@@ -131,6 +182,10 @@ export default function ListingsPage() {
           setView(v);
           clearSelection();
         }}
+        allSelected={allSelected}
+        someSelected={someSelected}
+        selectedCount={selectedCount}
+        onToggleSelectAll={toggleSelectAll}
       />
 
       {/* Bulk bar */}
@@ -138,10 +193,13 @@ export default function ListingsPage() {
         count={selectedIds.size}
         onEdit={() => {
           const first = listings.find((l) => selectedIds.has(l.id));
-          if (first) setModal({ type: 'edit', listing: first });
+
+          if (first) {
+            openEditListing(first);
+          }
         }}
-        onArchive={() => setModal({ type: 'archive' })}
-        onDelete={() => setModal({ type: 'bulk-delete' })}
+        onArchive={() => openArchiveListings(Array.from(selectedIds))}
+        onDelete={openBulkDelete}
         onClear={clearSelection}
       />
 
@@ -154,7 +212,7 @@ export default function ListingsPage() {
               listing={listing}
               selected={selectedIds.has(listing.id)}
               onToggleSelect={toggleSelect}
-              onEdit={(l) => setModal({ type: 'edit', listing: l })}
+              onEdit={openEditListing}
               onPromote={() => {}}
               onMore={() => {}}
             />
@@ -168,44 +226,48 @@ export default function ListingsPage() {
       ) : (
         <ListingListView
           listings={filtered}
-          onEdit={(l) => setModal({ type: 'edit', listing: l })}
+          selectedIds={selectedIds}
+          onToggleSelect={toggleSelect}
+          onEdit={openEditListing}
           onDuplicate={handleDuplicate}
-          onDelete={(l) => setModal({ type: 'delete', listing: l })}
+          onDelete={openDeleteListing}
         />
       )}
 
       {/* Modals */}
-      {modal.type === 'add' && (
-        <AddListingModal onAdd={handleAdd} onClose={() => setModal({ type: 'none' })} />
-      )}
-      {modal.type === 'edit' && (
-        <EditModal
-          listing={modal.listing}
-          onSave={handleEdit}
-          onClose={() => setModal({ type: 'none' })}
-        />
-      )}
-      {modal.type === 'delete' && (
-        <DeleteModal
-          listing={modal.listing}
-          onConfirm={() => handleDelete(modal.listing)}
-          onClose={() => setModal({ type: 'none' })}
-        />
-      )}
-      {modal.type === 'bulk-delete' && (
-        <BulkDeleteModal
-          count={selectedIds.size}
-          onConfirm={handleBulkDelete}
-          onClose={() => setModal({ type: 'none' })}
-        />
-      )}
-      {modal.type === 'archive' && (
-        <ArchiveModal
-          count={selectedIds.size}
-          onConfirm={handleArchive}
-          onClose={() => setModal({ type: 'none' })}
-        />
-      )}
+      <AddListingModal open={addListing.open} onAdd={handleAdd} onClose={closeAddListing} />
+
+      <EditModal
+        open={editListing.open}
+        listing={editListing.listing!}
+        onSave={handleEdit}
+        onClose={closeEditListing}
+      />
+
+      <DeleteModal
+        open={deleteListing.open}
+        listing={deleteListing.listing!}
+        onConfirm={() => {
+          if (deleteListing.listing) {
+            handleDelete(deleteListing.listing);
+          }
+        }}
+        onClose={closeDeleteListing}
+      />
+
+      <BulkDeleteModal
+        open={bulkDelete.open}
+        count={selectedIds.size}
+        onConfirm={handleBulkDelete}
+        onClose={closeBulkDelete}
+      />
+
+      <ArchiveModal
+        open={archiveListings.open}
+        count={archiveListings.listingIds.length}
+        onConfirm={handleArchive}
+        onClose={closeArchiveListings}
+      />
     </section>
   );
 }
