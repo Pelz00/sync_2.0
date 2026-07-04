@@ -1,12 +1,18 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
+// import { useEffect, useState } from "react"
+import Link from "next/link"
+import { isVendorOpen } from "@/lib/vendor-hours"
 import Image, { StaticImageData } from "next/image"
 import { X, Plus, Minus, ShoppingBag, Star, AlarmClock, MapPin, Bike, ArrowLeft, Trash2, ShoppingCart } from "lucide-react"
 import { TbCurrencyNaira } from "react-icons/tb"
 import { GoDotFill } from "react-icons/go"
 import EmptyCart from '@/components/food-comps/EmptyCart'
 import StoreInfoModal, { type StoreInfo } from "@/components/food-comps/StoreInfoModal"
-
+import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet"
+import { useRouter } from "next/navigation"
+import { useCart } from "@/app/(app)/food/cart-context"
+import { saveDemoOrder } from "@/lib/demo-order"
 interface MenuItem {
     id: string
     name: string
@@ -25,6 +31,7 @@ interface Props {
     reviews: number
     deliveryTime: string
     deliveryFee: string
+    time: string           // ← add this
     heroImage: StaticImageData | string
     menu: MenuSection[]
     storeInfo: StoreInfo
@@ -32,36 +39,46 @@ interface Props {
 
 const SYNC_FEE = 150
 const DELIVERY_FEE = 300
-// "Nylon" fee — the mandatory packaging/wrap charge applied once per order,
-// same treatment as Delivery fee and Sync fee below.
 const PACKAGING_FEE = 100
-// Height of the sticky header(s) above this component (AppShell's
-// MarketingHeader + ServicesDock + search row). Adjust to match your real
-// stacked header height in px so the tabs sit just below it, not under it.
 const NAV_H = 63
 
-type MobileView = "menu" | "item" | "cart"
+type MobileView = "menu" | "cart"
 
 export default function VendorClient({
     vendorName, tagline, location, rating, reviews,
-    deliveryTime, deliveryFee, heroImage, menu, storeInfo
+    deliveryTime, deliveryFee, time, heroImage, menu, storeInfo  // ← add time
 }: Props) {
-    const [cart, setCart] = useState<CartItem[]>([])
+
+    const router = useRouter()
+
+    const {
+        vendor,
+        items,
+        addItem,
+        removeItem,
+        increaseQty,
+        decreaseQty,
+        clearCart,
+        subtotal,
+        totalItems,
+    } = useCart()
+
     const [activeSection, setActiveSection] = useState(menu[0]?.title ?? "")
-    const [modalItem, setModalItem] = useState<MenuItem | null>(null)
-    const [modalQty, setModalQty] = useState(1)
     const [storeInfoOpen, setStoreInfoOpen] = useState(false)
     const [confirmClearOpen, setConfirmClearOpen] = useState(false)
-
     const [mobileView, setMobileView] = useState<MobileView>("menu")
-    const [mobileSelectedItem, setMobileSelectedItem] = useState<MenuItem | null>(null)
-    const [mobileItemQty, setMobileItemQty] = useState(1)
+
+    const [itemSheetOpen, setItemSheetOpen] = useState(false)
+    const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
+    const [itemQty, setItemQty] = useState(1)
+    const [closedModalOpen, setClosedModalOpen] = useState(false)
 
     const isScrollingRef = useRef(false)
 
-    const subtotal = cart.reduce((acc, i) => acc + i.price * i.qty, 0)
-    const total = cart.length > 0 ? subtotal + DELIVERY_FEE + SYNC_FEE + PACKAGING_FEE : 0
-    const totalItems = cart.reduce((acc, i) => acc + i.qty, 0)
+
+    // const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0)
+    const total = items.length > 0 ? subtotal + DELIVERY_FEE + SYNC_FEE + PACKAGING_FEE : 0
+    // const totalItems = items.reduce((acc, i) => acc + i.qty, 0)
 
     useEffect(() => {
         if (mobileView !== "menu") document.body.style.overflow = "hidden"
@@ -69,40 +86,62 @@ export default function VendorClient({
         return () => { document.body.style.overflow = "" }
     }, [mobileView])
 
-    function getQty(id: string) { return cart.find(i => i.id === id)?.qty ?? 0 }
-
-    function addOne(item: { id: string; name: string; description: string; price: number; image: StaticImageData | string }) {
-        setCart(prev => {
-            const ex = prev.find(i => i.id === item.id)
-            if (ex) return prev.map(i => i.id === item.id ? { ...i, qty: i.qty + 1 } : i)
-            return [...prev, { id: item.id, name: item.name, description: item.description, price: item.price, qty: 1, image: item.image }]
-        })
+    function getQty(id: string) {
+        return items.find(i => i.id === id)?.qty ?? 0
     }
-
     function removeOne(id: string) {
-        setCart(prev => {
-            const ex = prev.find(i => i.id === id)
-            if (!ex) return prev
-            if (ex.qty === 1) return prev.filter(i => i.id !== id)
-            return prev.map(i => i.id === id ? { ...i, qty: i.qty - 1 } : i)
-        })
+        decreaseQty(id)
     }
 
-    function removeFromCart(id: string) { setCart(prev => prev.filter(i => i.id !== id)) }
+    function removeFromCart(id: string) {
+        removeItem(id)
+    }
 
-    function clearCart() {
-        setCart([])
+    function handleClearCart() {
+        clearCart()
         setConfirmClearOpen(false)
     }
 
     function updateQty(id: string, delta: number) {
-        setCart(prev => {
-            const updated = prev.map(i => i.id === id ? { ...i, qty: Math.max(0, i.qty + delta) } : i)
-            return updated.filter(i => i.qty > 0)
-        })
+        if (delta > 0) {
+            increaseQty(id)
+        } else {
+            decreaseQty(id)
+        }
     }
 
-    // ── scroll spy ───────────────────────────────────────────────────────
+    function openItemSheet(item: MenuItem) {
+        setSelectedItem(item)
+        setItemQty(1)
+        setItemSheetOpen(true)
+    }
+
+    function addToCartFromSheet() {
+        if (!selectedItem) return
+
+        for (let i = 0; i < itemQty; i++) {
+            addItem(
+                {
+                    slug: vendorName.toLowerCase().replace(/\s+/g, "-"),
+                    name: vendorName,
+                    image: typeof heroImage === "string" ? heroImage : "",
+                },
+                {
+                    id: selectedItem.id,
+                    name: selectedItem.name,
+                    description: selectedItem.description,   // <-- add this
+                    image:
+                        typeof selectedItem.image === "string"
+                            ? selectedItem.image
+                            : "",
+                    price: selectedItem.price,
+                }
+            )
+        }
+
+        setItemSheetOpen(false)
+    }
+
     useEffect(() => {
         if (mobileView !== "menu") return
         const observers: IntersectionObserver[] = []
@@ -122,45 +161,20 @@ export default function VendorClient({
         return () => observers.forEach(o => o.disconnect())
     }, [menu, mobileView])
 
+    useEffect(() => {
+        if (!isVendorOpen(time)) {
+            setClosedModalOpen(true)
+        }
+    }, [time])
+
     function scrollToSection(title: string) {
         setActiveSection(title)
         const el = document.getElementById(`sec-${title}`)
         if (!el) return
         isScrollingRef.current = true
-        // Offset by NAV_H (sticky header) + the tab bar's own height so the
-        // section title lands just below the sticky tabs, not under them.
         const top = el.getBoundingClientRect().top + window.scrollY - (NAV_H + 48) - 16
         window.scrollTo({ top, behavior: "smooth" })
         setTimeout(() => { isScrollingRef.current = false }, 900)
-    }
-
-    function openDesktopModal(item: MenuItem) { setModalItem(item); setModalQty(1) }
-    function closeModal() { setModalItem(null) }
-
-    function addToCartFromModal() {
-        if (!modalItem) return
-        setCart(prev => {
-            const ex = prev.find(i => i.id === modalItem.id)
-            if (ex) return prev.map(i => i.id === modalItem.id ? { ...i, qty: i.qty + modalQty } : i)
-            return [...prev, { id: modalItem.id, name: modalItem.name, description: modalItem.description, price: modalItem.price, qty: modalQty, image: modalItem.image }]
-        })
-        closeModal()
-    }
-
-    function openMobileItem(item: MenuItem) {
-        setMobileSelectedItem(item)
-        setMobileItemQty(1)
-        setMobileView("item")
-    }
-
-    function addToCartFromMobileItem() {
-        if (!mobileSelectedItem) return
-        setCart(prev => {
-            const ex = prev.find(i => i.id === mobileSelectedItem.id)
-            if (ex) return prev.map(i => i.id === mobileSelectedItem.id ? { ...i, qty: i.qty + mobileItemQty } : i)
-            return [...prev, { id: mobileSelectedItem.id, name: mobileSelectedItem.name, description: mobileSelectedItem.description, price: mobileSelectedItem.price, qty: mobileItemQty, image: mobileSelectedItem.image }]
-        })
-        setMobileView("menu")
     }
 
     const VendorHeader = () => (
@@ -207,69 +221,42 @@ export default function VendorClient({
             </div>
         </>
     )
-const MenuSections = ({ mobile }: { mobile: boolean }) => (
-    <div className={`flex flex-col gap-6 ${mobile ? "pt-4 pb-28" : "pb-8"}`}>
-        {menu.map(section => (
-            <div key={section.title} id={`sec-${section.title}`}>
-                <h2 className="font-bold text-xl text-content mb-3">{section.title}</h2>
-                <div className="flex flex-col border border-content-muted/20 rounded-xl overflow-hidden">
-                    {section.items.map((item, idx) => {
-                        const qty = getQty(item.id)
-                        const isLast = idx === section.items.length - 1
 
-                        return (
-                            <div
-                                key={item.id}
-                                className={`flex gap-3 p-3 sm:p-4 ${!isLast ? "border-b border-content-muted/20" : ""}`}
-                            >
-                                <div className="relative w-20 h-16 sm:w-24 sm:h-20 rounded-lg overflow-hidden flex-shrink-0">
-                                    <Image src={item.image} alt={item.name} fill className="object-cover" />
-                                </div>
-                                <div className="flex flex-col justify-between flex-1 min-w-0">
-                                    <div>
-                                        <div className="flex items-start justify-between gap-2">
-                                            <h3 className="font-medium text-sm text-content">{item.name}</h3>
-                                            <p className="font-bold text-sm text-content flex-shrink-0 flex items-center">
-                                                <TbCurrencyNaira />
-                                                {qty > 0
-                                                    ? (item.price * qty).toLocaleString()
-                                                    : item.price.toLocaleString()
-                                                }
-                                            </p>
-                                        </div>
-                                        <p className="text-xs text-content-muted mt-1 line-clamp-2">{item.description}</p>
+    const MenuSections = ({ mobile }: { mobile: boolean }) => (
+        <div className={`flex flex-col gap-6 ${mobile ? "pt-4 pb-28" : "pb-8"}`}>
+            {menu.map(section => (
+                <div key={section.title} id={`sec-${section.title}`}>
+                    <h2 className="font-bold text-xl text-content mb-3">{section.title}</h2>
+                    <div className="flex flex-col border border-content-muted/20 rounded-xl overflow-hidden">
+                        {section.items.map((item, idx) => {
+                            const qty = getQty(item.id)
+                            const isLast = idx === section.items.length - 1
+                            return (
+                                <div
+                                    key={item.id}
+                                    className={`flex gap-3 p-3 sm:p-4 ${!isLast ? "border-b border-content-muted/20" : ""}`}
+                                >
+                                    <div className="relative w-20 h-16 sm:w-24 sm:h-20 rounded-lg overflow-hidden flex-shrink-0">
+                                        <Image src={item.image} alt={item.name} fill className="object-cover" />
                                     </div>
-
-                                    <div className="flex justify-end mt-2">
-                                        {mobile ? (
-                                            qty === 0 ? (
+                                    <div className="flex flex-col justify-between flex-1 min-w-0">
+                                        <div>
+                                            <div className="flex items-start justify-between gap-2">
+                                                <h3 className="font-medium text-sm text-content">{item.name}</h3>
+                                                <p className="font-bold text-sm text-content flex-shrink-0 flex items-center">
+                                                    <TbCurrencyNaira />
+                                                    {qty > 0
+                                                        ? (item.price * qty).toLocaleString()
+                                                        : item.price.toLocaleString()
+                                                    }
+                                                </p>
+                                            </div>
+                                            <p className="text-xs text-content-muted mt-1 line-clamp-2">{item.description}</p>
+                                        </div>
+                                        <div className="flex justify-end mt-2">
+                                            {qty === 0 ? (
                                                 <button
-                                                    onClick={() => openMobileItem(item)}
-                                                    className="w-8 h-8 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition-colors cursor-pointer"
-                                                >
-                                                    <Plus size={16} strokeWidth={2} />
-                                                </button>
-                                            ) : (
-                                                <div className="flex items-center gap-1.5">
-                                                    <button
-                                                        onClick={() => removeOne(item.id)}
-                                                        className="w-7 h-7 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition cursor-pointer"
-                                                    >
-                                                        <Minus size={12} strokeWidth={2.5} />
-                                                    </button>
-                                                    <span className="text-sm font-bold text-content w-5 text-center">{qty}</span>
-                                                    <button
-                                                        onClick={() => openMobileItem(item)}
-                                                        className="w-7 h-7 rounded-full bg-lime text-ink flex items-center justify-center cursor-pointer"
-                                                    >
-                                                        <Plus size={12} strokeWidth={2.5} />
-                                                    </button>
-                                                </div>
-                                            )
-                                        ) : (
-                                            qty === 0 ? (
-                                                <button
-                                                    onClick={() => openDesktopModal(item)}
+                                                    onClick={() => openItemSheet(item)}
                                                     className="w-8 h-8 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition-colors cursor-pointer"
                                                     aria-label={`Add ${item.name}`}
                                                 >
@@ -285,96 +272,30 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                                                     </button>
                                                     <span className="text-sm font-bold text-content w-5 text-center">{qty}</span>
                                                     <button
-                                                        onClick={() => openDesktopModal(item)}
+                                                        onClick={() => openItemSheet(item)}
                                                         className="w-7 h-7 rounded-full bg-lime text-ink flex items-center justify-center cursor-pointer"
                                                     >
                                                         <Plus size={12} strokeWidth={2.5} />
                                                     </button>
                                                 </div>
-                                            )
-                                        )}
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>
-        ))}
-        {mobile && (
-            <div className="flex items-center justify-center gap-1 text-xs text-content-muted pt-2">
-                <span>Fees information</span>
-                <span className="w-4 h-4 rounded-full border border-content-muted/40 flex items-center justify-center text-[9px]">i</span>
-            </div>
-        )}
-    </div>
-)
-
-    const MobileItemView = () => {
-        if (!mobileSelectedItem) return null
-        return (
-            <div className="fixed inset-0 z-50 bg-panel flex flex-col overflow-y-auto">
-                <div className="relative w-full h-64 flex-shrink-0">
-                    <Image src={mobileSelectedItem.image} alt={mobileSelectedItem.name} fill className="object-cover" />
-                    <button
-                        onClick={() => setMobileView("menu")}
-                        className="absolute top-4 left-4 w-9 h-9 bg-black/60 text-white rounded-full flex items-center justify-center cursor-pointer"
-                    >
-                        <X size={18} />
-                    </button>
-                </div>
-
-                <div className="flex-1 flex flex-col p-5 gap-5">
-                    <div className="flex items-start justify-between gap-3">
-                        <h1 className="font-bold text-2xl text-content leading-tight">{mobileSelectedItem.name}</h1>
-                        <p className="font-bold text-xl text-content flex-shrink-0 flex items-center">
-                            <TbCurrencyNaira />{mobileSelectedItem.price.toLocaleString()}
-                        </p>
-                    </div>
-                    <p className="text-sm text-content-muted leading-relaxed">{mobileSelectedItem.description}</p>
-
-                    <div className="border-t border-content-muted/20" />
-
-                    <div className="flex flex-col gap-3">
-                        <p className="font-bold text-sm text-content">Quantity</p>
-                        <div className="flex items-center gap-5">
-                            <button
-                                onClick={() => setMobileItemQty(q => Math.max(1, q - 1))}
-                                className="w-11 h-11 rounded-full border-2 border-content-muted/30 flex items-center justify-center text-content hover:border-lime transition cursor-pointer"
-                            >
-                                <Minus size={18} />
-                            </button>
-                            <span className="font-bold text-2xl text-content w-10 text-center">{mobileItemQty}</span>
-                            <button
-                                onClick={() => setMobileItemQty(q => q + 1)}
-                                className="w-11 h-11 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition cursor-pointer"
-                            >
-                                <Plus size={18} />
-                            </button>
-                        </div>
+                            )
+                        })}
                     </div>
                 </div>
-
-                <div className="sticky bottom-0 p-4 bg-panel border-t border-content-muted/20">
-                    <button
-                        onClick={addToCartFromMobileItem}
-                        className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-center gap-2"
-                    >
-                        Add {mobileItemQty} to order
-                        <span className="opacity-60">·</span>
-                        <span className="flex items-center">
-                            <TbCurrencyNaira />{(mobileSelectedItem.price * mobileItemQty).toLocaleString()}
-                        </span>
-                    </button>
+            ))}
+            {mobile && (
+                <div className="flex items-center justify-center gap-1 text-xs text-content-muted pt-2">
+                    <span>Fees information</span>
+                    <span className="w-4 h-4 rounded-full border border-content-muted/40 flex items-center justify-center text-[9px]">i</span>
                 </div>
-            </div>
-        )
-    }
+            )}
+        </div>
+    )
 
-    // Confirmation sheet shown before wiping the whole cart — mirrors the
-    // "Delete cart? / Delete cart / Keep cart" pattern from the reference
-    // screenshot. Slides up from the bottom on mobile, centered on larger
-    // screens, dismissible by tapping the backdrop or "Keep cart".
     const ConfirmClearSheet = () => (
         <div
             className="fixed inset-0 z-[60] bg-black/60 flex items-end sm:items-center justify-center"
@@ -384,14 +305,12 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                 <div className="w-16 h-16 rounded-full bg-red-500/15 flex items-center justify-center mb-3">
                     <ShoppingCart size={26} className="text-red-500" strokeWidth={1.5} />
                 </div>
-
                 <h2 className="font-bold text-lg text-content">Delete cart?</h2>
                 <p className="text-sm text-content-muted leading-relaxed mt-1 mb-5">
                     All items will be removed. To add items back, you&apos;ll need to start a new cart.
                 </p>
-
                 <button
-                    onClick={clearCart}
+                    onClick={handleClearCart}
                     className="w-full bg-red-500 text-white font-bold text-sm rounded-full py-3.5 cursor-pointer hover:bg-red-600 transition"
                 >
                     Delete cart
@@ -406,6 +325,45 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
         </div>
     )
 
+    const ClosedModal = () => (
+        <div className="fixed inset-0 z-[80] bg-black/60 flex items-center justify-center px-4">
+            <div className="w-full max-w-md bg-panel rounded-3xl px-6 pt-8 pb-6 flex flex-col items-center text-center gap-2 shadow-xl">
+
+                {/* Vendor hero image thumbnail */}
+                <div className="relative w-16 h-16 rounded-2xl overflow-hidden mb-2 border border-line/10">
+                    <Image src={heroImage} alt={vendorName} fill className="object-cover" />
+                </div>
+
+                <h2 className="font-bold text-xl text-content leading-tight">
+                    {vendorName} is temporarily closed
+                </h2>
+                <p className="text-sm text-content-muted mt-1 leading-relaxed">
+                    This store is currently closed. Come back during opening hours or browse other stores.
+                </p>
+                <p className="text-xs text-content-muted/70 mt-1">
+                    Opening hours: <span className="font-medium text-content-muted">{time}</span>
+                </p>
+
+                <div className="flex flex-col gap-3 w-full mt-4">
+                    <Link
+                        href="/food"
+                        className="w-full bg-lime text-ink font-bold text-sm py-4 rounded-2xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all text-center cursor-pointer"
+                    >
+                        Browse open stores
+                    </Link>
+                    <button
+                        onClick={() => setClosedModalOpen(false)}
+                        className="w-full bg-content-muted/10 text-content font-medium text-sm py-4 rounded-2xl cursor-pointer hover:bg-content-muted/15 transition"
+                    >
+                        View menu anyway
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+    {/* ── Closed modal ── */ }
+    { closedModalOpen && <ClosedModal /> }
+
     const MobileCartView = () => (
         <div className="fixed inset-0 z-50 bg-panel flex flex-col">
             <div className="flex items-center gap-3 px-4 py-4 border-b border-content-muted/20 flex-shrink-0">
@@ -416,7 +374,7 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                     <ArrowLeft size={18} />
                 </button>
                 <h1 className="font-bold text-lg text-content flex-1">Your Cart</h1>
-                {cart.length > 0 && (
+                {items.length > 0 && (
                     <button
                         onClick={() => setConfirmClearOpen(true)}
                         className="w-9 h-9 rounded-full border border-content-muted/20 flex items-center justify-center text-content-muted hover:text-red-500 cursor-pointer"
@@ -428,33 +386,25 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-5">
-                {cart.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 gap-4">
-                        <p className="text-content-muted text-sm">Your cart is empty</p>
-                        <button onClick={() => setMobileView("menu")} className="text-sm font-bold text-lime underline cursor-pointer">
-                            Browse menu
-                        </button>
+                {items.length === 0 ? (
+                    <div className="flex-1 flex items-center justify-center">
+                        <EmptyCart />
                     </div>
                 ) : (
                     <>
                         <p className="text-sm text-content-muted">
-                            {cart.length} product{cart.length > 1 ? "s" : ""} from{" "}
+                            {items.length} product{items.length > 1 ? "s" : ""} from{" "}
                             <span className="font-bold text-content">{vendorName}</span>
                         </p>
-
-                        {/* Cart item rows — now show the item description beneath
-                            the name (more detail on exactly what's being ordered),
-                            plus a unit-price line so the per-item and line-total
-                            costs are both visible, not just the line-total. */}
                         <div className="flex flex-col gap-3">
-                            {cart.map(item => (
+                            {items.map(item => (
                                 <div key={item.id} className="flex items-center gap-3 border border-content-muted/20 rounded-xl p-3">
                                     <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                                         <Image src={item.image} alt={item.name} fill className="object-cover" />
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium text-sm text-content truncate">{item.name}</p>
-                                        <p className="text-xs text-content-muted mt-0.5 line-clamp-2">{item.description}</p>
+                                        {/*error in this place the description */}    <p className="text-xs text-content-muted mt-0.5 line-clamp-2">{item.description}</p>
                                         <div className="flex items-center gap-1.5 mt-1">
                                             <span className="text-xs text-content-muted flex items-center">
                                                 <TbCurrencyNaira />{item.price.toLocaleString()} each
@@ -485,17 +435,12 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                                 </div>
                             ))}
                         </div>
-
                         <button
                             onClick={() => setMobileView("menu")}
                             className="self-start text-xs font-bold text-content border border-content-muted/30 rounded-full px-4 py-2 cursor-pointer"
                         >
                             + Add more items
                         </button>
-
-                        {/* Fee breakdown — Subtotal, Delivery fee, Sync fee, and the
-                            packaging ("nylon") fee are each itemized so it's clear
-                            exactly what's being charged before the total. */}
                         <div className="border border-content-muted/20 rounded-xl overflow-hidden">
                             <div className="flex flex-col divide-y divide-content-muted/10">
                                 {([
@@ -519,9 +464,9 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                 )}
             </div>
 
-            {cart.length > 0 && (
+            {items.length > 0 && (
                 <div className="flex-shrink-0 p-4 bg-panel border-t border-content-muted/20">
-                    <button className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5">
+                    <button className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5">
                         <span className="flex items-center gap-1">
                             <TbCurrencyNaira />{total.toLocaleString()}
                         </span>
@@ -534,20 +479,106 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
         </div>
     )
 
+    // ── Item sheet ────────────────────────────────────────────────────────
+    // Mobile  → slides up from the bottom (side="bottom")
+    // Desktop → centered modal via translate trick, capped at max-w-md
+    const ItemSheet = () => (
+        <Sheet open={itemSheetOpen} onOpenChange={setItemSheetOpen}>
+            <SheetContent
+                side="bottom"
+                className="
+                p-0 flex flex-col overflow-hidden
+                max-h-[92dvh] rounded-t-2xl
+                sm:rounded-2xl sm:max-h-[85vh]
+                sm:w-full sm:max-w-md
+                sm:inset-x-auto sm:inset-y-auto
+                sm:top-1/2 sm:left-1/2
+                sm:-translate-x-1/2 sm:-translate-y-1/2
+                sm:bottom-auto sm:right-auto
+                [&>button:last-child]:hidden
+            "
+            >
+                {selectedItem && (
+                    <>
+                        {/* Hero image */}
+                        <div className="relative w-full h-56 flex-shrink-0">
+                            <Image
+                                src={selectedItem.image}
+                                alt={selectedItem.name}
+                                fill
+                                className="object-cover"
+                            />
+                            <SheetClose className="absolute top-3 left-3 w-9 h-9 bg-black/60 text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-black transition z-10">
+                                <X size={16} />
+                            </SheetClose>
+                        </div>
+
+                        {/* Body */}
+                        <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-4">
+                            <div className="flex items-start justify-between gap-3">
+                                <h2 className="font-bold text-xl text-content leading-tight">
+                                    {selectedItem.name}
+                                </h2>
+                                <p className="font-bold text-xl text-content flex-shrink-0 flex items-center">
+                                    <TbCurrencyNaira />
+                                    {selectedItem.price.toLocaleString()}
+                                </p>
+                            </div>
+
+                            <p className="text-sm text-content-muted leading-relaxed">
+                                {selectedItem.description}
+                            </p>
+
+                            <div className="border-t border-content-muted/20" />
+
+                            {/* Quantity — centered on both mobile and desktop */}
+                            <div className="flex flex-col items-center gap-3">
+                                <p className="font-bold text-sm text-content self-start">Quantity</p>
+                                <div className="flex items-center justify-center gap-6 w-full">
+                                    <button
+                                        onClick={() => setItemQty(q => Math.max(1, q - 1))}
+                                        className="w-11 h-11 rounded-full border-2 border-content-muted/30 flex items-center justify-center text-content hover:border-lime transition cursor-pointer"
+                                    >
+                                        <Minus size={18} />
+                                    </button>
+                                    <span className="font-bold text-2xl text-content w-10 text-center tabular-nums">
+                                        {itemQty}
+                                    </span>
+                                    <button
+                                        onClick={() => setItemQty(q => q + 1)}
+                                        className="w-11 h-11 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition cursor-pointer"
+                                    >
+                                        <Plus size={18} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Sticky CTA */}
+                        <div className="flex-shrink-0 px-5 pb-6 pt-3 border-t border-content-muted/20 bg-panel">
+                            <button
+                                onClick={addToCartFromSheet}
+                                className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-center gap-2"
+                            >
+                                Add {itemQty} to order
+                                <span className="opacity-60">·</span>
+                                <span className="flex items-center">
+                                    <TbCurrencyNaira />
+                                    {(selectedItem.price * itemQty).toLocaleString()}
+                                </span>
+                            </button>
+                        </div>
+                    </>
+                )}
+            </SheetContent>
+        </Sheet>
+    )
+
     return (
         <>
-            {/* ════════════════════════════════════════
-                MOBILE LAYOUT
-            ════════════════════════════════════════ */}
+            {/* ── MOBILE ── */}
             <div className="block sm:hidden">
                 <VendorHeader />
-
-                {/* Sticky horizontal tabs — offset by NAV_H so it sits just
-                    below AppShell's own sticky header instead of fighting it
-                    for the same `top: 0` spot. Two stacked sticky elements
-                    with `top-0` collide; this one needs to "start" sticking
-                    only once it reaches the bottom edge of the header above
-                    it, which is what `top: NAV_H` achieves. */}
                 <div
                     className="sticky z-20 bg-surface/95 backdrop-blur-sm border-b border-content-muted/20 flex overflow-x-auto scrollbar-none"
                     style={{ top: NAV_H }}
@@ -565,16 +596,10 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                         </button>
                     ))}
                 </div>
-
-                {/* Removed the wrapping <div className="mt-4"> that used to sit
-                    here — that margin was the visible gap under the sticky tab
-                    bar. Spacing now lives inside MenuSections (pt-4) instead. */}
                 <MenuSections mobile={true} />
             </div>
 
-            {/* ════════════════════════════════════════
-                DESKTOP LAYOUT
-            ════════════════════════════════════════ */}
+            {/* ── DESKTOP ── */}
             <div className="hidden sm:flex gap-5 items-start">
                 <div className="w-full lg:w-[65%] min-w-0">
                     <VendorHeader />
@@ -593,7 +618,6 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                                 </button>
                             ))}
                         </nav>
-
                         <div className="flex-1 min-w-0">
                             <MenuSections mobile={false} />
                         </div>
@@ -608,21 +632,21 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                         <h3 className="font-bold text-sm text-content flex items-center gap-2">
                             <ShoppingBag size={16} className="text-lime" /> Your order
                         </h3>
-                        {cart.length > 0 && (
+                        {items.length > 0 && (
                             <span className="bg-lime text-ink text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                                 {totalItems}
                             </span>
                         )}
                     </div>
 
-                    {cart.length === 0 ? <EmptyCart /> : (
+                    {items.length === 0 ? <EmptyCart /> : (
                         <>
                             <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 min-h-0">
-                                {cart.map(item => (
+                                {items.map(item => (
                                     <div key={item.id} className="flex items-start gap-2">
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-medium text-content truncate">{item.name}</p>
-                                            <p className="text-xs text-content-muted flex items-center mt-0.5">
+                                            <p className="text-[13px] font-medium text-content truncate">{item.name}</p>
+                                            <p className="text-[13px] text-content-muted flex items-center mt-0.5">
                                                 <TbCurrencyNaira />{(item.price * item.qty).toLocaleString()}
                                             </p>
                                         </div>
@@ -643,18 +667,21 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                                         ["Packaging fee", PACKAGING_FEE],
                                         ["Sync fee", SYNC_FEE],
                                     ] as [string, number][]).map(([label, val]) => (
-                                        <div key={label} className="flex justify-between text-xs text-content-muted">
+                                        <div key={label} className="flex justify-between text-[13px] text-content-muted">
                                             <span>{label}</span>
                                             <span className="flex items-center"><TbCurrencyNaira />{val.toLocaleString()}</span>
                                         </div>
                                     ))}
                                 </div>
                                 <div className="flex justify-between px-4 py-2 font-bold text-sm text-content">
-                                    <span>Total</span>
-                                    <span className="flex items-center"><TbCurrencyNaira />{total.toLocaleString()}</span>
+                                    <span className="text-base">Total</span>
+                                    <span className="flex items-center"><TbCurrencyNaira className="text-xl" />{total.toLocaleString()}</span>
                                 </div>
                                 <div className="px-4 pb-4">
-                                    <button className="w-full bg-lime text-ink font-bold text-sm border-2 border-black rounded-xl py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono">
+                                    <button
+                                        onClick={() => router.push("/food/checkout")}
+                                        className="w-full bg-lime text-ink font-bold text-sm border-0 border-black rounded-xl py-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono"
+                                    >
                                         Proceed to Checkout →
                                     </button>
                                 </div>
@@ -664,11 +691,12 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                 </div>
             </div>
 
-            {cart.length > 0 && mobileView === "menu" && (
+            {/* ── Mobile floating cart bar ── */}
+            {items.length > 0 && mobileView === "menu" && (
                 <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-panel/95 backdrop-blur-sm border-t border-content-muted/20 px-4 py-3">
                     <button
                         onClick={() => setMobileView("cart")}
-                        className="w-full flex items-center justify-between bg-lime text-ink font-bold text-sm px-5 py-3.5 rounded-2xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] font-mono cursor-pointer"
+                        className="w-full flex items-center justify-between bg-lime text-ink font-bold text-sm px-5 py-3.5 rounded-2xl border-0 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-mono cursor-pointer"
                     >
                         <span className="flex items-center gap-2">
                             <span className="bg-ink text-lime text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">{totalItems}</span>
@@ -679,41 +707,11 @@ const MenuSections = ({ mobile }: { mobile: boolean }) => (
                 </div>
             )}
 
-            {mobileView === "item" && <MobileItemView />}
+            {/* ── Mobile cart view ── */}
             {mobileView === "cart" && <MobileCartView />}
 
-            {modalItem && (
-                <div
-                    className="fixed inset-0 z-50 bg-black/60 hidden sm:flex items-center justify-center px-4"
-                    onClick={e => { if (e.target === e.currentTarget) closeModal() }}
-                >
-                    <div className="bg-panel border border-content-muted/20 rounded-2xl w-full max-w-md overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                        <div className="relative w-full h-48">
-                            <Image src={modalItem.image} alt={modalItem.name} fill className="object-cover" />
-                            <button onClick={closeModal} className="absolute top-3 right-3 w-8 h-8 bg-black/60 text-white rounded-full flex items-center justify-center hover:bg-black cursor-pointer">
-                                <X size={16} />
-                            </button>
-                        </div>
-                        <div className="p-5">
-                            <div className="flex items-start justify-between gap-2">
-                                <h2 className="font-bold text-lg text-content leading-tight">{modalItem.name}</h2>
-                                <p className="font-bold text-lg text-content flex-shrink-0 flex items-center">
-                                    <TbCurrencyNaira />{modalItem.price.toLocaleString()}
-                                </p>
-                            </div>
-                            <p className="text-sm text-content-muted mt-1">{modalItem.description}</p>
-                            <div className="flex items-center justify-center gap-6 mt-5">
-                                <button onClick={() => setModalQty(q => Math.max(1, q - 1))} className="w-10 h-10 rounded-full border-2 border-content-muted/30 flex items-center justify-center text-content hover:border-lime transition cursor-pointer"><Minus size={18} /></button>
-                                <span className="font-bold text-xl text-content w-8 text-center">{modalQty}</span>
-                                <button onClick={() => setModalQty(q => q + 1)} className="w-10 h-10 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition cursor-pointer"><Plus size={18} /></button>
-                            </div>
-                            <button onClick={addToCartFromModal} className="w-full mt-5 bg-lime text-ink font-bold text-sm border-2 border-black rounded-xl py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono">
-                                Add {modalQty} to order · <TbCurrencyNaira className="inline" />{(modalItem.price * modalQty).toLocaleString()}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* ── Item sheet ── */}
+            <ItemSheet />
 
             {storeInfoOpen && (
                 <StoreInfoModal
