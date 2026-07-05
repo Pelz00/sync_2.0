@@ -13,14 +13,12 @@ export interface CheckoutItem {
 
 interface CheckoutSummaryProps {
     vendorName: string
-
     items: CheckoutItem[]
-
     deliveryFee: number
     packagingFee: number
     serviceFee: number
-
-    onPlaceOrder?: () => void
+    loading?: boolean        // ← add this
+    onPlaceOrder: () => void
 }
 
 export default function CheckoutSummary({

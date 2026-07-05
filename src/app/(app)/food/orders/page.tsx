@@ -44,7 +44,6 @@ function OrderCard({ order }: { order: DemoOrder }) {
                 {/* Vendor icon */}
                 <div className="w-12 h-12 rounded-xl bg-surface-deep flex items-center justify-center flex-shrink-0 border border-line/10">
                     {order.vendorLogo ? (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={order.vendorLogo} alt={order.vendorName} className="w-full h-full object-cover rounded-xl" />
                     ) : (
                         <ShoppingBag size={20} className="text-content-muted" />

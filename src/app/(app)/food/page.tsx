@@ -118,7 +118,7 @@ const food = [
     rating: '4.3',
     reviewCount: 120,
     location: 'Caffeine Co.',
-    time: '7am – 2pm',
+    time: '7am – 11:40pm',
     category: 'Swallow',
     isFree: true,
     deliveryTime: '15–25 min',
@@ -140,7 +140,7 @@ const food = [
     status: "open"
   },
   {
-    slug: 'Burger King',
+    slug: 'burger-king',
     image: BurgerOne,
     name: 'Burger King',
     tags: ['Loaded Fries', 'Burgers', 'Chips'] as string[],
@@ -155,7 +155,7 @@ const food = [
     status: "closed"
   },
   {
-    slug: 'Fast joint',
+    slug: 'fast-joint',
     image: BurgerTwo,
     name: 'Fast joint',
     tags: ['Loaded Fries', 'Burgers', 'Chips'] as string[],
@@ -170,7 +170,7 @@ const food = [
     status: "delivery-only"
   },
   {
-    slug: 'Shaqs Place',
+    slug: 'shaqs-place',
     image: BurgerThree,
     name: 'Shaqs Place',
     tags: ['Burgers', 'Chicken bread'] as string[],
@@ -198,7 +198,7 @@ const food = [
     status: "delivery-only"
   },
   {
-    slug: 'krafties-kitchen',
+    slug: 'krafties-kitchens',
     image: PizzaTwo,
     name: 'Pitza Palace',
     tags: ['Pizza', 'Shawarma'] as string[],
@@ -212,7 +212,7 @@ const food = [
     status: "open"
   },
   {
-    slug: 'krafties-kitchen',
+    slug: 'krafties-kitchener',
     image: PizzaThree,
     name: 'Dodo\'s  Pizza',
     tags: ['Pizza', 'Shawarma'] as string[],
@@ -226,7 +226,7 @@ const food = [
     status: "delivery-only"
   },
   {
-    slug: 'krafties-kitchen',
+    slug: 'krafties-kitchendry',
     image: PastaOne,
     name: 'Krafties Kitchen',
     tags: ['Pizza', 'Shawarma'] as string[],
@@ -240,7 +240,7 @@ const food = [
     status: "closed"
   },
   {
-    slug: 'krafties-kitchen',
+    slug: 'krafties-kitch',
     image: PastaTwo,
     name: 'Krafties Kitchen',
     tags: ['Pizza', 'Shawarma'] as string[],
@@ -254,7 +254,7 @@ const food = [
     status: "delivery-only"
   },
   {
-    slug: 'krafties-kitchen',
+    slug: 'krafties-kitchenionary',
     image: PastaThree,
     name: 'Krafties Kitchen',
     tags: ['Pizza', 'Shawarma'] as string[],
