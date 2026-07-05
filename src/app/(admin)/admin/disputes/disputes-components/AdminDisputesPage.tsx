@@ -69,14 +69,8 @@ export function AdminDisputesPage() {
       <div className="">
 
         {/* ── Page Header Dashboard Meta Info Cluster ── */}
-        <div className="mb-7 select-none">
-          <p className="eyebrow text-content-muted uppercase mb-1">
-            Admin
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-bold font-display text-content tracking-tight leading-tight">
-            Disputes
-          </h1>
-          <p className="text-xs sm:text-sm text-content-muted mt-1">
+        <div className="mb-4 select-none">
+          <p className="text-xs sm:text-sm text-content-muted">
             Manage and resolve customer disputes and issues.
           </p>
         </div>

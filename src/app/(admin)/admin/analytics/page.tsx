@@ -23,12 +23,6 @@ export default function AdminAnalyticsPage() {
       {/* ── Context Header Cluster ── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
         <div>
-          <p className="eyebrow text-content-muted tracking-widest text-[10px] font-bold mb-1">
-            ADMIN
-          </p>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-content tracking-tight leading-tight">
-            Analytics
-          </h1>
           <p className="text-xs sm:text-sm text-content-muted mt-1">
             Comprehensive platform insights and transactional operational data analysis.
           </p>

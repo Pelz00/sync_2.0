@@ -1,43 +1,39 @@
 "use client";
 
-import type { VendorStats } from "./vendor.types";
+import type { LandlordStats } from "./landlord.types";
 import { cn } from "@/lib/utils";
-import { Users, CheckCircle2, Clock4, ShieldOff } from "lucide-react";
+import { Building2, CheckCircle2, Clock4, ShieldOff } from "lucide-react";
 
-interface VendorStatsRowProps {
-  stats: VendorStats;
+interface LandlordStatsRowProps {
+  stats: LandlordStats;
 }
 
-export function VendorStatsRow({ stats }: VendorStatsRowProps) {
+export function LandlordStatsRow({ stats }: LandlordStatsRowProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mb-6">
       <StatCard
-        label="Total Vendors"
+        label="Total Landlords"
         value={stats.total.toLocaleString()}
-        icon={<Users size={16} className="text-content-muted/60" />}
+        icon={<Building2 size={16} className="text-content-muted/60" />}
         accent="text-content"
-        bg=""
       />
       <StatCard
         label="Active"
         value={stats.active.toLocaleString()}
         icon={<CheckCircle2 size={16} className="text-green-600" />}
         accent="text-green-600"
-        bg="border-green-100"
       />
       <StatCard
         label="Pending"
         value={stats.pending.toLocaleString()}
         icon={<Clock4 size={16} className="text-orange-500" />}
         accent="text-orange-500"
-        bg="border-orange-100"
       />
       <StatCard
         label="Suspended"
         value={stats.suspended.toLocaleString()}
         icon={<ShieldOff size={16} className="text-red-500" />}
         accent="text-red-500"
-        bg="border-red-100"
       />
     </div>
   );
@@ -48,14 +44,11 @@ interface StatCardProps {
   value: string;
   icon: React.ReactNode;
   accent: string;
-  bg: string;
 }
 
-function StatCard({ label, value, icon, accent, bg }: StatCardProps) {
+function StatCard({ label, value, icon, accent }: StatCardProps) {
   return (
-    <div className={cn(
-      "bg-panel border rounded-xl px-5 py-4 shadow-xs transition-colors duration-300 select-none border-line/15"
-    )}>
+    <div className={cn("bg-panel border rounded-xl px-5 py-4 shadow-xs transition-colors duration-300 select-none border-line/15")}>
       <div className="flex items-center justify-between mb-3">
         <p className="text-[11px] uppercase tracking-widest font-semibold text-content-muted">{label}</p>
         {icon}
