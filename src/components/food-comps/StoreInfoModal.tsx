@@ -164,7 +164,7 @@ export default function StoreInfoModal({ vendorName, info, onClose }: Props) {
                 <div className="px-5 py-4 border-t border-content-muted/20 flex-shrink-0">
                     <button
                         onClick={onClose}
-                        className="w-full bg-lime text-ink font-bold text-sm border-2 border-black rounded-xl py-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono"
+                        className="w-full bg-lime text-ink font-bold text-sm border-0 border-black rounded-xl py-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono"
                     >
                         Got it
                     </button>

@@ -346,7 +346,7 @@ export default function VendorClient({
                 <div className="flex flex-col gap-3 w-full mt-4">
                     <Link
                         href="/food"
-                        className="w-full bg-lime text-ink font-bold text-sm py-4 rounded-2xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all text-center cursor-pointer"
+                        className="w-full bg-lime text-ink font-bold text-sm py-4 rounded-2xl border-0 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all text-center cursor-pointer"
                     >
                         Browse open stores
                     </Link>
@@ -465,7 +465,7 @@ export default function VendorClient({
                 <div className="flex-shrink-0 p-4 bg-panel border-t border-content-muted/20">
                     <button
                         onClick={handleCheckout}
-                        className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5"
+                        className="w-full bg-lime text-ink font-bold text-base border-0 border-black rounded-xl py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5"
                     >
                         <span className="flex items-center gap-1">
                             <TbCurrencyNaira />{total.toLocaleString()}
@@ -552,7 +552,7 @@ export default function VendorClient({
                         <div className="flex-shrink-0 px-5 pb-6 pt-3 border-t border-content-muted/20 bg-panel">
                             <button
                                 onClick={addToCartFromSheet}
-                                className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-center gap-2"
+                                className="w-full bg-lime text-ink font-bold text-base border-0 border-black rounded-xl py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-center gap-2"
                             >
                                 Add {itemQty} to order
                                 <span className="opacity-60">·</span>
