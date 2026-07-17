@@ -1,18 +1,19 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-// import { useEffect, useState } from "react"
 import Link from "next/link"
 import { isVendorOpen } from "@/lib/vendor-hours"
 import Image, { StaticImageData } from "next/image"
 import { X, Plus, Minus, ShoppingBag, Star, AlarmClock, MapPin, Bike, ArrowLeft, Trash2, ShoppingCart } from "lucide-react"
 import { TbCurrencyNaira } from "react-icons/tb"
 import { GoDotFill } from "react-icons/go"
+import * as VisuallyHidden from "@radix-ui/react-visually-hidden"
 import EmptyCart from '@/components/food-comps/EmptyCart'
 import StoreInfoModal, { type StoreInfo } from "@/components/food-comps/StoreInfoModal"
-import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetClose, SheetTitle } from "@/components/ui/sheet"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/app/(app)/food/cart-context"
-import { saveDemoOrder } from "@/lib/demo-order"
+
+
 interface MenuItem {
     id: string
     name: string
@@ -21,7 +22,6 @@ interface MenuItem {
     image: StaticImageData | string
 }
 interface MenuSection { title: string; items: MenuItem[] }
-interface CartItem { id: string; name: string; description: string; price: number; qty: number; image: StaticImageData | string }
 
 interface Props {
     vendorName: string
@@ -31,7 +31,7 @@ interface Props {
     reviews: number
     deliveryTime: string
     deliveryFee: string
-    time: string           // ← add this
+    time: string
     heroImage: StaticImageData | string
     menu: MenuSection[]
     storeInfo: StoreInfo
@@ -46,13 +46,12 @@ type MobileView = "menu" | "cart"
 
 export default function VendorClient({
     vendorName, tagline, location, rating, reviews,
-    deliveryTime, deliveryFee, time, heroImage, menu, storeInfo  // ← add time
+    deliveryTime, deliveryFee, time, heroImage, menu, storeInfo
 }: Props) {
 
     const router = useRouter()
 
     const {
-        vendor,
         items,
         addItem,
         removeItem,
@@ -67,80 +66,27 @@ export default function VendorClient({
     const [storeInfoOpen, setStoreInfoOpen] = useState(false)
     const [confirmClearOpen, setConfirmClearOpen] = useState(false)
     const [mobileView, setMobileView] = useState<MobileView>("menu")
-
     const [itemSheetOpen, setItemSheetOpen] = useState(false)
     const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null)
     const [itemQty, setItemQty] = useState(1)
     const [closedModalOpen, setClosedModalOpen] = useState(false)
 
     const isScrollingRef = useRef(false)
-
-
-    // const subtotal = items.reduce((acc, i) => acc + i.price * i.qty, 0)
+    const open = isVendorOpen(time)
     const total = items.length > 0 ? subtotal + DELIVERY_FEE + SYNC_FEE + PACKAGING_FEE : 0
-    // const totalItems = items.reduce((acc, i) => acc + i.qty, 0)
+
+    // ── Show closed modal on mount if store is closed ─────────────────────
+    useEffect(() => {
+        if (!isVendorOpen(time)) {
+            setClosedModalOpen(true)
+        }
+    }, [time])
 
     useEffect(() => {
         if (mobileView !== "menu") document.body.style.overflow = "hidden"
         else document.body.style.overflow = ""
         return () => { document.body.style.overflow = "" }
     }, [mobileView])
-
-    function getQty(id: string) {
-        return items.find(i => i.id === id)?.qty ?? 0
-    }
-    function removeOne(id: string) {
-        decreaseQty(id)
-    }
-
-    function removeFromCart(id: string) {
-        removeItem(id)
-    }
-
-    function handleClearCart() {
-        clearCart()
-        setConfirmClearOpen(false)
-    }
-
-    function updateQty(id: string, delta: number) {
-        if (delta > 0) {
-            increaseQty(id)
-        } else {
-            decreaseQty(id)
-        }
-    }
-
-    function openItemSheet(item: MenuItem) {
-        setSelectedItem(item)
-        setItemQty(1)
-        setItemSheetOpen(true)
-    }
-
-    function addToCartFromSheet() {
-        if (!selectedItem) return
-
-        for (let i = 0; i < itemQty; i++) {
-            addItem(
-                {
-                    slug: vendorName.toLowerCase().replace(/\s+/g, "-"),
-                    name: vendorName,
-                    image: typeof heroImage === "string" ? heroImage : "",
-                },
-                {
-                    id: selectedItem.id,
-                    name: selectedItem.name,
-                    description: selectedItem.description,   // <-- add this
-                    image:
-                        typeof selectedItem.image === "string"
-                            ? selectedItem.image
-                            : "",
-                    price: selectedItem.price,
-                }
-            )
-        }
-
-        setItemSheetOpen(false)
-    }
 
     useEffect(() => {
         if (mobileView !== "menu") return
@@ -161,11 +107,63 @@ export default function VendorClient({
         return () => observers.forEach(o => o.disconnect())
     }, [menu, mobileView])
 
-    useEffect(() => {
-        if (!isVendorOpen(time)) {
-            setClosedModalOpen(true)
+    function getQty(id: string) { return items.find(i => i.id === id)?.qty ?? 0 }
+    function removeOne(id: string) { decreaseQty(id) }
+    function removeFromCart(id: string) { removeItem(id) }
+
+    function handleClearCart() {
+        clearCart()
+        setConfirmClearOpen(false)
+    }
+
+    function updateQty(id: string, delta: number) {
+        if (delta > 0) increaseQty(id)
+        else decreaseQty(id)
+    }
+
+    function openItemSheet(item: MenuItem) {
+        if (!open) { setClosedModalOpen(true); return }
+        setSelectedItem(item)
+        setItemQty(1)
+        setItemSheetOpen(true)
+    }
+
+    function addToCartFromSheet() {
+        if (!selectedItem) return
+        for (let i = 0; i < itemQty; i++) {
+            addItem(
+                {
+                    slug: vendorName.toLowerCase().replace(/\s+/g, "-"),
+                    name: vendorName,
+                    image: typeof heroImage === "string" ? heroImage : (heroImage as { src: string }).src,
+                },
+                {
+                    id: selectedItem.id,
+                    name: selectedItem.name,
+                    description: selectedItem.description,
+                    image: typeof selectedItem.image === "string" ? selectedItem.image : (selectedItem.image as { src: string }).src,
+                    price: selectedItem.price,
+                }
+            )
         }
-    }, [time])
+        setItemSheetOpen(false)
+    }
+
+    // ── Checkout — saves to sessionStorage, navigates to checkout page ────
+    function handleCheckout() {
+        if (!open) { setClosedModalOpen(true); return }
+        sessionStorage.setItem('sync_checkout', JSON.stringify({
+            vendorName,
+            vendorLogo: typeof heroImage === "string"
+                ? heroImage
+                : (heroImage as { src: string }).src,
+            deliveryAddress: location,
+            subtotal,
+            items: items.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+        }))
+        setMobileView("menu")
+        router.push('/food/checkout')
+    }
 
     function scrollToSection(title: string) {
         setActiveSection(title)
@@ -176,6 +174,8 @@ export default function VendorClient({
         window.scrollTo({ top, behavior: "smooth" })
         setTimeout(() => { isScrollingRef.current = false }, 900)
     }
+
+    // ── Sub-components ────────────────────────────────────────────────────
 
     const VendorHeader = () => (
         <>
@@ -200,8 +200,10 @@ export default function VendorClient({
                         </div>
                         <p className="text-sm text-content-muted mt-1">{tagline}</p>
                     </div>
-                    <span className="flex items-center gap-1 bg-lime text-ink text-xs font-bold px-3 py-1 rounded-full flex-shrink-0">
-                        <GoDotFill className="animate-pulse" /> Open now
+                    <span className={`flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full flex-shrink-0 ${open ? "bg-lime text-ink" : "bg-red-500 text-white"
+                        }`}>
+                        <GoDotFill className={open ? "animate-pulse" : ""} />
+                        {open ? "Open now" : "Closed"}
                     </span>
                 </div>
                 <div className="flex flex-wrap gap-3 mt-3">
@@ -234,7 +236,7 @@ export default function VendorClient({
                             return (
                                 <div
                                     key={item.id}
-                                    className={`flex gap-3 p-3 sm:p-4 ${!isLast ? "border-b border-content-muted/20" : ""}`}
+                                    className={`flex gap-3 p-3 sm:p-4 ${!isLast ? "border-b border-content-muted/20" : ""} ${!open ? "grayscale opacity-60" : ""}`}
                                 >
                                     <div className="relative w-20 h-16 sm:w-24 sm:h-20 rounded-lg overflow-hidden flex-shrink-0">
                                         <Image src={item.image} alt={item.name} fill className="object-cover" />
@@ -245,16 +247,17 @@ export default function VendorClient({
                                                 <h3 className="font-medium text-sm text-content">{item.name}</h3>
                                                 <p className="font-bold text-sm text-content flex-shrink-0 flex items-center">
                                                     <TbCurrencyNaira />
-                                                    {qty > 0
-                                                        ? (item.price * qty).toLocaleString()
-                                                        : item.price.toLocaleString()
-                                                    }
+                                                    {qty > 0 ? (item.price * qty).toLocaleString() : item.price.toLocaleString()}
                                                 </p>
                                             </div>
                                             <p className="text-xs text-content-muted mt-1 line-clamp-2">{item.description}</p>
                                         </div>
                                         <div className="flex justify-end mt-2">
-                                            {qty === 0 ? (
+                                            {!open ? (
+                                                <span className="text-[10px] font-semibold text-content-muted/60 border border-content-muted/20 px-3 py-1 rounded-full">
+                                                    Unavailable
+                                                </span>
+                                            ) : qty === 0 ? (
                                                 <button
                                                     onClick={() => openItemSheet(item)}
                                                     className="w-8 h-8 rounded-full border-2 border-lime flex items-center justify-center text-content hover:bg-lime hover:text-ink transition-colors cursor-pointer"
@@ -328,12 +331,9 @@ export default function VendorClient({
     const ClosedModal = () => (
         <div className="fixed inset-0 z-[80] bg-black/60 flex items-center justify-center px-4">
             <div className="w-full max-w-md bg-panel rounded-3xl px-6 pt-8 pb-6 flex flex-col items-center text-center gap-2 shadow-xl">
-
-                {/* Vendor hero image thumbnail */}
                 <div className="relative w-16 h-16 rounded-2xl overflow-hidden mb-2 border border-line/10">
                     <Image src={heroImage} alt={vendorName} fill className="object-cover" />
                 </div>
-
                 <h2 className="font-bold text-xl text-content leading-tight">
                     {vendorName} is temporarily closed
                 </h2>
@@ -343,11 +343,10 @@ export default function VendorClient({
                 <p className="text-xs text-content-muted/70 mt-1">
                     Opening hours: <span className="font-medium text-content-muted">{time}</span>
                 </p>
-
                 <div className="flex flex-col gap-3 w-full mt-4">
                     <Link
                         href="/food"
-                        className="w-full bg-lime text-ink font-bold text-sm py-4 rounded-2xl border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all text-center cursor-pointer"
+                        className="w-full bg-lime text-ink font-bold text-sm py-4 rounded-2xl border-0 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all text-center cursor-pointer"
                     >
                         Browse open stores
                     </Link>
@@ -361,8 +360,6 @@ export default function VendorClient({
             </div>
         </div>
     )
-    {/* ── Closed modal ── */ }
-    { closedModalOpen && <ClosedModal /> }
 
     const MobileCartView = () => (
         <div className="fixed inset-0 z-50 bg-panel flex flex-col">
@@ -404,7 +401,7 @@ export default function VendorClient({
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-medium text-sm text-content truncate">{item.name}</p>
-                                        {/*error in this place the description */}    <p className="text-xs text-content-muted mt-0.5 line-clamp-2">{item.description}</p>
+                                        <p className="text-xs text-content-muted mt-0.5 line-clamp-2">{item.description}</p>
                                         <div className="flex items-center gap-1.5 mt-1">
                                             <span className="text-xs text-content-muted flex items-center">
                                                 <TbCurrencyNaira />{item.price.toLocaleString()} each
@@ -466,7 +463,10 @@ export default function VendorClient({
 
             {items.length > 0 && (
                 <div className="flex-shrink-0 p-4 bg-panel border-t border-content-muted/20">
-                    <button className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5">
+                    <button
+                        onClick={handleCheckout}
+                        className="w-full bg-lime text-ink font-bold text-base border-0 border-black rounded-xl py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-between px-5"
+                    >
                         <span className="flex items-center gap-1">
                             <TbCurrencyNaira />{total.toLocaleString()}
                         </span>
@@ -479,28 +479,28 @@ export default function VendorClient({
         </div>
     )
 
-    // ── Item sheet ────────────────────────────────────────────────────────
-    // Mobile  → slides up from the bottom (side="bottom")
-    // Desktop → centered modal via translate trick, capped at max-w-md
     const ItemSheet = () => (
         <Sheet open={itemSheetOpen} onOpenChange={setItemSheetOpen}>
             <SheetContent
                 side="bottom"
                 className="
-                p-0 flex flex-col overflow-hidden
-                max-h-[92dvh] rounded-t-2xl
-                sm:rounded-2xl sm:max-h-[85vh]
-                sm:w-full sm:max-w-md
-                sm:inset-x-auto sm:inset-y-auto
-                sm:top-1/2 sm:left-1/2
-                sm:-translate-x-1/2 sm:-translate-y-1/2
-                sm:bottom-auto sm:right-auto
-                [&>button:last-child]:hidden
-            "
+                    p-0 flex flex-col overflow-hidden
+                    max-h-[92dvh] rounded-t-2xl
+                    sm:rounded-2xl sm:max-h-[85vh]
+                    sm:w-full sm:max-w-md
+                    sm:inset-x-auto sm:inset-y-auto
+                    sm:top-1/2 sm:left-1/2
+                    sm:-translate-x-1/2 sm:-translate-y-1/2
+                    sm:bottom-auto sm:right-auto
+                    [&>button:last-child]:hidden
+                "
             >
+                <VisuallyHidden.Root asChild>
+                    <SheetTitle>{selectedItem?.name ?? 'Menu item'}</SheetTitle>
+                </VisuallyHidden.Root>
+
                 {selectedItem && (
                     <>
-                        {/* Hero image */}
                         <div className="relative w-full h-56 flex-shrink-0">
                             <Image
                                 src={selectedItem.image}
@@ -513,7 +513,6 @@ export default function VendorClient({
                             </SheetClose>
                         </div>
 
-                        {/* Body */}
                         <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-4">
                             <div className="flex items-start justify-between gap-3">
                                 <h2 className="font-bold text-xl text-content leading-tight">
@@ -524,14 +523,10 @@ export default function VendorClient({
                                     {selectedItem.price.toLocaleString()}
                                 </p>
                             </div>
-
                             <p className="text-sm text-content-muted leading-relaxed">
                                 {selectedItem.description}
                             </p>
-
                             <div className="border-t border-content-muted/20" />
-
-                            {/* Quantity — centered on both mobile and desktop */}
                             <div className="flex flex-col items-center gap-3">
                                 <p className="font-bold text-sm text-content self-start">Quantity</p>
                                 <div className="flex items-center justify-center gap-6 w-full">
@@ -554,11 +549,10 @@ export default function VendorClient({
                             </div>
                         </div>
 
-                        {/* Sticky CTA */}
                         <div className="flex-shrink-0 px-5 pb-6 pt-3 border-t border-content-muted/20 bg-panel">
                             <button
                                 onClick={addToCartFromSheet}
-                                className="w-full bg-lime text-ink font-bold text-base border-2 border-black rounded-xl py-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-center gap-2"
+                                className="w-full bg-lime text-ink font-bold text-base border-0 border-black rounded-xl py-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono flex items-center justify-center gap-2"
                             >
                                 Add {itemQty} to order
                                 <span className="opacity-60">·</span>
@@ -639,7 +633,11 @@ export default function VendorClient({
                         )}
                     </div>
 
-                    {items.length === 0 ? <EmptyCart /> : (
+                    {items.length === 0 ? (
+                        <div className="flex-1 flex items-center justify-center">
+                            <EmptyCart />
+                        </div>
+                    ) : open ? (
                         <>
                             <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3 min-h-0">
                                 {items.map(item => (
@@ -679,7 +677,7 @@ export default function VendorClient({
                                 </div>
                                 <div className="px-4 pb-4">
                                     <button
-                                        onClick={() => router.push("/food/checkout")}
+                                        onClick={handleCheckout}
                                         className="w-full bg-lime text-ink font-bold text-sm border-0 border-black rounded-xl py-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer font-mono"
                                     >
                                         Proceed to Checkout →
@@ -687,12 +685,18 @@ export default function VendorClient({
                                 </div>
                             </div>
                         </>
+                    ) : (
+                        <div className="flex-1 flex flex-col items-center justify-center px-4 text-center gap-2">
+                            <ShoppingBag size={32} className="text-content-muted/30" strokeWidth={1} />
+                            <p className="text-sm text-content-muted">Store is currently closed</p>
+                            <p className="text-xs text-content-muted/60">{time}</p>
+                        </div>
                     )}
                 </div>
             </div>
 
-            {/* ── Mobile floating cart bar ── */}
-            {items.length > 0 && mobileView === "menu" && (
+            {/* ── Mobile floating cart bar — hidden when closed ── */}
+            {items.length > 0 && mobileView === "menu" && open && (
                 <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-panel/95 backdrop-blur-sm border-t border-content-muted/20 px-4 py-3">
                     <button
                         onClick={() => setMobileView("cart")}
@@ -713,6 +717,7 @@ export default function VendorClient({
             {/* ── Item sheet ── */}
             <ItemSheet />
 
+            {/* ── Store info modal ── */}
             {storeInfoOpen && (
                 <StoreInfoModal
                     vendorName={vendorName}
@@ -720,6 +725,9 @@ export default function VendorClient({
                     onClose={() => setStoreInfoOpen(false)}
                 />
             )}
+
+            {/* ── Closed modal ── */}
+            {closedModalOpen && <ClosedModal />}
         </>
     )
 }

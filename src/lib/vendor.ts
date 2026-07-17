@@ -1,6 +1,7 @@
 import type { StaticImageData } from 'next/image'
 import type { StoreInfo } from '@/components/food-comps/StoreInfoModal'
 
+
 import JollofOne from '@/assets/images/Food-Pics/Jollof/JollofOne.webp'
 import JollofTwo from '@/assets/images/Food-Pics/Jollof/JollofTwo.webp'
 import SwallowOne from '@/assets/images/Food-Pics/Swallow/SwallowOne.webp'
@@ -203,7 +204,7 @@ export const vendors: VendorData[] = [
         deliveryTime: '15–25 min',
         deliveryFee: 'Free Delivery',
         heroImage: SwallowOne,  // ← same as food card
-        time: '7am – 2pm',
+        time: '7am – 11:40pm',
         menu: [
             {
                 title: 'Swallow',
@@ -246,7 +247,7 @@ export const vendors: VendorData[] = [
         storeInfo: defaultStoreInfo('Iya Afusa', 'Basin Area, Ilorin'),
     },
     {
-        slug: 'Burger King',
+        slug: 'burger-king',
         vendorName: 'Burger King',
         tagline: 'Loaded Fries · Burgers · Chips',
         location: 'Caffeine Co.',
@@ -276,7 +277,7 @@ export const vendors: VendorData[] = [
         storeInfo: defaultStoreInfo('Burger King', 'Caffeine Co., Ilorin'),
     },
     {
-        slug: 'Fast joint',
+        slug: 'fast-joint',
         vendorName: 'Fast Joint',
         tagline: 'Loaded Fries · Burgers · Chips',
         location: 'Tarmac',
@@ -298,7 +299,7 @@ export const vendors: VendorData[] = [
         storeInfo: defaultStoreInfo('Fast Joint', 'Tarmac, Ilorin'),
     },
     {
-        slug: 'Shaqs Place',
+        slug: 'shaqs-place',
         vendorName: 'Shaqs Place',
         tagline: 'Burgers · Chicken bread',
         location: 'Tanke Junction',
@@ -328,7 +329,7 @@ export const vendors: VendorData[] = [
         reviews: 78,
         deliveryTime: '25–40 min',
         deliveryFee: '₦300',
-        heroImage: PizzaOne,  // ← same as food card
+        heroImage: PizzaOne,
         time: '7am – 10pm',
         menu: [
             {
@@ -359,7 +360,7 @@ export const vendors: VendorData[] = [
         reviews: 290,
         deliveryTime: '20–35 min',
         deliveryFee: 'Free Delivery',
-        heroImage: SmallChopsOne,  // ← same as food card
+        heroImage: SmallChopsOne,  
         time: '7am – 2pm',
         menu: [
             {
@@ -382,7 +383,7 @@ export const vendors: VendorData[] = [
         reviews: 143,
         deliveryTime: '30–45 min',
         deliveryFee: '₦300',
-        heroImage: SmallChopsTwo,  // ← same as food card
+        heroImage: SmallChopsTwo,  
         time: '8am – 11pm',
         menu: [
             {
@@ -405,7 +406,7 @@ export const vendors: VendorData[] = [
         reviews: 101,
         deliveryTime: '15–25 min',
         deliveryFee: 'Free Delivery',
-        heroImage: DrinkOne,  // ← same as food card
+        heroImage: DrinkOne,  
         time: '9am – 9pm',
         menu: [
             {
@@ -428,7 +429,7 @@ export const vendors: VendorData[] = [
         reviews: 205,
         deliveryTime: '20–30 min',
         deliveryFee: '₦300',
-        heroImage: DrinkTwo,  // ← same as food card
+        heroImage: DrinkTwo,  
         time: '7am – 10pm',
         menu: [
             {
@@ -450,7 +451,7 @@ export const vendors: VendorData[] = [
         reviews: 450,
         deliveryTime: '20–35 min',
         deliveryFee: 'Free Delivery',
-        heroImage: BreakFastOne,  // ← same as food card
+        heroImage: BreakFastOne,  
         time: '8am – 11pm',
         menu: [
             {
@@ -473,7 +474,7 @@ export const vendors: VendorData[] = [
         reviews: 320,
         deliveryTime: '25–40 min',
         deliveryFee: '₦300',
-        heroImage: BreakFastTwo,  // ← same as food card
+        heroImage: BreakFastTwo,  
         time: '8am – 11pm',
         menu: [
             {
@@ -495,7 +496,7 @@ export const vendors: VendorData[] = [
         reviews: 282,
         deliveryTime: '20–30 min',
         deliveryFee: '₦300',
-        heroImage: DesertOne,  // ← same as food card
+        heroImage: DesertOne,  
         time: '8am – 8pm',
         menu: [
             {
@@ -518,7 +519,7 @@ export const vendors: VendorData[] = [
         reviews: 56,
         deliveryTime: '15–25 min',
         deliveryFee: 'Free Delivery',
-        heroImage: DesertTwo,  // ← same as food card
+        heroImage: DesertTwo,  
         time: '8am – 11pm',
         menu: [
             {

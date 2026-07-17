@@ -1,7 +1,22 @@
+export interface DemoOrderItem {
+    id: string
+    name: string
+    description: string
+    price: number
+    qty: number
+    image: string
+}
+
 export interface DemoOrder {
     id: string
     vendorName: string
     vendorLogo: string
+    items: DemoOrderItem[]
+    subtotal: number
+    deliveryFee: number
+    packagingFee: number
+    syncFee: number
+    total: number
     deliveryAddress: string
     status: "preparing" | "picked_up" | "on_the_way" | "delivered"
     etaMinutes: number
@@ -26,7 +41,6 @@ export function getAllDemoOrders(): DemoOrder[] {
     } catch { return [] }
 }
 
-// Keep getDemoOrders as alias so ActiveOrders.tsx doesn't break
 export const getDemoOrders = getAllDemoOrders
 
 export function getDemoOrder(id: string): DemoOrder | null {

@@ -1,25 +1,27 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
+import { useRouter } from "next/navigation"
+import { useCart } from "@/app/(app)/food/cart-context"
+import { saveDemoOrder } from "@/lib/demo-order"
 
 import CheckoutHeader from "./components/checkoutHeader"
 import OrderItems from "./components/OrderItems"
-import DeliveryAddress, { DeliveryAddressData, } from "./components/DeliveryAddress"
+import DeliveryAddress, { type DeliveryAddressData } from "./components/DeliveryAddress"
 import AllergyCard from "./components/AllergyCard"
-import PaymentMethod, { PaymentType, } from "./components/PaymentMethod"
-import CheckoutSummary, { CheckoutItem, } from "./components/CheckoutSummary"
-import DeliveryOptions, { DeliveryType, } from "./components/DeliveryOptions"
-import { useCart } from "@/app/(app)/food/cart-context"
-import { useRouter } from "next/navigation"
-import { saveDemoOrder } from "@/lib/demo-order"
+import PaymentMethod, { type PaymentType } from "./components/PaymentMethod"
+import CheckoutSummary, { type CheckoutItem } from "./components/CheckoutSummary"
+import DeliveryOptions, { type DeliveryType } from "./components/DeliveryOptions"
 
+const SYNC_FEE = 150
 const DELIVERY_FEE = 300
 const PACKAGING_FEE = 100
-const SERVICE_FEE = 150
-
 
 export default function CheckoutClient() {
     const router = useRouter()
+
+    const { vendor, items, subtotal, clearCart } = useCart()
+
     const [addressData, setAddressData] = useState<DeliveryAddressData>({
         address: "",
         building: "",
@@ -29,24 +31,14 @@ export default function CheckoutClient() {
         recipientName: "",
         recipientPhone: "",
     })
+    const [allergies, setAllergies] = useState("")
+    const [deliveryOption, setDeliveryOption] = useState<DeliveryType>("standard")
+    const [payment, setPayment] = useState<PaymentType>("cash")
+    const [loading, setLoading] = useState(false)
 
+    const placingRef = useRef(false)
 
-    const [allergies, setAllergies] =
-        useState("")
-
-    const [deliveryOption, setDeliveryOption] =
-        useState<DeliveryType>("standard")
-
-    const [payment, setPayment] =
-        useState<PaymentType>("cash")
-
-
-    const {
-        vendor,
-        items,
-        subtotal,
-        clearCart,
-    } = useCart()
+    const total = subtotal + DELIVERY_FEE + PACKAGING_FEE + SYNC_FEE
 
     const checkoutItems: CheckoutItem[] = items.map(item => ({
         id: item.id,
@@ -56,21 +48,40 @@ export default function CheckoutClient() {
         price: item.price,
     }))
 
-    function placeOrder() {
-        if (!vendor) return
+    async function placeOrder() {
+        if (items.length === 0 || placingRef.current) return
+        placingRef.current = true
+        setLoading(true)
+
+
+        await new Promise(resolve => setTimeout(resolve, 2000))
 
         const order = saveDemoOrder({
-            vendorName: vendor.name,
-            vendorLogo: vendor.image ?? "",
-            deliveryAddress:
-                addressData.address || "Campus Delivery",
+            vendorName: vendor?.name ?? "Unknown vendor",
+            vendorLogo: typeof vendor?.image === "string"
+                ? vendor.image
+                : (vendor?.image as { src: string } | undefined)?.src ?? "",
+            items: items.map(i => ({
+                id: i.id,
+                name: i.name,
+                description: i.description ?? "",
+                price: i.price,
+                qty: i.qty,
+                image: typeof i.image === "string" ? i.image : "",
+            })),
+            subtotal,
+            deliveryFee: DELIVERY_FEE,
+            packagingFee: PACKAGING_FEE,
+            syncFee: SYNC_FEE,
+            total,
+            deliveryAddress: addressData.address || "Tanke Crescent, Behind Tanke Lodge, Ilorin",
             status: "preparing",
             etaMinutes: 25,
         })
 
-        // clearCart()
-
         router.push(`/food/orders/${order.id}/track`)
+        // clearCart()
+        // no need to reset placingRef — we're navigating away
     }
 
     return (
@@ -80,8 +91,7 @@ export default function CheckoutClient() {
 
             <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_380px]">
 
-                {/* LEFT COLUMN */}
-
+                {/* ── LEFT COLUMN ── */}
                 <div className="space-y-6">
 
                     <OrderItems
@@ -94,7 +104,10 @@ export default function CheckoutClient() {
                         onChange={setAllergies}
                     />
 
-                    <DeliveryAddress value={addressData} onChange={setAddressData} />
+                    <DeliveryAddress
+                        value={addressData}
+                        onChange={setAddressData}
+                    />
 
                     <DeliveryOptions
                         value={deliveryOption}
@@ -108,40 +121,34 @@ export default function CheckoutClient() {
 
                 </div>
 
-                {/* RIGHT COLUMN */}
-
+                {/* ── RIGHT COLUMN (desktop) ── */}
                 <div className="hidden lg:block">
-
                     <CheckoutSummary
                         vendorName={vendor?.name ?? ""}
                         items={checkoutItems}
                         deliveryFee={DELIVERY_FEE}
                         packagingFee={PACKAGING_FEE}
-                        serviceFee={SERVICE_FEE}
+                        serviceFee={SYNC_FEE}
+                        loading={loading}
                         onPlaceOrder={placeOrder}
                     />
-
                 </div>
 
             </div>
 
-            {/* MOBILE STICKY SUMMARY */}
-
+            {/* ── MOBILE sticky summary ── */}
             <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-line/10 bg-panel/95 backdrop-blur">
-
                 <div className="px-4 py-4">
-
                     <CheckoutSummary
                         vendorName={vendor?.name ?? ""}
                         items={checkoutItems}
                         deliveryFee={DELIVERY_FEE}
                         packagingFee={PACKAGING_FEE}
-                        serviceFee={SERVICE_FEE}
+                        serviceFee={SYNC_FEE}
+                        loading={loading}
                         onPlaceOrder={placeOrder}
                     />
-
                 </div>
-
             </div>
 
         </div>
