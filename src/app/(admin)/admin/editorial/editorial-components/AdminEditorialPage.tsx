@@ -112,10 +112,8 @@ export function AdminEditorialPage() {
   return (
     <div className="w-full mx-auto p-1 transition-colors duration-300">
       {/* Page Header Section */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between mb-6">
         <div>
-          <p className="eyebrow text-content-muted">ADMIN</p>
-          <h1 className="text-2xl font-display font-semibold tracking-tight text-content md:text-3xl mt-1">Editorial</h1>
           <p className=" text-content-muted/80 mt-1">
             Create and manage blog posts, articles, and content layouts.
           </p>

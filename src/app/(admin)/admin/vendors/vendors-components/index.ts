@@ -4,6 +4,6 @@ export * from "./VendorStatsRow";
 export * from "./VendorStatusBadge";
 export * from "./VendorRowMenu";
 export * from "./VendorTable";
-export * from "./VendorFilterDropdown";
 export * from "./VendorDetailModal";
+export * from "./VendorKycSidebar";
 export * from "./AdminVendorsPage";

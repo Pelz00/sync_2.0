@@ -13,14 +13,8 @@ export default function AdminOverviewPage() {
       <div >
 
         {/* ── Page Header Dashboard Meta Info cluster ── */}
-        <div className="mb-7 select-none">
-          <p className="eyebrow text-content-muted uppercase">
-            Admin
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-bold font-display text-content tracking-tight leading-tight">
-            Admin overview
-          </h1>
-          <p className="text-xs sm:text-sm text-content-muted mt-1">
+        <div className="mb-4 select-none">
+          <p className="text-xs sm:text-sm text-content-muted">
             Welcome back! Here&apos;s what&apos;s happening with your platform.
           </p>
         </div>

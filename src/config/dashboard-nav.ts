@@ -149,6 +149,7 @@ export const DASHBOARD_NAV: Record<DashboardNavKey, DashboardNavConfig> = {
         items: [
           { href: '/admin', label: 'Overview', icon: LayoutDashboard },
           { href: '/admin/vendors', label: 'Vendors', icon: ShieldCheck },
+          { href: '/admin/landlord', label: '  Landlords', icon: Building2},
           { href: '/admin/verify-visits', label: 'Verification visits', icon: ClipboardCheck },
           { href: '/admin/users', label: 'Users', icon: Users },
         ],

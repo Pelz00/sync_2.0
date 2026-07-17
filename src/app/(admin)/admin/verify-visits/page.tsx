@@ -74,15 +74,9 @@ export default function VerificationVisitsPage() {
 
         {/* ── Page Header ── */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-eyebrow font-mono text-content-muted">ADMIN</p>
-            <h1 className="font-display text-content text-2xl font-bold tracking-tight md:text-3xl mt-1">
-              Verification Visits
-            </h1>
-            <p className="text-sm text-content-muted mt-1">
+           <p className="text-sm text-content-muted mt-1">
               Schedule and track vendor verification visits.
-            </p>
-          </div>
+           </p>
           <button
             onClick={() => setSchedule(true)}
             className="flex items-center justify-center gap-2 bg-accent text-sm text-black font-semibold h-10 px-4 rounded-lg cursor-pointer hover:opacity-90 active:scale-[0.98] transition-all shadow-card whitespace-nowrap" >
