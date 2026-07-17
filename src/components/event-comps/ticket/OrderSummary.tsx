@@ -103,7 +103,7 @@ export default function OrderSummary({
                         type="button"
                         onClick={onContinue}
                         disabled={totalTickets === 0}
-                        className="w-full bg-lime text-ink font-bold text-sm rounded-xl py-3 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none font-mono"
+                        className="w-full bg-lime text-ink font-bold text-sm rounded-xl py-3 border-0 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-none transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none font-mono"
                     >
                         {ctaLabel ?? (
                             totalTickets === 0

@@ -18,7 +18,7 @@ export default function TicketsPage() {
 
     const [quantities, setQuantities] = useState<Record<string, number>>({})
     console.log("slug param:", slug, "found event:", event)
-    
+
     if (!event) notFound()
 
     function increase(ticketId: string) {
@@ -58,7 +58,7 @@ export default function TicketsPage() {
 
             <Link
                 href={`/events/${event.slug}`}
-                className="inline-flex items-center gap-2 bg-lime text-ink font-bold px-4 py-2 rounded-xl border border-black shadow-[3px_3px_0px_black] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+                className="inline-flex items-center gap-2 bg-lime text-ink font-bold px-4 py-2 rounded-xl border-0 border-black shadow-[2px_2px_0px_black] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
             >
                 <MoveLeft size={18} />
                 Back to Event
