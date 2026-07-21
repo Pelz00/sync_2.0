@@ -283,7 +283,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   return (
     <section className="flex flex-col gap-4">
 
-      <Link href={`/events`} className="w-fit flex items-center gap-2 bg-lime text-ink font-bold font-mono text-xs lg:text-sm px-4 py-2  lg:px-2 lg:py-1.5 rounded-xl border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:opacity-90 transition flex-shrink-0">
+      <Link href={`/events`} className="w-fit flex items-center gap-2 bg-lime text-ink font-bold font-mono text-xs lg:text-sm px-4 py-2  lg:px-2 lg:py-1.5 rounded-xl border-0 border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:opacity-90 transition flex-shrink-0">
         <MoveLeft strokeWidth={3} width={14} height={14} />Go Back
       </Link>
 
