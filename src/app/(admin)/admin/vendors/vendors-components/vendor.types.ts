@@ -6,6 +6,7 @@ export type VendorView = "grid" | "list";
 export interface VendorProduct {
   name: string;
   price: number;
+  image?: string;   // product photo — clicking the product switches the gallery to this
 }
 
 // ─── KYC & Verification ───────────────────────────────────────────────────────
@@ -17,7 +18,7 @@ export interface KycDocument {
 }
 
 export interface NinVerification {
-  nin: string;           // masked e.g. "NIN-XXXX-XXXX-2843"
+  nin: string;
   submittedAt: string;
   slipPhoto?: string;
 }
@@ -73,8 +74,9 @@ export interface Vendor {
   joinedDate: string;
   isVerified: boolean;
   suspendReason?: string;
+  unsuspendReason?: string;   // recorded when a suspension is lifted
   rejectionReason?: string;
-  verificationNote?: string;     // admin note written when verifying
+  verificationNote?: string;
   businessPhotos?: string[];
   products?: VendorProduct[];
   kycDocuments?: KycDocument[];

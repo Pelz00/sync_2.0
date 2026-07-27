@@ -2,29 +2,25 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { X, ArrowLeft, ShieldCheck, ShieldX, Siren, FileText, ExternalLink, ChevronLeft, ChevronRight, Images, Mail, Phone, MapPin, Calendar, CheckCircle2, Clock, AlertCircle, Fingerprint, CreditCard } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { X, ArrowLeft, ShieldCheck, FileText, ExternalLink, ChevronLeft, ChevronRight, Images, Mail, Phone, MapPin, Calendar, CheckCircle2, Clock, AlertCircle, Fingerprint, CreditCard } from "lucide-react";
 import type { Landlord } from "./landlord.types";
 import { LandlordStatusBadge } from "./LandlordStatusBadge";
 import { CATEGORY_COLORS } from "./landlord.constants";
-import { Button, Textarea } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
 interface LandlordKycSidebarProps {
   landlord: Landlord | null;
   onClose: () => void;
   onVerify: (landlord: Landlord) => void;
-  onReject: (landlord: Landlord, reason: string) => void;
 }
 
 export function LandlordKycSidebar({
-  landlord, onClose, onVerify, onReject,
+  landlord, onClose, onVerify,
 }: LandlordKycSidebarProps) {
+  const router = useRouter();
   const [photoIdx, setPhotoIdx] = useState(0);
-  const [rejectMode, setRejectMode] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
-  const [policeMode, setPoliceMode] = useState(false);
-  const [policeDetails, setPoliceDetails] = useState("");
-  const [policeSubmitted, setPoliceSubmitted] = useState(false);
 
   // Close on Escape
   useEffect(() => {
@@ -44,11 +40,6 @@ export function LandlordKycSidebar({
   // Reset state when landlord changes
   useEffect(() => {
     setPhotoIdx(0);
-    setRejectMode(false);
-    setRejectReason("");
-    setPoliceMode(false);
-    setPoliceDetails("");
-    setPoliceSubmitted(false);
   }, [landlord?.id]);
 
   if (!landlord) return null;
@@ -56,8 +47,6 @@ export function LandlordKycSidebar({
   const photos = landlord.businessPhotos ?? [];
   const docs = landlord.kycDocuments ?? [];
   const catColor = CATEGORY_COLORS[landlord.category] ?? "bg-gray-100 text-gray-600";
-  const canReject = rejectReason.trim().length >= 10;
-  const canPolice = policeDetails.trim().length >= 15;
 
   return (
     <div
@@ -263,100 +252,25 @@ export function LandlordKycSidebar({
               )}
             </KycSection>
 
-            {/* Reject form (inline) */}
-            {rejectMode && (
-              <div className="flex flex-col gap-3 bg-red-50 border border-red-100 rounded-2xl p-4">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-red-600">Rejection reason *</p>
-                <Textarea
-                  value={rejectReason}
-                  onChange={e => setRejectReason(e.target.value)}
-                  placeholder="Describe why this landlord is being rejected..."
-                  rows={3}
-                  className="w-full text-sm text-content bg-white border border-red-200 px-3 py-2.5 placeholder:text-content-muted/30 resize-none outline-none! ring-0! focus:border-red-300 transition-all rounded-xl"
-                />
-                <div className="flex gap-2">
-                  <Button type="button" variant="ghost" onClick={() => { setRejectMode(false); setRejectReason(""); }} className="flex-1 h-9 rounded-xl border border-line/20 text-xs font-bold text-content-muted hover:text-content">
-                    Cancel
-                  </Button>
-                  <Button
-                    type="button"
-                    disabled={!canReject}
-                    onClick={() => { if (canReject) { onReject(landlord, rejectReason.trim()); onClose(); } }}
-                    className="flex-1 h-9 rounded-xl bg-red-500 hover:bg-red-600 text-white text-xs font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-                    Confirm Rejection
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Police report form (inline) */}
-            {policeMode && (
-              <div className="flex flex-col gap-3 bg-surface-deep/60 border border-line/15 rounded-2xl p-4">
-                {policeSubmitted ? (
-                  <div className="flex flex-col items-center py-4 gap-2 text-center">
-                    <CheckCircle2 size={20} className="text-green-600" />
-                    <p className="text-sm font-bold text-content">Report filed</p>
-                    <p className="text-xs text-content-muted/70">Your report on {landlord.name} has been logged and forwarded.</p>
-                    <Button type="button" variant="ghost" onClick={() => setPoliceMode(false)} className="mt-1 h-8 px-4 rounded-lg border border-line/20 text-xs font-bold text-content-muted hover:text-content">
-                      Close
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-content-muted/70">Incident details *</p>
-                    <Textarea
-                      value={policeDetails}
-                      onChange={e => setPoliceDetails(e.target.value)}
-                      placeholder="Describe the suspected fraud or unsafe conduct..."
-                      rows={3}
-                      className="w-full text-sm text-content bg-panel border border-line/20 px-3 py-2.5 placeholder:text-content-muted/30 resize-none outline-none! ring-0! transition-all rounded-xl"
-                    />
-                    <div className="flex gap-2">
-                      <Button type="button" variant="ghost" onClick={() => setPoliceMode(false)} className="flex-1 h-9 rounded-xl border border-line/20 text-xs font-bold text-content-muted hover:text-content">
-                        Cancel
-                      </Button>
-                      <Button
-                        type="button"
-                        disabled={!canPolice}
-                        onClick={() => canPolice && setPoliceSubmitted(true)}
-                        className="flex-1 h-9 rounded-xl bg-coral hover:opacity-90 text-white text-xs font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-                        File Report
-                      </Button>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-
           </div>
         </div>
 
         {/* ── Footer actions ── */}
-        {!rejectMode && !policeMode && (
-          <div className="px-5 py-4 border-t border-line/15 shrink-0 bg-panel flex flex-col gap-2.5">
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                onClick={() => { onVerify(landlord); onClose(); }}
-                className="flex-1 h-10 rounded-xl bg-lime text-ink font-semibold hover:opacity-90 cursor-pointer shadow-xs flex items-center justify-center gap-2">
-                <ShieldCheck size={14} /> Verify Landlord
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setRejectMode(true)}
-                className="flex-1 h-10 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 font-semibold cursor-pointer flex items-center justify-center gap-2">
-                <ShieldX size={14} /> Reject
-              </Button>
-            </div>
-            <button
-              type="button"
-              onClick={() => setPoliceMode(true)}
-              className="w-full h-9 flex items-center justify-center gap-1.5 text-xs font-semibold text-content-muted/60 hover:text-coral transition-colors rounded-xl border border-line/15 hover:border-coral/30">
-              <Siren size={12} /> Report to Police
-            </button>
-          </div>
-        )}
+        <div className="px-5 py-4 border-t border-line/15 shrink-0 bg-panel flex gap-2">
+          <Button
+            type="button"
+            onClick={() => { onVerify(landlord); onClose(); }}
+            className="flex-1 h-10 rounded-xl bg-lime text-ink font-semibold hover:opacity-90 cursor-pointer shadow-xs flex items-center justify-center gap-2">
+            <ShieldCheck size={14} /> Verify Landlord
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => { router.push(`/admin/landlord/${landlord.slug}`); onClose(); }}
+            className="flex-1 h-10 rounded-xl border border-line/20 text-content-muted hover:text-content hover:bg-surface-deep font-semibold cursor-pointer flex items-center justify-center gap-2">
+            <ExternalLink size={14} /> View Hostels
+          </Button>
+        </div>
       </div>
     </div>
   );

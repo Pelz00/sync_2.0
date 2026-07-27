@@ -21,9 +21,9 @@ export default async function Page() {
   const [user, profile] = await Promise.all([getCurrentUser(), getProfile()]);
   const role = profile?.role ?? adminRoleForEmail(user?.email);
 
-  if (role !== 'admin' && role !== 'super_admin') {
-    redirect('/403');
-  }
+  // if (role !== 'admin' && role !== 'super_admin') {
+  //   redirect('/403');
+  // }
 
   const isSuperAdmin = role === 'super_admin';
 

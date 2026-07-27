@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Mail, Phone, MapPin, Star, ShieldCheck, Clock, Package, TrendingUp, ArrowLeft, Calendar, ChevronLeft, ChevronRight, Images, AlertTriangle, ShoppingBag, } from "lucide-react";
+import {
+  X, Mail, Phone, MapPin, Star, ShieldCheck, Clock, Package,
+  TrendingUp, ArrowLeft, Calendar, ChevronLeft, ChevronRight,
+  Images, AlertTriangle, ShoppingBag,
+} from "lucide-react";
 import { VendorStatusBadge } from "./VendorStatusBadge";
 import { formatRevenue, CATEGORY_COLORS } from "./vendor.constants";
 import type { Vendor } from "./vendor.types";
@@ -9,35 +13,44 @@ import Image from "next/image";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { SuspendModal } from "./SuspendModal";
+import { UnsuspendModal } from "./UnsuspendModal";
 
 interface VendorDetailModalProps {
   vendor: Vendor | null;
   onClose: () => void;
   onActivate: (v: Vendor) => void;
   onSuspend: (v: Vendor, reason: string) => void;
+  onUnsuspend: (v: Vendor, reason: string) => void;
 }
 
-export function VendorDetailModal({ vendor, onClose, onActivate, onSuspend }: VendorDetailModalProps) {
-  const [photoIdx, setPhotoIdx] = useState(0);
+export function VendorDetailModal({
+  vendor, onClose, onActivate, onSuspend, onUnsuspend,
+}: VendorDetailModalProps) {
+  // ── Photo state: tracks what's shown at the top ───────────────────────────
+  // null = use the businessPhotos gallery; string = a specific product image
+  const [activePhoto, setActivePhoto] = useState<string | null>(null);
+  const [galleryIdx, setGalleryIdx] = useState(0);
+
   const [suspendOpen, setSuspendOpen] = useState(false);
+  const [unsuspendOpen, setUnsuspendOpen] = useState(false);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape" && !suspendOpen) onClose();
+      if (e.key === "Escape" && !suspendOpen && !unsuspendOpen) onClose();
     }
     if (vendor) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [vendor, onClose, suspendOpen]);
+  }, [vendor, onClose, suspendOpen, unsuspendOpen]);
 
   useEffect(() => {
     document.body.style.overflow = vendor ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [vendor]);
 
+  // Reset when vendor changes
   useEffect(() => {
-    setPhotoIdx(0);
+    setGalleryIdx(0);
+    setActivePhoto(null);
   }, [vendor?.id]);
 
   if (!vendor) return null;
@@ -47,59 +60,132 @@ export function VendorDetailModal({ vendor, onClose, onActivate, onSuspend }: Ve
   const catColor = CATEGORY_COLORS[vendor.category] ?? "bg-gray-100 text-gray-600";
   const vendorProducts = vendor.products ?? [];
 
+  // What to actually show in the top image slot
+  const displayPhoto = activePhoto ?? (photos[galleryIdx] ?? null);
+  const isProductPhotoActive = activePhoto !== null;
+
+  function handleProductClick(productImage: string | undefined) {
+    if (productImage) {
+      setActivePhoto(productImage);
+    }
+  }
+
+  function handleGalleryNav(dir: "prev" | "next") {
+    setActivePhoto(null); // return to business photo gallery
+    setGalleryIdx(i =>
+      dir === "prev"
+        ? (i - 1 + photos.length) % photos.length
+        : (i + 1) % photos.length
+    );
+  }
+
+  function handleThumbnailClick(idx: number) {
+    setActivePhoto(null);
+    setGalleryIdx(idx);
+  }
+
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-start justify-end bg-black/60 backdrop-blur-xs transition-opacity duration-300" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div
+        className="fixed inset-0 z-50 flex items-start justify-end bg-black/60 backdrop-blur-xs transition-opacity duration-300"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
         <div className="h-full w-full max-w-md bg-panel border-l border-line/15 shadow-pop flex flex-col animate-slide-in-right transition-colors duration-300">
-          
-          {/* ── Top nav bar ── */}
+
+          {/* ── Top nav ── */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-line/15 shrink-0">
-            <button type="button" onClick={onClose} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-content-muted/80 hover:text-content transition-colors cursor-pointer select-none">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-content-muted/80 hover:text-content transition-colors cursor-pointer select-none">
               <ArrowLeft size={13} /> Back to Vendors
             </button>
-            <Button type="button" variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 rounded-md text-content-muted hover:bg-surface-deep transition-colors">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="h-8 w-8 rounded-md text-content-muted hover:bg-surface-deep transition-colors">
               <X size={15} />
             </Button>
           </div>
 
           {/* ── Scrollable content ── */}
           <div className="flex-1 overflow-y-auto flex flex-col gap-0 CustomScrollbar">
-            
-            {/* ── Business Photo Gallery ── */}
-            {hasPhotos ? (
+
+            {/* ── Photo / product image slot ── */}
+            {displayPhoto ? (
               <div className="relative w-full aspect-video bg-surface-deep shrink-0 overflow-hidden">
-                <Image key={photos[photoIdx]} src={photos[photoIdx]} width={200} height={200} alt={`${vendor.name} — photo ${photoIdx + 1}`} className="w-full h-full object-cover transition-all duration-500" onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1528323273322-d81458248d40?w=600&q=80"; }} />
-                {/* gradient overlay bottom */}
+                <Image
+                  key={displayPhoto}
+                  src={displayPhoto}
+                  width={600}
+                  height={338}
+                  alt="Vendor photo"
+                  className="w-full h-full object-cover transition-all duration-500"
+                  onError={(e) => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1528323273322-d81458248d40?w=600&q=80"; }}
+                />
                 <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
-                {/* photo counter */}
+
+                {/* Label: business photo counter vs product label */}
                 <div className="absolute bottom-3 left-4 flex items-center gap-1.5">
-                  <Images size={12} className="text-white/80" />
-                  <span className="text-[11px] font-bold text-white/90">{photoIdx + 1} / {photos.length}</span>
+                  {isProductPhotoActive ? (
+                    <span className="flex items-center gap-1.5 bg-black/50 backdrop-blur-sm text-white text-[11px] font-bold px-2.5 py-1 rounded-full">
+                      <ShoppingBag size={11} /> Product photo
+                    </span>
+                  ) : (
+                    <>
+                      <Images size={12} className="text-white/80" />
+                      <span className="text-[11px] font-bold text-white/90">{galleryIdx + 1} / {photos.length}</span>
+                    </>
+                  )}
                 </div>
-                {/* nav arrows */}
-                {photos.length > 1 && (
+
+                {/* Back-to-gallery button when showing product photo */}
+                {isProductPhotoActive && photos.length > 0 && (
+                  <button
+                    onClick={() => setActivePhoto(null)}
+                    className="absolute bottom-3 right-4 text-[10px] font-bold text-white/80 hover:text-white bg-black/40 hover:bg-black/60 px-2.5 py-1 rounded-full transition-colors cursor-pointer">
+                    ← Gallery
+                  </button>
+                )}
+
+                {/* Gallery nav arrows (hidden when showing product photo) */}
+                {!isProductPhotoActive && photos.length > 1 && (
                   <>
-                    <button onClick={() => setPhotoIdx(i => (i - 1 + photos.length) % photos.length)} className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center text-white transition-colors cursor-pointer">
+                    <button
+                      onClick={() => handleGalleryNav("prev")}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center text-white transition-colors cursor-pointer">
                       <ChevronLeft size={16} />
                     </button>
-                    <button onClick={() => setPhotoIdx(i => (i + 1) % photos.length)} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center text-white transition-colors cursor-pointer">
+                    <button
+                      onClick={() => handleGalleryNav("next")}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center text-white transition-colors cursor-pointer">
                       <ChevronRight size={16} />
                     </button>
                   </>
                 )}
-                {/* dot indicators */}
-                {photos.length > 1 && (
+
+                {/* Dot indicators */}
+                {!isProductPhotoActive && photos.length > 1 && (
                   <div className="absolute bottom-3 right-4 flex gap-1">
                     {photos.map((_, i) => (
-                      <button key={i} onClick={() => setPhotoIdx(i)} className={cn("w-1.5 h-1.5 rounded-full transition-all cursor-pointer", i === photoIdx ? "bg-white scale-125" : "bg-white/50 hover:bg-white/80")} />
+                      <button
+                        key={i}
+                        onClick={() => handleThumbnailClick(i)}
+                        className={cn("w-1.5 h-1.5 rounded-full transition-all cursor-pointer", i === galleryIdx ? "bg-white scale-125" : "bg-white/50 hover:bg-white/80")}
+                      />
                     ))}
                   </div>
                 )}
-                {/* thumbnail strip */}
-                {photos.length > 1 && (
+
+                {/* Thumbnail strip */}
+                {!isProductPhotoActive && photos.length > 1 && (
                   <div className="absolute bottom-0 left-0 right-0 translate-y-full flex gap-1.5 px-4 pt-3 pb-3 bg-panel border-b border-b-line/10 overflow-x-auto scrollbar-none">
                     {photos.map((url, i) => (
-                      <button key={i} onClick={() => setPhotoIdx(i)} className={cn("shrink-0 w-14 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer", i === photoIdx ? "border-lime" : "border-transparent opacity-60 hover:opacity-100")}>
+                      <button
+                        key={i}
+                        onClick={() => handleThumbnailClick(i)}
+                        className={cn("shrink-0 w-14 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer", i === galleryIdx ? "border-lime" : "border-transparent opacity-60 hover:opacity-100")}>
                         <img src={url} alt="" className="w-full h-full object-cover" />
                       </button>
                     ))}
@@ -113,18 +199,18 @@ export function VendorDetailModal({ vendor, onClose, onActivate, onSuspend }: Ve
               </div>
             )}
 
-            {/* ── Main content block ── */}
-            <div className={cn("px-6 py-6 flex flex-col gap-6", photos.length > 1 && "mt-[76px]")}>
+            {/* ── Main content ── */}
+            <div className={cn("px-6 py-6 flex flex-col gap-6", !isProductPhotoActive && photos.length > 1 && "mt-[76px]")}>
+
               {/* Identity */}
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
                     <h2 className="text-xl font-bold font-display text-content tracking-tight">{vendor.name}</h2>
-                    {vendor.isVerified ? (
-                      <ShieldCheck size={16} className="text-green-600 shrink-0" />
-                    ) : (
-                      <Clock size={16} className="text-orange-400 shrink-0" />
-                    )}
+                    {vendor.isVerified
+                      ? <ShieldCheck size={16} className="text-green-600 shrink-0" />
+                      : <Clock size={16} className="text-orange-400 shrink-0" />
+                    }
                   </div>
                   <p className="text-xs font-mono font-medium text-content-muted/60">{vendor.vendorId}</p>
                   <span className={cn("inline-block text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-md mt-1.5", catColor)}>
@@ -145,35 +231,50 @@ export function VendorDetailModal({ vendor, onClose, onActivate, onSuspend }: Ve
                 </div>
               )}
 
-              {/* Metrics grid */}
+              {/* Metrics */}
               <div className="grid grid-cols-3 gap-2.5">
                 <MiniStat icon={<Package size={13} />} label="Orders" value={vendor.orders.toLocaleString()} />
                 <MiniStat icon={<TrendingUp size={13} />} label="Revenue" value={formatRevenue(vendor.revenue)} />
                 <MiniStat icon={<Star size={13} className="fill-amber-400 text-amber-400" />} label="Rating" value={vendor.rating !== null ? `${vendor.rating}` : "N/A"} />
               </div>
 
-              {/* Products Inventory Section */}
+              {/* Products — clicking one switches the top image */}
               <Section title={`Products & Catalog (${vendorProducts.length})`}>
                 {vendorProducts.length > 0 ? (
                   <div className="flex flex-col w-full divide-y divide-line/10">
-                    {vendorProducts.map((product, index) => (
-                      <div 
-                        key={index} 
-                        className="flex items-center justify-between w-full py-2.5 first:pt-1.5 last:pb-1.5 group"
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <span className="p-1 rounded-md bg-surface-deep text-content-muted/70 group-hover:text-content transition-colors">
-                            <ShoppingBag size={12} />
+                    {vendorProducts.map((product, index) => {
+                      const isActive = activePhoto === product.image && product.image;
+                      return (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => handleProductClick(product.image)}
+                          className={cn(
+                            "flex items-center justify-between w-full py-2.5 first:pt-1.5 last:pb-1.5 group text-left transition-colors rounded-lg px-1 -mx-1",
+                            product.image
+                              ? "cursor-pointer hover:bg-surface-deep/60"
+                              : "cursor-default",
+                            isActive && "bg-surface-deep/80"
+                          )}>
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            {/* Product thumbnail or icon */}
+                            {product.image ? (
+                              <div className={cn("w-8 h-8 rounded-lg overflow-hidden shrink-0 border-2 transition-all", isActive ? "border-lime" : "border-transparent")}>
+                                <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                              </div>
+                            ) : (
+                              <span className="p-1 rounded-md bg-surface-deep text-content-muted/70 group-hover:text-content transition-colors shrink-0">
+                                <ShoppingBag size={12} />
+                              </span>
+                            )}
+                            <span className="text-xs text-content font-medium truncate">{product.name}</span>
+                          </div>
+                          <span className="text-xs font-mono font-bold text-content whitespace-nowrap pl-2">
+                            ₦{product.price.toLocaleString()}
                           </span>
-                          <span className="text-xs text-content font-medium truncate">
-                            {product.name}
-                          </span>
-                        </div>
-                        <span className="text-xs font-mono font-bold text-content whitespace-nowrap pl-2">
-                          ₦{product.price.toLocaleString()}
-                        </span>
-                      </div>
-                    ))}
+                        </button>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-4 text-center">
@@ -190,30 +291,50 @@ export function VendorDetailModal({ vendor, onClose, onActivate, onSuspend }: Ve
                 <InfoRow icon={<MapPin size={13} />} label="Location" value={vendor.location} />
                 <InfoRow icon={<Calendar size={13} />} label="Joined" value={vendor.joinedDate} />
               </Section>
-
-              
-
             </div>
           </div>
 
           {/* ── Footer actions ── */}
           <div className="px-5 py-4 border-t border-line/15 flex gap-2 shrink-0 bg-panel shadow-sm">
-            {vendor.status !== "Active" && (
-              <Button type="button" onClick={() => { onActivate(vendor); onClose(); }} className="flex-1 bg-lime text-ink font-semibold hover:opacity-90 cursor-pointer transition-opacity h-10 shadow-xs rounded-xl">
+            {vendor.status !== "Active" && vendor.status !== "Suspended" && (
+              <Button
+                type="button"
+                onClick={() => { onActivate(vendor); onClose(); }}
+                className="flex-1 bg-lime text-ink font-semibold hover:opacity-90 cursor-pointer transition-opacity h-10 shadow-xs rounded-xl">
                 Verify Vendor
               </Button>
             )}
+            {vendor.status === "Suspended" && (
+              <Button
+                type="button"
+                onClick={() => setUnsuspendOpen(true)}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold cursor-pointer h-10 shadow-xs rounded-xl transition-colors">
+                Unsuspend Vendor
+              </Button>
+            )}
             {vendor.status !== "Suspended" && (
-              <Button type="button" variant="warning" onClick={() => setSuspendOpen(true)} className="flex-1 border border-orange-200 bg-orange-50 hover:bg-orange-100 cursor-pointer text-orange-600 font-semibold h-10 rounded-xl">
+              <Button
+                type="button"
+                variant="warning"
+                onClick={() => setSuspendOpen(true)}
+                className="flex-1 border border-orange-200 bg-orange-50 hover:bg-orange-100 cursor-pointer text-orange-600 font-semibold h-10 rounded-xl">
                 Suspend Vendor
               </Button>
             )}
           </div>
-
         </div>
       </div>
 
-      <SuspendModal vendor={suspendOpen ? vendor : null} onClose={() => setSuspendOpen(false)} onConfirm={(reason) => { onSuspend(vendor, reason); setSuspendOpen(false); onClose(); }} />
+      <SuspendModal
+        vendor={suspendOpen ? vendor : null}
+        onClose={() => setSuspendOpen(false)}
+        onConfirm={(reason) => { onSuspend(vendor, reason); setSuspendOpen(false); onClose(); }}
+      />
+      <UnsuspendModal
+        vendor={unsuspendOpen ? vendor : null}
+        onClose={() => setUnsuspendOpen(false)}
+        onConfirm={(reason) => { onUnsuspend(vendor, reason); setUnsuspendOpen(false); onClose(); }}
+      />
     </>
   );
 }

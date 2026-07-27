@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ShieldCheck, ShieldX, Siren, FileText, ExternalLink, Images, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
+import { ShieldCheck, ShieldX, Siren, FileText, ExternalLink, Images, ChevronLeft, ChevronRight, AlertTriangle, Info } from "lucide-react";
 import type { Landlord } from "../../landlords-components/landlord.types";
 import { Button } from "@/components/ui";
 import { RejectLandlordModal } from "./RejectLandlordModal";
 import { ReportPoliceModal } from "./ReportPoliceModal";
+import { HostelGrid } from "./HostelGrid";
 
 interface LandlordVerificationViewProps {
   landlord: Landlord;
@@ -125,6 +126,19 @@ export function LandlordVerificationView({ landlord, onVerify, onReject }: Landl
               </div>
             )}
           </div>
+
+          <section>
+            <p className="text-[10px] uppercase tracking-widest font-bold text-content-muted/70 mb-4 select-none">
+              Submitted hostels ({(landlord.hostels ?? []).length})
+            </p>
+            <div className="flex items-start gap-3 rounded-2xl border border-orange-100 bg-orange-50 p-4 mb-4">
+              <Info size={15} className="mt-0.5 shrink-0 text-orange-500" />
+              <p className="text-xs leading-relaxed text-orange-700">
+                These hostels are submitted but hidden from students until this landlord is verified.
+              </p>
+            </div>
+            <HostelGrid landlord={landlord} isPublished={false} />
+          </section>
         </div>
 
         {/* ── Right: verification actions sidebar ── */}

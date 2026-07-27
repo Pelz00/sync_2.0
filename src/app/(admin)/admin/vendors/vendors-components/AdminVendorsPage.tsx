@@ -3,7 +3,10 @@
 import { useState, useMemo } from "react";
 import { Search, LayoutGrid, List } from "lucide-react";
 import { Input } from "@/components/ui";
-import { VENDORS, computeVendorStats, VendorStatsRow, VendorTable, VendorDetailModal } from "./index";
+import {
+  VENDORS, computeVendorStats,
+  VendorStatsRow, VendorTable, VendorDetailModal,
+} from "./index";
 import { VendorKycSidebar } from "./VendorKycSidebar";
 import type { Vendor, VendorStatusFilter, VendorView } from "./vendor.types";
 import { cn } from "@/lib/utils";
@@ -12,9 +15,9 @@ const FILTERS: VendorStatusFilter[] = ["All Vendors", "Active", "Pending", "Susp
 
 const FILTER_STYLES: Record<VendorStatusFilter, { active: string; dot?: string }> = {
   "All Vendors": { active: "bg-surface-deep text-content shadow-xs" },
-  "Active": { active: "bg-green-50 text-green-700 shadow-xs", dot: "bg-green-500" },
-  "Pending": { active: "bg-orange-50 text-orange-600 shadow-xs", dot: "bg-orange-400" },
-  "Suspended": { active: "bg-red-50 text-red-600 shadow-xs", dot: "bg-red-500" },
+  "Active":      { active: "bg-green-50 text-green-700 shadow-xs", dot: "bg-green-500" },
+  "Pending":     { active: "bg-orange-50 text-orange-600 shadow-xs", dot: "bg-orange-400" },
+  "Suspended":   { active: "bg-red-50 text-red-600 shadow-xs", dot: "bg-red-500" },
 };
 
 export function AdminVendorsPage() {
@@ -41,7 +44,6 @@ export function AdminVendorsPage() {
     });
   }, [vendors, search, statusFilter]);
 
-  // ── Smart view handler: pending → KYC sidebar, verified → detail modal ──────
   function handleView(vendor: Vendor) {
     if (!vendor.isVerified || vendor.status === "Pending") {
       setKycVendor(vendor);
@@ -65,19 +67,30 @@ export function AdminVendorsPage() {
     );
   }
 
-  function handleReject(vendor: Vendor, reason: string) {
-    setVendors(prev =>
-      prev.map(v => v.id === vendor.id
-        ? { ...v, status: "Suspended", isVerified: false, rejectionReason: reason }
-        : v
-      )
-    );
-  }
-
   function handleSuspend(vendor: Vendor, reason: string) {
     setVendors(prev =>
       prev.map(v => v.id === vendor.id
         ? { ...v, status: "Suspended", suspendReason: reason }
+        : v
+      )
+    );
+    if (viewing?.id === vendor.id) setViewing(null);
+  }
+
+  function handleUnsuspend(vendor: Vendor, reason: string) {
+    setVendors(prev =>
+      prev.map(v => v.id === vendor.id
+        ? { ...v, status: "Active", isVerified: true, unsuspendReason: reason, suspendReason: undefined }
+        : v
+      )
+    );
+    if (viewing?.id === vendor.id) setViewing(null);
+  }
+
+  function handleReject(vendor: Vendor, reason: string) {
+    setVendors(prev =>
+      prev.map(v => v.id === vendor.id
+        ? { ...v, status: "Suspended", isVerified: false, rejectionReason: reason }
         : v
       )
     );
@@ -175,6 +188,7 @@ export function AdminVendorsPage() {
         onClose={() => setViewing(null)}
         onActivate={handleActivate}
         onSuspend={handleSuspend}
+        onUnsuspend={handleUnsuspend}
       />
 
       {/* ── KYC sidebar (pending/unverified vendors) ── */}

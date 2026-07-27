@@ -6,15 +6,22 @@ import Image from "next/image";
 import { ArrowLeft, Home, User, Wallet, Phone as PhoneIcon, PlayCircle, ImageOff, CheckCircle2, XCircle, Clock4, AlertCircle } from "lucide-react";
 import { LANDLORDS, getLandlordBySlug, getHostelBySlug, formatPrice } from "../../../../landlords-components/landlord.constants";
 import { HostelVisitStatusBadge } from "../../../../landlords-components/HostelVisitStatusBadge";
-import type { LandlordHostel, HostelVisitStatus } from "../../../../landlords-components/landlord.types";
+import type { LandlordHostel, HostelVisitStatus, LandlordStatus } from "../../../../landlords-components/landlord.types";
 import { Button, Textarea } from "@/components/ui";
 
 interface HostelVerificationPageProps {
   landlordSlug: string;
   hostelSlug: string;
+  landlordIsVerified: boolean;
+  landlordStatus: LandlordStatus | undefined;
 }
 
-export function HostelVerificationPage({ landlordSlug, hostelSlug }: HostelVerificationPageProps) {
+export function HostelVerificationPage({
+  landlordSlug,
+  hostelSlug,
+  landlordIsVerified,
+  landlordStatus,
+}: HostelVerificationPageProps) {
   const router = useRouter();
   const landlord = useMemo(() => getLandlordBySlug(LANDLORDS, landlordSlug), [landlordSlug]);
   const seedHostel = useMemo(() => getHostelBySlug(landlord, hostelSlug), [landlord, hostelSlug]);
@@ -52,6 +59,15 @@ export function HostelVerificationPage({ landlordSlug, hostelSlug }: HostelVerif
         className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-content-muted/80 hover:text-content transition-colors cursor-pointer select-none mb-6">
         <ArrowLeft size={13} /> Back to {landlord.name}
       </button>
+
+      {!landlordIsVerified && landlordStatus === "Pending" && (
+        <div className="mb-6 flex items-start gap-3 rounded-2xl border border-orange-100 bg-orange-50 p-4">
+          <AlertCircle size={16} className="mt-0.5 shrink-0 text-orange-500" />
+          <p className="text-xs leading-relaxed text-orange-700">
+            This hostel has been approved internally but will only go live to students once the landlord is verified.
+          </p>
+        </div>
+      )}
 
       {/* ── Header ── */}
       <div className="bg-panel border border-line/15 rounded-2xl p-6 mb-6 shadow-xs flex flex-wrap items-start justify-between gap-4">

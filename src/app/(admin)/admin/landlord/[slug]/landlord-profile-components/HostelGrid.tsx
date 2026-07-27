@@ -8,9 +8,10 @@ import { HostelVisitStatusBadge } from "../../landlords-components/HostelVisitSt
 
 interface HostelGridProps {
   landlord: Landlord;
+  isPublished?: boolean;
 }
 
-export function HostelGrid({ landlord }: HostelGridProps) {
+export function HostelGrid({ landlord, isPublished = true }: HostelGridProps) {
   const router = useRouter();
   const hostels = landlord.hostels ?? [];
 
@@ -29,12 +30,19 @@ export function HostelGrid({ landlord }: HostelGridProps) {
         <div
           key={hostel.id}
           onClick={() => router.push(`/admin/landlord/${landlord.slug}/hostels/${hostel.slug}`)}
-          className="bg-panel border border-line/15 rounded-2xl p-4 cursor-pointer hover:shadow-md hover:border-line/30 transition-all duration-200 flex flex-col gap-3 group">
+          className="bg-panel border border-line/15 rounded-2xl p-4 flex flex-col gap-3 group cursor-pointer hover:shadow-md hover:border-line/30 transition-all duration-200">
           <div className="flex items-start justify-between gap-2">
-            <span className="p-2 rounded-lg bg-surface-deep text-content-muted/70 group-hover:text-content transition-colors shrink-0">
+            <span className="p-2 rounded-lg bg-surface-deep text-content-muted/70 shrink-0 group-hover:text-content transition-colors">
               <Home size={14} />
             </span>
-            <HostelVisitStatusBadge status={hostel.visitStatus} />
+            <div className="flex items-center gap-2">
+              {!isPublished && (
+                <span className="rounded-md bg-orange-100 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-orange-700">
+                  Not Published
+                </span>
+              )}
+              <HostelVisitStatusBadge status={hostel.visitStatus} />
+            </div>
           </div>
           <div>
             <p className="text-sm font-bold text-content leading-snug group-hover:text-green-700 transition-colors">{hostel.name}</p>

@@ -42,11 +42,11 @@ export const VENDORS: Vendor[] = [
       },
     },
     products: [
-      { name: "Organic Tomatoes Basket", price: 4500 },
-      { name: "Fresh Habanero Peppers (Atarodo)", price: 2000 },
-      { name: "Sweet Potatoes (Big Sack)", price: 12000 },
-      { name: "Local Rice 5kg", price: 7500 },
-    ],
+  { name: "Organic Tomatoes Basket",          price: 4500,  image: "https://images.unsplash.com/photo-1546470427-227c7ab30f00?w=600&q=80" },
+  { name: "Fresh Habanero Peppers (Atarodo)", price: 2000,  image: "https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=600&q=80" },
+  { name: "Sweet Potatoes (Big Sack)",        price: 12000, image: "https://images.unsplash.com/photo-1596097557993-54f948bf7a3e?w=600&q=80" },
+  { name: "Local Rice 5kg",                   price: 7500,  image: "https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=600&q=80" },
+],
   },
 
   {
@@ -79,10 +79,10 @@ export const VENDORS: Vendor[] = [
       },
     },
     products: [
-      { name: "Organic Honey Extract", price: 6000 },
-      { name: "Unrefined Brown Sugar 1kg", price: 3500 },
-      { name: "Almond Milk 1L", price: 4200 },
-    ],
+  { name: "Organic Honey Extract",      price: 6000, image: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=600&q=80" },
+  { name: "Unrefined Brown Sugar 1kg",  price: 3500, image: "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=600&q=80" },
+  { name: "Almond Milk 1L",             price: 4200, image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600&q=80" },
+],
   },
 
   {
@@ -115,12 +115,12 @@ export const VENDORS: Vendor[] = [
       },
     },
     products: [
-      { name: "Chilled Soda Can", price: 600 },
-      { name: "Potato Chips Pack", price: 1200 },
-      { name: "Energy Drink 330ml", price: 1500 },
-      { name: "Bottled Water 75cl", price: 400 },
-      { name: "Salted Peanuts Pack", price: 800 },
-    ],
+  { name: "Chilled Soda Can",       price: 600,  image: "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=600&q=80" },
+  { name: "Potato Chips Pack",      price: 1200, image: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=600&q=80" },
+  { name: "Energy Drink 330ml",     price: 1500, image: "https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=600&q=80" },
+  { name: "Bottled Water 75cl",     price: 400,  image: "https://images.unsplash.com/photo-1553564552-f1b08826c93f?w=600&q=80" },
+  { name: "Salted Peanuts Pack",    price: 800,  image: "https://images.unsplash.com/photo-1567892320421-4689986e7893?w=600&q=80" },
+],
   },
 
   {
@@ -151,10 +151,10 @@ export const VENDORS: Vendor[] = [
       },
     },
     products: [
-      { name: "Premium Washing Powder 2kg", price: 5800 },
-      { name: "Vegetable Cooking Oil 3L", price: 9400 },
-      { name: "Spaghetti Carton (20 Packs)", price: 15000 },
-    ],
+  { name: "Premium Washing Powder 2kg",   price: 5800,  image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80" },
+  { name: "Vegetable Cooking Oil 3L",     price: 9400,  image: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80" },
+  { name: "Spaghetti Carton (20 Packs)",  price: 15000, image: "https://images.unsplash.com/photo-1551462147-ff29053bfc14?w=600&q=80" },
+],
   },
 
   {
@@ -217,10 +217,10 @@ export const VENDORS: Vendor[] = [
       },
     },
     products: [
-      { name: "Imported Salted Butter", price: 4800 },
-      { name: "Whole Grain Wheat Oats 1kg", price: 3900 },
-      { name: "Premium Cheddar Cheese Block", price: 7200 },
-    ],
+  { name: "Imported Salted Butter",        price: 4800, image: "https://images.unsplash.com/photo-1589985270958-bd2f9e49f89f?w=600&q=80" },
+  { name: "Whole Grain Wheat Oats 1kg",    price: 3900, image: "https://images.unsplash.com/photo-1614961233686-d8a03e5e3e5c?w=600&q=80" },
+  { name: "Premium Cheddar Cheese Block",  price: 7200, image: "https://images.unsplash.com/photo-1552767059-ce182ead6c1b?w=600&q=80" },
+],
   },
 
   {
@@ -251,11 +251,11 @@ export const VENDORS: Vendor[] = [
       },
     },
     products: [
-      { name: "Chicken Shawarma (Double Sausage)", price: 5500 },
-      { name: "Beef Burger with Fries", price: 6200 },
-      { name: "Special Fried Rice & Grilled Chicken", price: 4800 },
-      { name: "Chilled Chapman Drink", price: 1800 },
-    ],
+  { name: "Chicken Shawarma (Double Sausage)",       price: 5500, image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80" },
+  { name: "Beef Burger with Fries",                  price: 6200, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&q=80" },
+  { name: "Special Fried Rice & Grilled Chicken",    price: 4800, image: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=600&q=80" },
+  { name: "Chilled Chapman Drink",                   price: 1800, image: "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80" },
+],
   },
 
   {
@@ -279,9 +279,9 @@ export const VENDORS: Vendor[] = [
       inspectionFee: 8000,
     },
     products: [
-      { name: "Vitamin C Effervescent (Pack of 20)", price: 3500 },
-      { name: "First Aid Basic Kits Box", price: 8500 },
-    ],
+  { name: "Vitamin C Effervescent (Pack of 20)", price: 3500, image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&q=80" },
+  { name: "First Aid Basic Kits Box",            price: 8500, image: "https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=600&q=80" },
+],
   },
 
   {
@@ -303,10 +303,10 @@ export const VENDORS: Vendor[] = [
       inspectionFee: 8000,
     },
     products: [
-      { name: "A4 Laser Printing (Per Page Black/White)", price: 50 },
-      { name: "Full Color Project Hard Binding Booklet", price: 4500 },
-      { name: "Premium Spiral Notebook Diary", price: 2500 },
-    ],
+  { name: "A4 Laser Printing (Per Page Black/White)",     price: 50,   image: "https://images.unsplash.com/photo-1612198537557-6e13b8e3e67f?w=600&q=80" },
+  { name: "Full Color Project Hard Binding Booklet",      price: 4500, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&q=80" },
+  { name: "Premium Spiral Notebook Diary",                price: 2500, image: "https://images.unsplash.com/photo-1531346680769-a1d79b57de5c?w=600&q=80" },
+],
   },
 ];
 

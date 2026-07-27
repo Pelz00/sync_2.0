@@ -150,7 +150,7 @@ export function LandlordProfilePage({ slug }: LandlordProfilePageProps) {
           <p className="text-[10px] uppercase tracking-widest font-bold text-content-muted/70 mb-4 select-none">
             {(landlord.hostels ?? []).length} hostel{(landlord.hostels ?? []).length === 1 ? "" : "s"}
           </p>
-          <HostelGrid landlord={landlord} />
+          <HostelGrid landlord={landlord} isPublished />
         </>
       ) : (
         <>

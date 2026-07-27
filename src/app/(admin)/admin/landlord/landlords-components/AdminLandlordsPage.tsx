@@ -50,15 +50,6 @@ export function AdminLandlordsPage() {
     );
   }
 
-  function handleReject(landlord: Landlord, reason: string) {
-    setLandlords(prev =>
-      prev.map(l => l.id === landlord.id
-        ? { ...l, status: "Suspended", isVerified: false, rejectionReason: reason }
-        : l
-      )
-    );
-  }
-
   return (
     <div className="min-h-screen bg-surface transition-colors duration-300">
 
@@ -140,7 +131,6 @@ export function AdminLandlordsPage() {
         landlord={kycLandlord}
         onClose={() => setKycLandlord(null)}
         onVerify={handleVerify}
-        onReject={handleReject}
       />
     </div>
   );
