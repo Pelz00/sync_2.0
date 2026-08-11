@@ -39,7 +39,7 @@ export const DASHBOARD_CONTENT: Record<DashboardVariant, DashboardContentConfig>
     eyebrow: 'LANDLORD DASHBOARD',
     headline: (count) => ({ lead: `${count} new requests`, accent: 'this week.' }),
     pendingTitle: 'Pending booking requests',
-    pendingViewAllHref: '/landlord/requests',
+    pendingViewAllHref: '/landlord/bookings',
     unverifiedBadge: 'Verify your account',
   },
 };

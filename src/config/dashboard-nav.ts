@@ -126,18 +126,23 @@ export const DASHBOARD_NAV: Record<DashboardNavKey, DashboardNavConfig> = {
         items: [
           { href: '/landlord', label: 'Overview', icon: LayoutDashboard },
           { href: '/landlord/properties', label: 'Properties', icon: Building2 },
-          { href: '/landlord/tenants', label: 'Tenants', icon: Users },
-          { href: '/landlord/requests', label: 'Booking requests', icon: ClipboardList },
+          { href: '/landlord/bookings', label: 'Bookings and Tenants', icon: Users },
           { href: '/landlord/inbox', label: 'Inbox', icon: Inbox },
         ],
       },
       {
         label: 'Business',
-        items: [{ href: '/landlord/earnings', label: 'Earnings', icon: Wallet }],
+        items: [
+          { href: '/landlord/earnings', label: 'Earnings', icon: Wallet },
+          { href: '/landlord/reviews', label: 'Reviews', icon: Star },
+        ],
       },
       {
         label: 'Account',
-        items: [{ href: '/landlord/settings', label: 'Settings', icon: Settings }],
+        items: [
+          { href: '/landlord/verification', label: 'Verification', icon: ShieldCheck },
+          { href: '/landlord/settings', label: 'Settings', icon: Settings },
+        ],
       },
     ],
   },

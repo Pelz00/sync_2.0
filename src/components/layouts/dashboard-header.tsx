@@ -48,7 +48,7 @@ export function DashboardHeader({ navKey, profile }: DashboardHeaderProps) {
           </Dialog.Trigger>
           <Dialog.Portal>
             <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out fixed inset-0 z-40 bg-black/40 md:hidden" />
-            <Dialog.Content className="bg-panel data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left fixed inset-y-0 left-0 z-50 flex w-[18rem] max-w-[85vw] flex-col overflow-y-auto p-4 md:hidden">
+            <Dialog.Content className="bg-panel data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left fixed inset-0 z-50 flex h-dvh w-screen flex-col overflow-y-auto p-4 md:hidden">
               <Dialog.Title className="sr-only">Menu</Dialog.Title>
               <Dialog.Description className="sr-only">Dashboard navigation.</Dialog.Description>
               <Dialog.Close asChild>

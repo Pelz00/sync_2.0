@@ -31,6 +31,8 @@ export const revenueWeekly: { week: string; revenue: number }[] = [
 ];
 
 // Properties fake data for LandlordCards component
+export type PropertyAvailability = 'available' | 'occupied' | 'review';
+
 export interface Property {
   id: string;
   name: string;
@@ -38,6 +40,23 @@ export interface Property {
   roomsBooked: number;
   status?: 'Active' | 'Inactive';
   imageUrl?: string;
+  /**
+   * Extended fields for the dedicated /landlord/properties CRUD flow and the
+   * Bookings/Earnings pages. Optional — anticipating the backend adding these
+   * — so existing consumers (the Overview "MY HOSTELS" section) still work
+   * unchanged with just the original five fields.
+   */
+  address?: string;
+  price?: number;
+  term?: 'per session' | 'per year' | 'per semester';
+  roomType?: string;
+  beds?: number;
+  baths?: number;
+  amenities?: string[];
+  availability?: PropertyAvailability;
+  rating?: number;
+  description?: string;
+  houseRules?: string;
 }
 
 export const properties: Property[] = [
@@ -45,10 +64,19 @@ export const properties: Property[] = [
     id: '1',
     name: 'Tanke Crescent',
     roomsTotal: 12,
-    roomsBooked: 4,
+    roomsBooked: 12,
     status: 'Active' as const,
     imageUrl:
       'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG9zdGVsc3xlbnwwfHwwfHx8MA%3D%3D',
+    address: 'Tanke Crescent, off Fate Road, Ilorin',
+    price: 180000,
+    term: 'per session',
+    roomType: 'Self-contained',
+    beds: 1,
+    baths: 1,
+    amenities: ['Wi-Fi', '24/7 Power', 'Water', 'Security'],
+    availability: 'occupied',
+    rating: 4.6,
   },
   {
     id: '2',
@@ -58,50 +86,32 @@ export const properties: Property[] = [
     status: 'Active' as const,
     imageUrl:
       'https://images.unsplash.com/photo-1709805619372-40de3f158e83?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG9zdGVsc3xlbnwwfHwwfHx8MA%3D%3D',
+    address: 'Harmony Estate, Tanke, Ilorin',
+    price: 150000,
+    term: 'per session',
+    roomType: 'Shared room',
+    beds: 2,
+    baths: 1,
+    amenities: ['Wi-Fi', 'Water', 'Security', 'Kitchen'],
+    availability: 'available',
+    rating: 4.2,
   },
   {
     id: '3',
     name: 'Gra Layout',
     roomsTotal: 20,
-    roomsBooked: 11,
+    roomsBooked: 0,
     status: 'Inactive' as const,
     imageUrl:
       'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
-  },
-  {
-    id: '4',
-    name: 'Gra Layout',
-    roomsTotal: 20,
-    roomsBooked: 11,
-    status: 'Inactive' as const,
-    imageUrl:
-      'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
-  },
-  {
-    id: '5',
-    name: 'Gra Layout',
-    roomsTotal: 20,
-    roomsBooked: 11,
-    status: 'Inactive' as const,
-    imageUrl:
-      'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
-  },
-  {
-    id: '6',
-    name: 'Gra Layout',
-    roomsTotal: 20,
-    roomsBooked: 11,
-    status: 'Inactive' as const,
-    imageUrl:
-      'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
-  },
-  {
-    id: '7',
-    name: 'Gra Layout',
-    roomsTotal: 20,
-    roomsBooked: 11,
-    status: 'Inactive' as const,
-    imageUrl:
-      'https://images.unsplash.com/photo-1584132915807-fd1f5fbc078f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGhvc3RlbHN8ZW58MHx8MHx8fDA%3D',
+    address: 'GRA Layout, Ilorin',
+    price: 200000,
+    term: 'per session',
+    roomType: 'Single room',
+    beds: 1,
+    baths: 1,
+    amenities: ['Wi-Fi', 'Security'],
+    availability: 'review',
+    rating: 0,
   },
 ];

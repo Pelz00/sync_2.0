@@ -62,14 +62,14 @@ export function DashboardSidebar({ navKey, profile, onNavigate }: DashboardSideb
   return (
     <div className="flex h-full flex-col gap-5">
       {/* Wordmark + role, with the mode toggle pinned to the edge */}
-      <div className="flex items-center justify-between gap-2 px-2">
+      <div className="flex items-center  gap-2 px-2">
         <div className="flex items-baseline gap-2">
           <Link href="/" onClick={onNavigate} className="font-display text-card text-content">
             {SITE.name}
           </Link>
           <span className="eyebrow text-content-muted">{brandLabel}</span>
         </div>
-        <ThemeToggle className="text-content shrink-0" />
+        <ThemeToggle className="text-content shrink-0 mr-6" />
       </div>
 
       {/* Profile card */}
