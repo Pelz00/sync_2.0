@@ -512,7 +512,7 @@ export default function EarningsPage({ data = mockData }: EarningsPageProps) {
           {/* Table */}
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableHead className="px-5 font-mono text-[10px] tracking-widest uppercase">
                   Transaction ID
                 </TableHead>
@@ -566,7 +566,7 @@ export default function EarningsPage({ data = mockData }: EarningsPageProps) {
                   </TableRow>
                 ))
               ) : (
-                <TableRow>
+                <TableRow className="hover:bg-transparent">
                   <TableCell colSpan={5} className="text-content-muted h-24 text-center text-sm">
                     No transactions found for this date range.
                   </TableCell>

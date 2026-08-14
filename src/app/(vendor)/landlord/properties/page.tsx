@@ -2,9 +2,17 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { LayoutGrid, List, Plus, Search, Building2 } from 'lucide-react';
+import {
+  BedDouble,
+  Building2,
+  LayoutGrid,
+  List,
+  Plus,
+  Search,
+  TrendingUp,
+  Wallet,
+} from 'lucide-react';
 import { Button, Input, Tabs, TabsList, TabsTrigger, Chip } from '@/components/ui';
-import { PageHeader } from '../(components)/shared/page-header';
 import { PropertyListCard } from '../(components)/properties/property-list-card';
 import { useLandlordProperties } from '@/hooks/use-landlord-properties';
 import { cn } from '@/lib/utils';
@@ -33,18 +41,14 @@ export default function PropertiesPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader
-        title="My Properties"
-        description="Manage your listings, availability and approval status."
-      >
-        <Button asChild>
+      <div className='flex justify-end'>
+        <Button asChild className='w-fit'>
           <Link href="/landlord/properties/new">
             <Plus className="size-4" />
             Add New Property
           </Link>
         </Button>
-      </PageHeader>
-
+      </div>
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
           <TabsList>
@@ -90,18 +94,95 @@ export default function PropertiesPage() {
           </Button>
         </div>
       ) : (
-        <div
-          className={cn(
-            view === 'grid'
-              ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'
-              : 'flex flex-col gap-3',
+        <>
+          {view === 'list' ? (
+            <div className="border-line/10 bg-panel overflow-hidden rounded-2xl border shadow-sm">
+              <div className="text-content-muted bg-surface-deep/70 hidden grid-cols-[minmax(250px,2fr)_minmax(125px,.85fr)_minmax(90px,.6fr)_minmax(95px,.6fr)_minmax(110px,.7fr)_minmax(125px,.8fr)_minmax(75px,.45fr)_minmax(110px,.75fr)] gap-4 px-4 py-4 text-xs font-semibold tracking-wide lg:grid">
+                <span>PROPERTY</span>
+                <span>LOCATION</span>
+                <span>ROOMS</span>
+                <span>STATUS</span>
+                <span>OCCUPANCY</span>
+                <span>PRICE / SESSION</span>
+                <span>RATING</span>
+                <span>ACTIONS</span>
+              </div>
+              {filtered.map((p) => (
+                <PropertyListCard key={p.id} property={p} view="list" onDelete={remove} />
+              ))}
+              <p className="text-content-muted px-4 py-4 text-sm">
+                Showing {filtered.length} of {mergedProperties.length} properties
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {filtered.map((p) => (
+                <PropertyListCard key={p.id} property={p} view="grid" onDelete={remove} />
+              ))}
+            </div>
           )}
-        >
-          {filtered.map((p) => (
-            <PropertyListCard key={p.id} property={p} onDelete={remove} />
-          ))}
-        </div>
+
+          <div className="border-line/10 bg-panel grid gap-4 rounded-2xl border p-5 shadow-sm sm:grid-cols-2 xl:grid-cols-4">
+            {[
+              {
+                label: 'Total properties',
+                value: mergedProperties.length,
+                detail: `${mergedProperties.filter((p) => p.status === 'Active').length} active`,
+                icon: Building2,
+                tone: 'bg-lime/10 text-lime-deep',
+              },
+              {
+                label: 'Total rooms',
+                value: mergedProperties.reduce((total, p) => total + p.roomsTotal, 0),
+                detail: `${mergedProperties.reduce((total, p) => total + p.roomsBooked, 0)} occupied`,
+                icon: BedDouble,
+                tone: 'bg-violet-500/10 text-violet-600',
+              },
+              {
+                label: 'Average price / session',
+                value: formatCurrency(
+                  mergedProperties.reduce((total, p) => total + (p.price ?? 0), 0) /
+                    mergedProperties.length,
+                ),
+                detail: 'Across all properties',
+                icon: Wallet,
+                tone: 'bg-amber-500/10 text-amber-600',
+              },
+              {
+                label: 'Booked value',
+                value: formatCurrency(
+                  mergedProperties.reduce((total, p) => total + (p.price ?? 0) * p.roomsBooked, 0),
+                ),
+                detail: 'Current occupied rooms',
+                icon: TrendingUp,
+                tone: 'bg-blue-500/10 text-blue-600',
+              },
+            ].map(({ label, value, detail, icon: Icon, tone }) => (
+              <div
+                key={label}
+                className="sm:border-line/10 flex items-center gap-3 sm:border-r sm:pr-4 sm:last:border-r-0"
+              >
+                <span className={cn('grid size-11 shrink-0 place-items-center rounded-xl', tone)}>
+                  <Icon className="size-5" />
+                </span>
+                <div>
+                  <p className="text-content-muted text-xs">{label}</p>
+                  <p className="font-display text-xl font-semibold">{value}</p>
+                  <p className="text-content-muted text-xs">{detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
+}
+
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    maximumFractionDigits: 0,
+  }).format(value || 0);
 }

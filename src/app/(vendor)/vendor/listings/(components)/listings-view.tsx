@@ -42,7 +42,7 @@ export function ListingListView({
     <div className="bg-panel shadow-card overflow-hidden rounded-xl">
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="hover:bg-transparent">
             <TableHead className="w-64">PRODUCT</TableHead>
             <TableHead>CATEGORY</TableHead>
             <TableHead>PRICE</TableHead>
@@ -54,7 +54,7 @@ export function ListingListView({
         </TableHeader>
         <TableBody>
           {listings.length === 0 && (
-            <TableRow>
+            <TableRow className="hover:bg-transparent">
               <TableCell colSpan={7} className="text-muted h-24 text-center">
                 No listings found.
               </TableCell>

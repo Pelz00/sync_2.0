@@ -18,7 +18,7 @@ export default function EditPropertyPage() {
   if (!hydrated || !mockDataHydrated) return null;
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-6xl">
       {property ? <PropertyForm property={property} /> : <p>Property not found.</p>}
     </div>
   );

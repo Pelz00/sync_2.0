@@ -1,12 +1,9 @@
 'use client';
 
-import { Check, X, Users, CalendarClock, ShieldCheck } from 'lucide-react';
+import { Check, X, CalendarClock, ShieldCheck } from 'lucide-react';
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   Button,
   Avatar,
   AvatarFallback,
@@ -15,17 +12,10 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
   toast,
 } from '@/components/ui';
 import { PageHeader } from '../(components)/shared/page-header';
-import { StatusBadge } from '../(components)/shared/status-badge';
-import { TenantSheet } from '../(components)/bookings/tenant-sheet';
+import { TenantsTable } from '../(components)/bookings/tenants-table';
 import { formatNaira, formatDate, initials } from '@/lib/landlord-data';
 import { useLandlordMockStore } from '@/store/landlord-mock-store';
 
@@ -60,10 +50,6 @@ export default function BookingsPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader
-        title="Bookings & Tenants"
-        description="Review booking requests and manage your current tenants."
-      />
 
       {!hasHydrated ? null : (
         <Tabs defaultValue="requests">
@@ -133,61 +119,7 @@ export default function BookingsPage() {
           </TabsContent>
 
           <TabsContent value="tenants" className="mt-4">
-            <Card className="overflow-hidden">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Users className="size-4" />
-                  Active tenants
-                </CardTitle>
-                <CardDescription>
-                  {tenants.length} students currently housed across your properties.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="px-0 pb-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="hover:bg-accent/50">
-                      <TableHead>Tenant</TableHead>
-                      <TableHead className="hidden md:table-cell">Property</TableHead>
-                      <TableHead className="hidden lg:table-cell">Lease ends</TableHead>
-                      <TableHead>Payment</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {tenants.map((t) => (
-                      <TableRow key={t.id} className="hover:bg-accent/50">
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <Avatar className="size-9">
-                              <AvatarFallback>{initials(t.name)}</AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{t.name}</span>
-                              <span className="text-content-muted text-xs md:hidden">
-                                {t.property}
-                              </span>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-content-muted hidden md:table-cell">
-                          {t.property}
-                        </TableCell>
-                        <TableCell className="text-content-muted hidden lg:table-cell">
-                          {formatDate(t.leaseEnd)}
-                        </TableCell>
-                        <TableCell>
-                          <StatusBadge status={t.paymentStatus} />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <TenantSheet tenant={t} />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            <TenantsTable tenants={tenants} />
           </TabsContent>
         </Tabs>
       )}
