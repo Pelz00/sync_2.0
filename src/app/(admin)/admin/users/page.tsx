@@ -1,11 +1,15 @@
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
 import { getCurrentUser, getProfile } from '@/modules/auth/queries';
 import { adminRoleForEmail } from '@/lib/admin-emails';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { UsersClient } from './user-componenets/UsersClient';
 
 export const metadata: Metadata = { title: 'Users — Admin' };
+
+// This authenticated admin page reads Supabase with the server-only service
+// role client. Rendering it per request prevents build-time prerendering from
+// requiring production credentials in CI.
+export const dynamic = 'force-dynamic';
 
 export type ProfileRow = {
   id: string;
