@@ -17,6 +17,7 @@ import { PropertyListCard } from '../(components)/properties/property-list-card'
 import { useLandlordProperties } from '@/hooks/use-landlord-properties';
 import { cn } from '@/lib/utils';
 import { getMergedProperties, useLandlordMockStore } from '@/store/landlord-mock-store';
+import { PageHeader } from '../(components)/shared/page-header';
 
 type Filter = 'all' | 'Active' | 'Inactive';
 
@@ -41,14 +42,14 @@ export default function PropertiesPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className='flex justify-end'>
-        <Button asChild className='w-fit'>
+      <PageHeader title="My Properties" description="Manage your listings, availability and approval status.">
+        <Button asChild>
           <Link href="/landlord/properties/new">
             <Plus className="size-4" />
             Add New Property
           </Link>
         </Button>
-      </div>
+      </PageHeader>
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
           <TabsList>

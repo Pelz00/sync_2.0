@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import {
   Sheet,
   SheetTrigger,
@@ -19,18 +19,23 @@ import { useRouter } from 'next/navigation';
 import { StatusBadge } from '../shared/status-badge';
 import { formatDate, initials, type Tenant } from '@/lib/landlord-data';
 
-export function TenantSheet({ tenant }: { tenant: Tenant }) {
+export function TenantSheet({ tenant, trigger }: { tenant: Tenant; trigger?: ReactNode }) {
   const router = useRouter();
   const [reminderSent, setReminderSent] = useState(false);
 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="sm">
-          View
-        </Button>
+        {trigger ?? (
+          <Button variant="outline" size="sm">
+            View
+          </Button>
+        )}
       </SheetTrigger>
-      <SheetContent side="right" className="flex w-full flex-col gap-6 overflow-y-auto rounded! sm:max-w-md">
+      <SheetContent
+        side="right"
+        className="flex w-full flex-col gap-6 overflow-y-auto rounded! sm:max-w-md"
+      >
         <SheetHeader>
           <SheetTitle>Tenant profile</SheetTitle>
           <SheetDescription>Booking and payment history</SheetDescription>
@@ -97,7 +102,10 @@ export function TenantSheet({ tenant }: { tenant: Tenant }) {
           <span className="text-sm font-medium">Booking history</span>
           <div className="flex flex-col gap-2">
             {tenant.bookingHistory.map((b, i) => (
-              <div key={i} className="border-line/10 flex items-center justify-between rounded-lg border p-3 text-sm">
+              <div
+                key={i}
+                className="border-line/10 flex items-center justify-between rounded-lg border p-3 text-sm"
+              >
                 <span className="font-medium">{b.property}</span>
                 <span className="text-content-muted">{b.period}</span>
               </div>

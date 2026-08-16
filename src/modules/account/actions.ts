@@ -13,6 +13,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { adminRoleForEmail } from '@/lib/admin-emails';
 
 type Result = { ok: true } | { ok: false; error: string };
 
@@ -25,7 +26,10 @@ async function caller(): Promise<{ id: string; role: string } | null> {
   if (!user) return null;
   const admin = createAdminClient();
   const { data } = await admin.from('profiles').select('role').eq('id', user.id).maybeSingle();
-  return { id: user.id, role: (data?.role as string | undefined) ?? 'student' };
+  return {
+    id: user.id,
+    role: adminRoleForEmail(user.email) ?? (data?.role as string | undefined) ?? 'student',
+  };
 }
 
 const isAdmin = (role: string) => role === 'admin' || role === 'super_admin';

@@ -9,7 +9,7 @@ import type { KycDocument, KycStatus } from '@/lib/landlord-data';
 
 const steps = [
   { id: 'personal', label: 'Personal Info' },
-  { id: 'ownership', label: 'Ownership' },
+  { id: 'business', label: 'Business' },
   { id: 'id', label: 'Government ID' },
   { id: 'address', label: 'Proof of Address' },
 ];
@@ -61,7 +61,7 @@ export function VerificationClient({
           <div className="flex flex-col gap-1">
             <p className="text-sm font-semibold">You&apos;re a verified landlord</p>
             <p className="text-content-muted text-sm">
-              Your identity and property ownership have been confirmed. The verified badge now appears on all your listings.
+              Your identity has been confirmed. The verified badge now appears on all your listings.
             </p>
           </div>
         </div>
@@ -128,7 +128,6 @@ export function VerificationClient({
 
           {step === 1 ? (
             <div className="grid gap-4 sm:grid-cols-2">
-              <DocumentFolderCard doc={docFor('ownership')} disabled={!editable} />
               <DocumentFolderCard doc={docFor('business')} disabled={!editable} />
             </div>
           ) : null}

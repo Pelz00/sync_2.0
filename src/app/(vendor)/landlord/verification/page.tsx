@@ -7,7 +7,7 @@ export default function VerificationPage() {
     <div className="flex flex-col gap-5">
       <PageHeader
         title="Verification (KYC)"
-        description="Verify your identity and property ownership to start receiving payouts."
+        description="Verify your identity to start receiving payouts."
       />
       <VerificationClient status={kycStatus} rejectionReason={kycRejectionReason} documents={kycDocuments} />
     </div>

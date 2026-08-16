@@ -177,13 +177,6 @@ export const kycDocuments: KycDocument[] = [
     uploadedAt: '2 Aug 2026',
   },
   {
-    id: 'ownership',
-    label: 'Property Ownership',
-    description: 'C of O, deed of assignment or tenancy agreement',
-    fileName: 'certificate-of-occupancy.pdf',
-    uploadedAt: '2 Aug 2026',
-  },
-  {
     id: 'address',
     label: 'Proof of Address',
     description: 'Utility bill issued within the last 3 months',

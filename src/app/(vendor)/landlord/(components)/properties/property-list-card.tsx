@@ -6,7 +6,6 @@ import { useState } from 'react';
 import {
   Bath,
   BedDouble,
-  Bookmark,
   Eye,
   MapPin,
   Pencil,

@@ -2,15 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  BarChart3,
-  CalendarDays,
-  Download,
-  Eye,
-  MoveUpRight,
-  Users,
-  WalletCards,
-} from 'lucide-react';
+import { BarChart3, CalendarDays, Eye, MoveUpRight, Users, WalletCards } from 'lucide-react';
 import { Button, Card, CardContent } from '@/components/ui';
 import {
   PendingRequestList,
@@ -33,37 +25,15 @@ export function LandlordOverview({
 }) {
   const firstName = name.trim().split(/\s+/)[0] || 'there';
 
-  function exportReport() {
-    const rows = [
-      ['Metric', 'Value'],
-      ['Total revenue', '420000'],
-      ['Occupancy rate', '87%'],
-      ['Booking requests', String(pending.length)],
-      ['Listing views', '1248'],
-    ];
-    const url = URL.createObjectURL(
-      new Blob([rows.map((row) => row.join(',')).join('\n')], { type: 'text/csv' }),
-    );
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'landlord-overview-report.csv';
-    link.click();
-    URL.revokeObjectURL(url);
-  }
-
   return (
     <div className="flex flex-col gap-7 pb-8">
-      <section className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <section>
         <div>
           <p className="text-content-muted text-sm tracking-wide">Good morning, {firstName} 👋</p>
           <h1 className="text-section text-content font-display mt-2">
             Here’s what’s happening <span className="text-lime-deep">this week</span>
           </h1>
         </div>
-        <Button variant="dark" size="sm" onClick={exportReport}>
-          Export Report
-          <Download className="size-4" />
-        </Button>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

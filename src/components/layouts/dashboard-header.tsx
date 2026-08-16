@@ -29,6 +29,15 @@ export function DashboardHeader({ navKey, profile }: DashboardHeaderProps) {
   const handle = navKey === 'student' || navKey === 'vendor' ? profile.handle : undefined;
   const base = handle ? `/${handle}` : rootHref;
   const { label, heading } = activeNav(navKey, pathname, handle);
+  const showHeading = !(
+    navKey === 'landlord' &&
+    (pathname.startsWith('/landlord/bookings') ||
+      pathname.startsWith('/landlord/earnings') ||
+      pathname.startsWith('/landlord/inbox') ||
+      pathname.startsWith('/landlord/verification') ||
+      pathname.startsWith('/landlord/reviews') ||
+      pathname.startsWith('/landlord/properties'))
+  );
   // Only the student dashboard has a dedicated profile page.
   const profileHref = navKey === 'student' ? `${base}/profile` : undefined;
 
@@ -70,12 +79,16 @@ export function DashboardHeader({ navKey, profile }: DashboardHeaderProps) {
         </Dialog.Root>
 
         <div className="min-w-0">
-          <p className="eyebrow text-content-muted uppercase">
+          <p
+            className={`eyebrow text-content-muted uppercase ${!showHeading ? 'font-extrabold' : ''}`}
+          >
             {brandLabel} . {label}
           </p>
-          <h1 className="font-display text-content mt-1 truncate text-2xl leading-none font-semibold md:text-3xl">
-            {heading}
-          </h1>
+          {showHeading ? (
+            <h1 className="font-display text-content mt-1 truncate text-2xl leading-none font-semibold md:text-3xl">
+              {heading}
+            </h1>
+          ) : null}
         </div>
       </div>
 
