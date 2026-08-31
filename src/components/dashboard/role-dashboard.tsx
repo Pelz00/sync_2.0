@@ -102,9 +102,11 @@ export async function RoleDashboard({
           </Badge>
         </div>
         <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
-          <h2 className="text-section text-content font-display mt-2 font-medium md:mt-0">
-            {lead} <span className="text-lime-deep">{accent}</span>
-          </h2>
+          {variant !== 'landlord' ? (
+            <h2 className="text-section text-content font-display mt-2 font-medium md:mt-0">
+              {lead} <span className="text-lime-deep">{accent}</span>
+            </h2>
+          ) : null}
           {content.action && (
             <Link href={content.action.href}>
               <Button className="mt-4 flex items-center justify-end gap-2 md:mt-0 md:justify-start">

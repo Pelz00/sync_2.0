@@ -29,6 +29,15 @@ export function DashboardHeader({ navKey, profile }: DashboardHeaderProps) {
   const handle = navKey === 'student' || navKey === 'vendor' ? profile.handle : undefined;
   const base = handle ? `/${handle}` : rootHref;
   const { label, heading } = activeNav(navKey, pathname, handle);
+  const showHeading = !(
+    navKey === 'landlord' &&
+    (pathname.startsWith('/landlord/bookings') ||
+      pathname.startsWith('/landlord/earnings') ||
+      pathname.startsWith('/landlord/inbox') ||
+      pathname.startsWith('/landlord/verification') ||
+      pathname.startsWith('/landlord/reviews') ||
+      pathname.startsWith('/landlord/properties'))
+  );
   // Only the student dashboard has a dedicated profile page.
   const profileHref = navKey === 'student' ? `${base}/profile` : undefined;
 
@@ -48,7 +57,7 @@ export function DashboardHeader({ navKey, profile }: DashboardHeaderProps) {
           </Dialog.Trigger>
           <Dialog.Portal>
             <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out fixed inset-0 z-40 bg-black/40 md:hidden" />
-            <Dialog.Content className="bg-panel data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left fixed inset-y-0 left-0 z-50 flex w-[18rem] max-w-[85vw] flex-col overflow-y-auto p-4 md:hidden">
+            <Dialog.Content className="bg-panel data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left fixed inset-0 z-50 flex h-dvh w-screen flex-col overflow-y-auto p-4 md:hidden">
               <Dialog.Title className="sr-only">Menu</Dialog.Title>
               <Dialog.Description className="sr-only">Dashboard navigation.</Dialog.Description>
               <Dialog.Close asChild>
@@ -70,12 +79,16 @@ export function DashboardHeader({ navKey, profile }: DashboardHeaderProps) {
         </Dialog.Root>
 
         <div className="min-w-0">
-          <p className="eyebrow text-content-muted uppercase">
+          <p
+            className={`eyebrow text-content-muted uppercase ${!showHeading ? 'font-extrabold' : ''}`}
+          >
             {brandLabel} . {label}
           </p>
-          <h1 className="font-display text-content mt-1 truncate text-2xl leading-none font-semibold md:text-3xl">
-            {heading}
-          </h1>
+          {showHeading ? (
+            <h1 className="font-display text-content mt-1 truncate text-2xl leading-none font-semibold md:text-3xl">
+              {heading}
+            </h1>
+          ) : null}
         </div>
       </div>
 

@@ -54,11 +54,11 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4 rounded-md p-8">
       <DataTableToolbar table={table} searchValue={globalFilter} onSearchChange={setGlobalFilter} />
 
-      <div className="border-line/5 rounded-md border bg-panel p-2">
+      <div className="border-line/5 bg-panel rounded-md border p-2">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((group) => (
-              <TableRow key={group.id}>
+              <TableRow key={group.id} className="hover:bg-transparent">
                 {group.headers.map((header) => (
                   <TableHead key={header.id}>
                     {header.isPlaceholder
@@ -82,7 +82,7 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
+              <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>

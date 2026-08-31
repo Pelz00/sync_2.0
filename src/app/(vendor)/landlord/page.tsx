@@ -9,9 +9,9 @@
  */
 import type { Metadata } from 'next';
 import type { PendingRequestItem } from '@/components/dashboard/pending-request-card';
-import { RoleDashboard } from '@/components/dashboard/role-dashboard';
-import { properties, revenueWeekly, stats } from '@/mock/StatsCard';
-import { PropertyCard } from './(components)/HostelCards';
+import { getDashboardProfile } from '@/components/layouts/dashboard-profile';
+import { properties, revenueWeekly } from '@/mock/StatsCard';
+import { LandlordOverview } from './(components)/landlord-overview';
 
 export const metadata: Metadata = { title: 'Landlord dashboard' };
 
@@ -40,20 +40,17 @@ const pending: PendingRequestItem[] = [
 ];
 
 export default function Page() {
+  return <LandlordPage />;
+}
+
+async function LandlordPage() {
+  const profile = await getDashboardProfile('landlord');
   return (
-    <RoleDashboard
-      variant="landlord"
-      count={8}
-      kpis={stats}
+    <LandlordOverview
+      name={profile.name}
       pending={pending}
       chart={revenueWeekly}
-    >
-      <section>
-        <h2 className="text-content-muted mb-2 max-w-xl font-mono text-sm tracking-wide">
-          MY HOSTELS
-        </h2>
-        <PropertyCard properties={properties} />
-      </section>
-    </RoleDashboard>
+      properties={properties}
+    />
   );
 }

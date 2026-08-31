@@ -185,7 +185,7 @@ export function BillingHistoryTable({ invoices }: Props) {
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((group) => (
-                  <TableRow key={group.id} className="border-line/5">
+                  <TableRow key={group.id} className="border-line/5 hover:bg-transparent">
                     {group.headers.map((header) => (
                       <TableHead
                         key={header.id}
@@ -218,7 +218,7 @@ export function BillingHistoryTable({ invoices }: Props) {
                     </TableRow>
                   ))
                 ) : (
-                  <TableRow>
+                  <TableRow className="hover:bg-transparent">
                     <TableCell
                       colSpan={columns.length}
                       className="text-content-muted h-24 text-center"
